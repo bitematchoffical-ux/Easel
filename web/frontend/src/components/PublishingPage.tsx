@@ -15,7 +15,8 @@ export default function PublishingPage({ persona }: { persona: string }) {
     fetchPublishingPolicy().then((value) => {
       if (active) {
         setPolicy(value);
-        setMode(value.mode === 'automated' && value.automaticSubmission ? 'automated' : 'manual');
+        // Postloop: Instagram/TikTok/YouTube gibt es bisher nur im Export-Tab → der ist Standard
+        setMode('manual');
       }
     })
       .catch(() => { if (active) setError('无法读取发布方式，请重试。'); });

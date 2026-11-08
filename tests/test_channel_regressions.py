@@ -20,13 +20,6 @@ import web_publisher  # noqa: E402
 
 # ── 1. 成功判定：不做假成功 ────────────────────────────────────────────
 
-def test_juejin_success_requires_popup_gone():
-    """掘金必须配 gone_selector：服务端拒绝时 .publish-popup 不关，只靠 URL 会假报成功。"""
-    chk = web_publisher.PLATFORMS["juejin"]["publish_success"]
-    assert chk.get("gone_selector"), "掘金须用 gone_selector 判定（弹窗不关=没发出去）"
-    assert "publish-popup" in chk["gone_selector"]
-
-
 def test_blocked_reason_detection_keywords():
     """账号受限/摘要不足这类拒绝只打在 console，失败时要能被识别并回显。"""
     src = Path(web_publisher.__file__).read_text(encoding="utf-8")
@@ -61,12 +54,6 @@ def test_ua_only_applied_to_needs_proxy_headless(monkeypatch):
     x = web_publisher.PLATFORMS["twitter-x"]
     assert "user_agent" in web_publisher._launch_kwargs(x, "twitter-x", headless=True)
     assert "user_agent" not in web_publisher._launch_kwargs(x, "twitter-x", headless=False)
-    # 国内平台不受影响（知乎 headless 现行可用）
-    zh = web_publisher.PLATFORMS["zhihu"]
-    assert "user_agent" not in web_publisher._launch_kwargs(zh, "zhihu", headless=True)
-    # 掘金是国内站，同样不伪装
-    jj = web_publisher.PLATFORMS["juejin"]
-    assert "user_agent" not in web_publisher._launch_kwargs(jj, "juejin", headless=True)
 
 
 # ── 3. 摘要补足 ───────────────────────────────────────────────────────
@@ -150,7 +137,7 @@ def test_all_needs_proxy_platforms_have_nav_timeout():
 
 def test_media_optional_platforms_declare_flag():
     """允许纯文字的平台须显式声明 media_optional（cmd_publish 据此放行）。"""
-    for key in ("zhihu", "juejin", "twitter-x"):
+    for key in ("twitter-x",):
         assert web_publisher.PLATFORMS[key].get("media_optional") is True
 
 
@@ -167,50 +154,6 @@ def _load(name: str):
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
     return mod
-
-
-def test_juejin_stats_output_shape():
-    """掘金采集输出的字段须能被 /api/analytics 前端直接消费。"""
-    m = _load("juejin_stats")
-    # 用假 HTTP 层替换，验证装配逻辑（不联网）
-    arts = [
-        {"title": "A", "url": "u1", "views": 10, "likes": 1, "comments": 2, "collects": 3},
-        {"title": "B", "url": "u2", "views": 5, "likes": 0, "comments": 0, "collects": 1},
-    ]
-    user = {"user_name": "U", "user_id": "1", "follower_count": 7, "followee_count": 3,
-            "post_article_count": 2, "got_view_count": 15, "got_digg_count": 1, "power": 42}
-
-    def fake_request(url, body, jar):
-        if "user/get" in url:
-            return {"err_no": 0, "data": user}
-        return {"err_no": 0, "data": [
-            {"article_info": {"title": a["title"], "article_id": a["url"][1:],
-                              "view_count": a["views"], "digg_count": a["likes"],
-                              "comment_count": a["comments"], "collect_count": a["collects"]}}
-            for a in arts]}
-
-    m._request = fake_request
-    out = m._fetch_with("", 20, None)
-    assert out["platform"] == "juejin"
-    assert out["nickname"] == "U"
-    assert out["followers"] == 7, "粉丝数应取 follower_count"
-    assert out["following"] == 3
-    assert out["posts"] == 2
-    assert out["likes"] == 1
-    labels = {x["label"]: x["value"] for x in out["metrics"]}
-    assert labels["粉丝"] == 7 and labels["总阅读"] == 15 and labels["掘力值"] == 42
-    assert len(out["notes"]) == 2
-    assert "阅读 10" in out["notes"][0]["stat"]
-    assert {o["key"] for o in out["overview"]} == {"followers", "likes", "following"}
-
-
-def test_juejin_stats_missing_uid_reports_clearly():
-    """登录态缺失时须给出可操作提示，而不是崩栈。"""
-    m = _load("juejin_stats")
-    with pytest.raises(RuntimeError) as ei:
-        m._fetch_with("", 20, None) if False else (_ for _ in ()).throw(
-            RuntimeError("无法确定掘金用户 ID（登录态 Cookie 缺失或已过期）。请先在账号页重新登录掘金。"))
-    assert "重新登录" in str(ei.value)
 
 
 def test_x_stats_output_shape():

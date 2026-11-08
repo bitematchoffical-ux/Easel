@@ -14,7 +14,8 @@ ALLOWED_KEYS = {"name", "description", "layer", "metadata"}
 LAYERS = {"discover", "plan", "produce", "publish", "attribute", "general"}
 INTENTIONAL_NAME_MISMATCHES: dict[str, str] = {}
 KEY_RE = re.compile(r"^([A-Za-z][A-Za-z0-9_-]*):(?:\s*(.*))?$")
-TRIGGER_RE = re.compile(r"当用户|触发|使用时机|适用场景|用户说|用户问|用户需要|用于")
+# Postloop: auch deutsche/englische Auslöser zulassen (Skills werden nach und nach übersetzt)
+TRIGGER_RE = re.compile(r"当用户|触发|使用时机|适用场景|用户说|用户问|用户需要|用于|Verwenden, wenn|Nutzen, wenn|Use when")
 LEGACY_OUTPUT_DIRS = {
     "ai-image", "ai-music", "ai-video", "audio-denoise", "audio-editing",
     "audio-mix", "audio-visualizer", "auto-short-video", "auto-subtitle",

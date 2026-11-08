@@ -576,7 +576,7 @@ export function fetchPublishingPolicy(): Promise<PublishingPolicy> {
 
 /** Create a local export only; no social platform is contacted. */
 export function exportManualPackage(platform: string, payload: {
-  title: string; body: string; tags: string; media: string[]; reviewed: boolean;
+  title: string; body: string; tags: string; media: string[]; reviewed: boolean; aiGenerated: boolean;
 }): Promise<{ path: string; filename: string; published: false }> {
   return request(`/api/manual-publish/${encodeURIComponent(platform)}/export`, {
     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload),

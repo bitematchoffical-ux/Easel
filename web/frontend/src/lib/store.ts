@@ -54,7 +54,7 @@ function readMigratedLocalValue(key: string, suffix: string): string | null {
 }
 
 const PUBLISH_DEFAULT: PublishDraft = {
-  title: '', body: '', platforms: ['twitter-x'], overrides: {}, tags: '',
+  title: '', body: '', platforms: ['instagram', 'tiktok'], overrides: {}, tags: '',
 };
 export function loadPublishDraft(): PublishDraft {
   try {

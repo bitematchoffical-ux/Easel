@@ -82,16 +82,18 @@ function button(tree, label) {
   return result;
 }
 
-test('default policy keeps the existing automatic page and exposes both paths', async () => {
+// Postloop: Instagram/TikTok/YouTube gibt es nur im Export-Tab → er ist Standard,
+// der automatische Tab bleibt aber auswählbar.
+test('default policy opens the export page and keeps the automatic path available', async () => {
   const app = setup();
   assert.equal(app.render().props.children, '正在读取发布方式…');
   await settle();
   const tree = app.render();
-  assert.equal(button(tree, '自动发布').props['aria-pressed'], true);
+  assert.equal(button(tree, '人工审核发布').props['aria-pressed'], true);
+  assert.equal(button(tree, '自动发布').props['aria-pressed'], false);
   assert.equal(button(tree, '自动发布').props.disabled, false);
-  assert.equal(button(tree, '人工审核发布').props['aria-pressed'], false);
-  assert.equal(nodes(tree).find(node => node.type === 'automated-page').props.persona, 'travel-brand');
-  assert.equal(nodes(tree).some(node => node.type === 'manual-page'), false);
+  assert.equal(nodes(tree).find(node => node.type === 'manual-page').props.persona, 'travel-brand');
+  assert.equal(nodes(tree).some(node => node.type === 'automated-page'), false);
 });
 
 test('switching to manual and back only changes the visible workflow', async () => {
@@ -149,7 +151,8 @@ test('policy lookup failures show retry instead of silently permitting submissio
   app.render();
   await settle();
   tree = app.render();
-  assert.equal(nodes(tree).some(node => node.type === 'automated-page'), true);
+  assert.equal(nodes(tree).some(node => node.type === 'manual-page'), true);
+  assert.equal(button(tree, '自动发布').props.disabled, false);
   assert.equal(app.requests(), 2);
 });
 

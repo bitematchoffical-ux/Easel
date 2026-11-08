@@ -5,7 +5,11 @@ import { loadPublishDraft, savePublishDraft } from '../lib/store';
 import { renderMarkdown } from '../lib/sanitize';
 import { IconCalendar, IconCheck, IconCopy, IconEdit, IconPublish, IconSkills, IconStop, IconTrash } from './icons';
 
+// Postloop: Limits und Links müssen zu easel/manual_publish.py passen.
 const PLATFORMS = [
+  { key: 'instagram', label: 'Instagram', titleLimit: 0, bodyLimit: 2200, url: 'https://www.instagram.com/', hint: 'Kein Titelfeld: Titel und Text werden zur Caption. Mehrere Bilder = Karussell, Video = Reel.' },
+  { key: 'tiktok', label: 'TikTok', titleLimit: 0, bodyLimit: 4000, url: 'https://www.tiktok.com/tiktokstudio/upload', hint: 'Video oder Fotos im Hochformat; der Anfang der Beschreibung muss sofort fesseln.' },
+  { key: 'youtube-shorts', label: 'YouTube Shorts', titleLimit: 100, bodyLimit: 5000, url: 'https://studio.youtube.com/', hint: 'Braucht ein Hochformat-Video. Titel max. 100 Zeichen.' },
   { key: 'twitter-x', label: 'X', titleLimit: 0, bodyLimit: 280, url: 'https://x.com/compose/post', hint: '将标题与正文合并到官方发帖框，按平台计数检查长度后亲自发布。' },
 ];
 
@@ -39,6 +43,8 @@ export default function ManualPublishPage({ persona }: { persona: string }) {
   const [checking, setChecking] = useState(false);
   const [checkResult, setCheckResult] = useState('');
   const [exporting, setExporting] = useState('');
+  // Pflichtangabe vor jedem Export (KI-Kennzeichnung); null = noch nicht beantwortet
+  const [aiGenerated, setAiGenerated] = useState<boolean | null>(null);
   const [saving, setSaving] = useState(false);
   const ctl = useRef<AbortController | null>(null);
 
@@ -115,29 +121,16 @@ export default function ManualPublishPage({ persona }: { persona: string }) {
 
   const exportFor = async (key: string) => {
     if (!approved(key) || exporting) return;
+    if (aiGenerated === null) { showToast('Bitte zuerst angeben, ob KI-generierte Inhalte enthalten sind.'); return; }
     setExporting(key);
     try {
-      const result = await exportManualPackage(key, { title, body: effective(key), tags, media: [...selectedMedia], reviewed: true });
+      const result = await exportManualPackage(key, { title, body: effective(key), tags, media: [...selectedMedia], reviewed: true, aiGenerated });
       const a = document.createElement('a');
       a.href = mediaUrl(result.path); a.download = result.filename;
       document.body.appendChild(a); a.click(); a.remove();
       showToast('已生成稿件包并发起下载；尚未上传或发布');
     } catch (error) { showToast(error instanceof Error ? error.message : '导出失败'); }
     finally { setExporting(''); }
-  };
-
-  const copyRichText = async () => {
-    if (!approved('wechat-oa')) return;
-    try {
-      const heading = document.createElement('h1');
-      heading.textContent = title;
-      const content = `<article style="font-size:16px;line-height:1.9">${heading.outerHTML}${renderMarkdown(effective('wechat-oa'))}</article>`;
-      await navigator.clipboard.write([new ClipboardItem({
-        'text/html': new Blob([content], { type: 'text/html' }),
-        'text/plain': new Blob([`${title}\n\n${effective('wechat-oa')}`], { type: 'text/plain' }),
-      })]);
-      showToast('已复制公众号排版；请在官方编辑器中粘贴并检查实际效果');
-    } catch { showToast('当前浏览器未允许复制富文本，请导出稿件包并打开 article.html'); }
   };
 
   const addToCalendar = async (key: string, published = false) => {
@@ -188,11 +181,17 @@ export default function ManualPublishPage({ persona }: { persona: string }) {
           {selectedMedia.includes(f.path) && <span className="media-check">✓</span>}
         </button>)}
       </div>}
+      <fieldset className="panel" style={{ margin: '16px 0', fontSize: 13 }}>
+        <legend className="field-label">KI-Kennzeichnung (Pflicht vor dem Export)</legend>
+        <p style={{ margin: '0 0 8px' }}>Enthält der Beitrag KI-generierte oder stark veränderte Bilder, Videos, Stimmen oder Personen?</p>
+        <label style={{ marginRight: 16 }}><input type="radio" name="ai-generated" value="yes" aria-label="Ja, KI-generierte Inhalte enthalten" checked={aiGenerated === true} onChange={() => setAiGenerated(true)} /> Ja – Kennzeichnungsschritte und Hinweistext ins Paket</label>
+        <label><input type="radio" name="ai-generated" value="no" aria-label="Nein, keine KI-generierten Inhalte" checked={aiGenerated === false} onChange={() => setAiGenerated(false)} /> Nein</label>
+      </fieldset>
       <div className="publish-actions">
         {adapting ? <button className="btn btn-sm" onClick={() => { ctl.current?.abort(); setAdapting(false); }}><IconStop size={13} /> 停止排版</button>
           : <button className="btn btn-sm btn-primary" disabled={empty || !platforms.length} onClick={adapt}><IconSkills size={14} /> AI 排版 / 适配</button>}
         <button className="btn btn-sm" disabled={empty || checking || adapting} onClick={check}><IconCheck size={14} />{checking ? '检查中…' : 'AI 辅助检查'}</button>
-        <button className="btn btn-sm" disabled={empty || saving || adapting} onClick={() => addToCalendar(platforms[0] || 'xiaohongshu')}><IconCalendar size={14} /> 存草稿并排期</button>
+        <button className="btn btn-sm" disabled={empty || saving || adapting} onClick={() => addToCalendar(platforms[0] || 'instagram')}><IconCalendar size={14} /> 存草稿并排期</button>
         <button className="btn btn-sm btn-ghost" disabled={empty || adapting} onClick={() => { setTitle(''); setBody(''); setTags(''); setOverrides({}); setReviewed({}); setCheckResult(''); }}><IconTrash size={13} /> 清空文案</button>
       </div>
       <p className="publish-saved-note">文案自动保存到当前浏览器。审核只针对当前版本；修改标题、正文、标签或素材后，需重新审核。AI 检查仅作参考。</p>
@@ -210,7 +209,7 @@ export default function ManualPublishPage({ persona }: { persona: string }) {
           <div className="pv-body">
             <div className={`pv-title ${p.titleLimit && title.length > p.titleLimit ? 'over' : ''}`}>{title || <span className="pv-ph">标题预览</span>}</div>
             {isEdit ? <textarea className="field" aria-label={`${p.label}正文`} style={{ minHeight: 140 }} value={text} onChange={(e) => setOverrides((old) => ({ ...old, [p.key]: e.target.value }))} />
-              : p.key === 'wechat-oa' ? <div className="skill-body-md" dangerouslySetInnerHTML={{ __html: renderMarkdown(text) }} /> : <div className="pv-text">{text || '正文预览'}</div>}
+              : <div className="pv-text">{text || '正文预览'}</div>}
             <p className="pv-hint" style={{ marginTop: 12 }}>{p.hint} 字数和格式以官方页面为准。</p>
             <button className="pv-copy" onClick={() => setEditing(isEdit ? null : p.key)}><IconEdit size={13} />{isEdit ? '完成编辑' : '编辑此平台版本'}</button>
             <label style={{ display: 'flex', alignItems: 'flex-start', gap: 8, margin: '16px 0', fontSize: 13 }}>
@@ -219,8 +218,7 @@ export default function ManualPublishPage({ persona }: { persona: string }) {
             </label>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
               {(['title', 'body', 'all'] as const).map((part) => <button key={part} className="btn btn-sm" disabled={!ready} onClick={() => copyFor(p.key, part)}><IconCopy size={13} />{copied === `${p.key}:${part}` ? '已复制' : part === 'title' ? '复制标题' : part === 'body' ? '复制正文' : '复制全文'}</button>)}
-              {p.key === 'wechat-oa' && <button className="btn btn-sm" disabled={!ready} onClick={copyRichText}>复制公众号排版</button>}
-              <button className="btn btn-sm" disabled={!ready || !!exporting} onClick={() => exportFor(p.key)}>{exporting === p.key ? '打包中…' : '导出稿件和素材 ZIP'}</button>
+              <button className="btn btn-sm" disabled={!ready || !!exporting || aiGenerated === null} title={aiGenerated === null ? 'Erst die KI-Frage beantworten' : undefined} onClick={() => exportFor(p.key)}>{exporting === p.key ? '打包中…' : '导出稿件和素材 ZIP'}</button>
               {ready ? <a className="btn btn-sm btn-primary" href={p.url} target="_blank" rel="noopener noreferrer">打开官方发布页 ↗</a> : <button className="btn btn-sm" disabled>审核后打开官方发布页</button>}
             </div>
             <p className="pv-hint" style={{ margin: '14px 0' }}>导出不代表已发布。请解压 ZIP，在官方页面粘贴稿件、上传素材、检查预览，并按平台要求标注 AI 辅助创作，最后由你点击发布。</p>

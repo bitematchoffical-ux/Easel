@@ -26,7 +26,17 @@ import sys
 # 平台注册表：约束 + 对应发布 SKILL
 # title/body 上限为字符数；0 表示无硬限或不适用。aspect 为推荐视频比例。
 PLATFORMS: dict[str, dict] = {
-    # EU-Fork: China-Plattformen entfernt. Instagram/TikTok/YouTube folgen in Paket B.
+    # Postloop: Instagram/TikTok/YouTube laufen über das Export-Paket (Web: Veröffentlichen →
+    # Export-Tab, Backend easel/manual_publish.py). Limits müssen dort identisch sein.
+    "instagram": {"publisher": "manual-export", "types": ["image", "video"],
+                  "title": 0, "body": 2200, "tags": 5, "aspect": "4:5/9:16",
+                  "note": "Kein Titelfeld; Karussell 4:5, Reel 9:16; wenige gezielte Hashtags; KI-Label setzen"},
+    "tiktok": {"publisher": "manual-export", "types": ["video", "image"],
+               "title": 0, "body": 4000, "tags": 5, "aspect": "9:16",
+               "note": "Hochformat 9:16; erste Sekunde = Hook; Schalter „KI-generierte Inhalte“ setzen"},
+    "youtube-shorts": {"publisher": "manual-export", "types": ["video"],
+                       "title": 100, "body": 5000, "tags": 5, "aspect": "9:16",
+                       "note": "Nur Video, vertikal; Titel ≤100; synthetische Inhalte im Upload angeben"},
     "twitter-x": {"publisher": "web_publisher", "types": ["image", "video"],
                   "title": 0, "body": 280, "tags": 3, "aspect": "16:9/1:1",
                   "note": "Post = Titel + Text, max. 280 Zeichen"},
@@ -106,6 +116,9 @@ def _read(path: str) -> str:
 def cmd_selftest(_a) -> int:
     print("publish_dispatch 自检 ...", file=sys.stderr)
     assert PLATFORMS["twitter-x"]["publisher"] == "web_publisher"
+    assert PLATFORMS["instagram"]["publisher"] == "manual-export"
+    yt = _check_platform("youtube-shorts", {"title": "T" * 101, "media_type": "image"})
+    assert any("标题" in w for w in yt["warnings"]) and any("类型" in w for w in yt["warnings"])
     ok = _check_platform("twitter-x", {"title": "", "body": "kurz", "tags": ["a"],
                                        "media_type": "image"})
     assert ok["ok"] and not ok["warnings"], f"合规内容不应告警：{ok}"

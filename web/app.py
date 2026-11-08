@@ -5028,6 +5028,8 @@ class ManualPublishRequest(BaseModel):
     tags: str = Field(default='', max_length=2000)
     media: list[str] = Field(default_factory=list, max_length=32)
     reviewed: StrictBool = False
+    # Postloop: Pflichtangabe pro Export (None = nicht beantwortet → 400)
+    aiGenerated: StrictBool | None = None
 
 
 @app.get("/api/publishing-policy")
@@ -5046,7 +5048,7 @@ def api_manual_publish_export(platform: str, req: ManualPublishRequest):
     """Build a local handoff package; never contact a platform or mark it published."""
     try:
         package = build_package(OUTPUTS_DIR, platform, req.title, req.body,
-                                req.tags, req.media, req.reviewed)
+                                req.tags, req.media, req.reviewed, req.aiGenerated)
     except ValueError as error:
         raise HTTPException(400, str(error)) from error
     return {"path": package.relative_to(OUTPUTS_DIR.resolve()).as_posix(),

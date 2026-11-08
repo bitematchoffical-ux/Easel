@@ -10,7 +10,6 @@ from playwright.sync_api import TimeoutError as BrowserTimeout
 
 
 @pytest.mark.parametrize('platform,url,payload,identifier', [
-    ('juejin','https://api.juejin.cn/content_api/v1/article/publish',{'err_no':0,'data':{'article_id':'123'}},'123'),
     ('twitter-x','https://x.com/i/api/graphql/hash/CreateTweet',{'data':{'create_tweet':{'tweet_results':{'result':{'rest_id':'456'}}}}},'456'),
 ])
 def test_submission_receipt_requires_platform_and_content_id(platform,url,payload,identifier):
@@ -22,7 +21,6 @@ def test_submission_receipt_requires_platform_and_content_id(platform,url,payloa
 
 
 @pytest.mark.parametrize('platform,url,payload', [
-    ('juejin','https://api.juejin.cn/content_api/v1/article/publish',{'err_no':403,'err_msg':'private-text'}),
     ('twitter-x','https://x.com/i/api/graphql/hash/CreateTweet',{'errors':[{'message':'private-text'}]}),
 ])
 def test_platform_rejection_does_not_expose_raw_response(platform,url,payload):
@@ -76,7 +74,7 @@ def browser_flow(monkeypatch,tmp_path,platform,*,timeout=False,reject=False,unkn
     return calls,lambda:wp._run_browser(args,headed=False,do_publish=True)
 
 
-@pytest.mark.parametrize('platform',['juejin','twitter-x'])
+@pytest.mark.parametrize('platform',['twitter-x'])
 def test_real_flow_accepts_only_receipt_and_submits_once(monkeypatch,tmp_path,platform,capsys):
     calls,run=browser_flow(monkeypatch,tmp_path,platform)
     assert run()==0
@@ -84,7 +82,7 @@ def test_real_flow_accepts_only_receipt_and_submits_once(monkeypatch,tmp_path,pl
     assert '平台响应作品' in capsys.readouterr().out
 
 
-@pytest.mark.parametrize('platform',['juejin','twitter-x'])
+@pytest.mark.parametrize('platform',['twitter-x'])
 def test_real_flow_does_not_reclick_after_uncertain_submit(monkeypatch,tmp_path,platform,capsys):
     calls,run=browser_flow(monkeypatch,tmp_path,platform,timeout=True)
     with pytest.raises(SystemExit) as caught:run()
@@ -92,26 +90,19 @@ def test_real_flow_does_not_reclick_after_uncertain_submit(monkeypatch,tmp_path,
     assert '先别重发' in capsys.readouterr().err
 
 
-@pytest.mark.parametrize('platform',['juejin','twitter-x'])
+@pytest.mark.parametrize('platform',['twitter-x'])
 def test_real_flow_rejection_is_not_published(monkeypatch,tmp_path,platform):
     calls,run=browser_flow(monkeypatch,tmp_path,platform,reject=True)
     with pytest.raises(SystemExit) as caught:run()
     assert caught.value.code==5 and calls==['submit']
 
 
-@pytest.mark.parametrize('platform',['juejin','twitter-x'])
+@pytest.mark.parametrize('platform',['twitter-x'])
 def test_real_flow_popup_or_navigation_cannot_replace_missing_receipt(monkeypatch,tmp_path,platform,capsys):
     calls,run=browser_flow(monkeypatch,tmp_path,platform,unknown=True)
     with pytest.raises(SystemExit) as caught:run()
     assert caught.value.code==5 and calls==['submit']
     assert '先别重发' in capsys.readouterr().err
-
-
-def test_juejin_anonymous_statistics_are_not_a_login(monkeypatch):
-    import juejin_stats as stats
-    monkeypatch.setattr(stats,'_request',lambda url,body,jar: {'err_no':0,'data':{'user_id':'1','user_name':'public'}} if 'user/get' in url else {'err_no':0,'data':[]})
-    assert stats._fetch_with('1',20,None)['loggedIn'] is False
-    assert stats._fetch_with('',20,object())['loggedIn'] is True
 
 
 def test_x_public_profile_does_not_prove_login(monkeypatch,tmp_path):

@@ -21,7 +21,6 @@ sys.path.insert(0, str(PROJECT_ROOT / "scripts"))
 from easel.commands import skill as cli_skill  # noqa: E402
 from easel import persona  # noqa: E402
 import app as web  # noqa: E402
-import render_slides  # noqa: E402
 from model_registry import (configured_providers, env_aliases, provider_ids,
                             provider_required_env)  # noqa: E402
 from persona_gate import classify as classify_persona_score  # noqa: E402
