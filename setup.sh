@@ -1136,6 +1136,12 @@ fi
 oc_set 'gateway 基本配置' gateway.mode local
 oc_set 'gateway 基本配置' gateway.bind loopback
 oc_set 'gateway 基本配置' gateway.auth.mode none
+# Postloop-Kostenschutz (Upstream-Issue #163: ein „Hallo“ löste Hunderte Tool-Aufrufe und
+# ~86 Mio. Tokens pro Stunde aus). OpenClaw-eigener Schleifenschutz an; abgeschlossene
+# Hintergrund-Befehle wecken den Agenten nicht mehr selbstständig auf. Fail-soft: ältere
+# OpenClaw-Versionen ohne diese Schlüssel erzeugen nur eine Warnung im Abschlussbericht.
+oc_set 'Kostenschutz: Schleifenerkennung' tools.loopDetection.enabled true --json
+oc_set 'Kostenschutz: kein Auto-Weiterlaufen nach exec' tools.exec.notifyOnExit false --json
 # 对话直连常驻网关（web/app.py 的 http 传输层）要用 OpenAI 兼容端点，而 openclaw 默认
 # 不挂这条路由（chatCompletions.enabled 默认 false），不开的话 POST /v1/chat/completions
 # 一律 404、只能退回每轮 spawn 客户端的老路径。端点只绑 loopback + auth.mode=none 的本机

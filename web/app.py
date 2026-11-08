@@ -606,6 +606,22 @@ if _proxy_origin:
     _LOCAL_ORIGINS.append(_proxy_origin[1])
 
 
+def listen_host(environ: dict[str, str] | None = None) -> str:
+    """Adresse, auf der der Web-Server lauscht. Standard: nur dieser Rechner.
+
+    EASEL_HOST erlaubt eine bewusste Freigabe (z. B. 0.0.0.0 in Docker). Ungültige Werte
+    fallen auf 127.0.0.1 zurück, statt die Oberfläche versehentlich ins Netz zu stellen.
+    """
+    value = (environ if environ is not None else os.environ).get("EASEL_HOST", "").strip()
+    if not value:
+        return "127.0.0.1"
+    try:
+        ipaddress.ip_address(value)
+    except ValueError:
+        return "127.0.0.1" if value != "localhost" else "localhost"
+    return value
+
+
 def _loopback_peer(request: Request) -> bool:
     """对端是否来自回环地址。只有「没有 Origin 可判」时才用作判据。"""
     client = request.client
@@ -631,7 +647,7 @@ async def local_write_guard(request: Request, call_next):
     ② 不带 Origin（curl / 本机脚本 / 测试客户端）：要求对端来自回环地址。
 
     局限（重要）：这套防护假定 Origin/Host 头不可伪造——对浏览器成立，对裸
-    HTTP 客户端不成立。本进程仍监听 0.0.0.0（见文件底部 uvicorn.run，未随
+    HTTP 客户端不成立。Postloop 监听默认只在 127.0.0.1（listen_host），只有显式设置 EASEL_HOST=0.0.0.0 才会（见文件底部 uvicorn.run，未随
     此中间件收紧，兼容 Docker/远程容器端口转发场景），因此局域网内能直连到
     这个端口的攻击者，只要手写 curl 一起伪造 `Origin`/`Host` 头就能绕过本
     中间件与下面的 TrustedHostMiddleware。这里防的是「浏览器打开恶意网页」
@@ -5777,6 +5793,7 @@ if __name__ == "__main__":
     if proxy_url:
         print(f"  {proxy_url}")
     print()
-    # 监听 0.0.0.0（非仅回环）是为了兼容 Docker/远程容器端口转发访问 Easel 的场景；
-    # local_write_guard/TrustedHostMiddleware 只挡浏览器发起的跨站请求，见其注释里的局限说明。
-    uvicorn.run(app, host="0.0.0.0", port=port, log_level="warning")
+    # Postloop: standardmäßig nur auf diesem Rechner erreichbar (127.0.0.1). Die Oberfläche hat
+    # keinen Login, und local_write_guard schützt laut eigener Doku nicht gegen Geräte im selben
+    # WLAN. Für Docker/Port-Forwarding bewusst EASEL_HOST=0.0.0.0 setzen.
+    uvicorn.run(app, host=listen_host(), port=port, log_level="warning")

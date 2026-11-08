@@ -87,12 +87,18 @@ def persona_prefix(name: str | None) -> str:
 # 模型对系统提示的注意力会衰减 → 常见现象「开头会查 SKILL、后面就凭记忆裸做」。
 # 把最关键的反射每轮在消息末尾重申一次（放末尾借近因效应），成本极低，
 # 显著提升后续轮次的 SKILL 命中率。仅用于对话入口；单跑某个 SKILL 不必加。
+# Postloop: Der Hinweis hängt an JEDER Nachricht. Früher verlangte er „vor jedem Schritt erst
+# die Skill-Bibliothek durchsuchen“ (→ Tool-Aufrufe schon bei „Hallo“, vgl. Upstream-Issue #163)
+# und „nicht verraten, dass etwas KI-generiert ist“ (→ Widerspruch zur KI-Kennzeichnungspflicht).
 TURN_REMINDER = (
-    "〔内部提醒·非用户所说，勿复述、勿回显〕本轮动手前先查技能库："
-    "有对应或相邻的 SKILL 就读进来、按它的流程/数据源/工具做，别凭记忆或通用知识裸做；"
-    "五层（含制作层：图文/图/视频/成片/长稿等）都由你自己按对应 SKILL 产出成品文件到 outputs/；"
-    "问「我的账号/帖子/粉丝/最近发了啥」先查已登录账号、别回问用户要账号名；"
-    "要发到公开平台的文案/评论绝不写入密钥/内部地址/代理/路径/env 名等敏感信息，也别随手自曝「由 AI 生成/某工具做的」。"
+    "[Interner Hinweis – nicht vom Nutzer, nicht wiederholen oder zitieren] "
+    "Erst bestimmen, was diese Runde wirklich verlangt: Begrüßung, Smalltalk oder Verständnisfrage "
+    "→ direkt antworten, ohne Tools. Nur für echte Aufgaben den passenden SKILL lesen und befolgen "
+    "und fertige Ergebnisse als Dateien in outputs/ ablegen. "
+    "Bei Blockaden (Login, QR-Scan, Bestätigung, fehlender Schlüssel, Kosten) anhalten und den Nutzer fragen. "
+    "Fragen zu eigenen Konten oder Posts: zuerst die eingeloggten Konten prüfen, nicht nach dem Namen fragen. "
+    "Öffentliche Texte enthalten nie Schlüssel, interne Adressen, Proxys, Pfade oder env-Namen. "
+    "KI-generierte Inhalte nie verschleiern: nach Plattformregeln und EU AI Act kennzeichnen."
 )
 
 
