@@ -119,8 +119,8 @@ export default function Sidebar({
     <div className="sidebar">
       <div className="sidebar-header">
         <div className="sidebar-logo">
-          <img className="sidebar-logo-icon" src="./static/easel-icon-transparent.png" alt="" />
-          <h1>Easel</h1>
+          <img className="sidebar-logo-icon" src="./static/postloop-icon.svg" alt="" />
+          <h1>Postloop</h1>
           <ThemeToggle />
         </div>
         <SettingsSelect className="persona-control" label="选择用户画像"

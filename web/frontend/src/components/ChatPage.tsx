@@ -23,7 +23,7 @@ interface ChatPageProps {
   onQuestionClosed?: (id: string, status: string) => void;
 }
 
-// 空态推荐（贴合 Easel 社媒创作场景）
+// 空态推荐（贴合 Postloop 社媒创作场景）
 const SUGGESTIONS = [
   { icon: '🔥', title: '蹭个热点', prompt: '看看现在微博和抖音有什么热搜，挑几个适合我做二创的选题' },
   { icon: '✍️', title: '写小红书文案', prompt: '帮我写一条小红书种草文案，主题先问我' },
@@ -182,8 +182,8 @@ export default function ChatPage({ apiDirect, session, stream, onSend, onStop, o
       <div className="chat-page">
         <div className="chat-hero">
           <div className="chat-hero-brand">
-            <img src="./static/easel-icon-transparent.png" alt="" />
-            <span>Easel</span>
+            <img src="./static/postloop-icon.svg" alt="" />
+            <span>Postloop</span>
           </div>
           <h1 className="chat-hero-title">{greeting()}</h1>
           <p className="chat-hero-sub">{apiDirect ? 'API 直连：写文案、策划选题、分析附件。本机工具和自动发布未启用。'

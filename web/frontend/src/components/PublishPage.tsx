@@ -15,25 +15,16 @@ interface PublishPageProps {
 // 平台列表须与后端 LOGIN_RUNNERS 对齐（有登录/发布链路的才列）
 // draft: true = 该平台支持「存草稿」（落后台草稿箱，不公开发布）
 const PLATFORMS: { key: string; label: string; titleLimit?: number; bodyLimit: number; hint: string; draft?: boolean }[] = [
-  { key: 'xiaohongshu', label: '小红书', titleLimit: 20, bodyLimit: 1000, hint: '标题≤20，正文≤1000，重情绪+话题标签' },
-  { key: 'douyin', label: '抖音', titleLimit: 55, bodyLimit: 55, hint: '文案≤55，前几字是钩子' },
-  { key: 'kuaishou', label: '快手', titleLimit: 30, bodyLimit: 1000, hint: '视频或图片(图文)，标题≤30，需附媒体' },
-  { key: 'weixin-channels', label: '视频号', bodyLimit: 1000, hint: '需附视频，短描述+话题标签，微信扫码登录' },
-  { key: 'zhihu', label: '知乎', bodyLimit: 5000, hint: '长文/回答，讲清逻辑' },
-  { key: 'juejin', label: '掘金', titleLimit: 100, bodyLimit: 20000, hint: '技术文章（Markdown），标题≤100；发布默认分类，标签需掘金已有标签' },
-  { key: 'bilibili', label: 'B站', titleLimit: 80, bodyLimit: 2000, hint: '需附视频，标题≤80、简介≤2000，默认投「知识」分区' },
-  { key: 'toutiao', label: '今日头条', titleLimit: 30, bodyLimit: 10000, draft: true, hint: '图文长文，标题≤30 字，话题≤5 个；附件图片插进正文，可存草稿' },
-  { key: 'wechat-oa', label: '公众号', titleLimit: 64, bodyLimit: 20000, hint: '图文文章，正文用 Markdown，首图作封面，发到草稿箱；需先在账号页「登录公众号后台」扫码' },
-  { key: 'twitter-x', label: '推特 X', bodyLimit: 280, hint: '标题与正文合并，最终长度以 X 校验为准；可附 1 图或 1 视频；窗口登录需要运行 Easel 的电脑有图形桌面及外网连接' },
+  { key: 'twitter-x', label: 'X', bodyLimit: 280, hint: '标题与正文合并，最终长度以 X 校验为准；可附 1 图或 1 视频；窗口登录需要运行 Postloop 的电脑有图形桌面及外网连接' },
 ];
 const LABEL2KEY = Object.fromEntries(PLATFORMS.map((p) => [p.label, p.key]));
 
 // 能一键发布的平台（有后端 publisher）
-const PUBLISHABLE = new Set(['xiaohongshu', 'douyin', 'kuaishou', 'weixin-channels', 'zhihu', 'juejin', 'bilibili', 'wechat-oa', 'twitter-x', 'toutiao']);
+const PUBLISHABLE = new Set(['twitter-x']);
 // 必须附带媒体的平台（无媒体发不了）——公众号需要一张封面图，也计入；X 纯文字推文合法，不计入
-const MEDIA_REQUIRED = new Set(['xiaohongshu', 'douyin', 'kuaishou', 'weixin-channels', 'bilibili', 'wechat-oa']);
+const MEDIA_REQUIRED = new Set<string>();
 // 只能发视频的平台（抖音/视频号/B站：图文不走此链路，必须视频）
-const VIDEO_ONLY = new Set(['douyin', 'weixin-channels', 'bilibili']);
+const VIDEO_ONLY = new Set<string>();
 const VIDEO_RE = /\.(mp4|mov|webm|mkv|avi|m4v|flv|ts)$/i;
 
 function parseSections(text: string): Record<string, string> {
@@ -403,7 +394,7 @@ export default function PublishPage({ persona }: PublishPageProps) {
           <button className="btn btn-sm" disabled={empty || checking || adapting} onClick={check}>
             <IconCheck size={14} /> {checking ? '预检中…' : '发布前预检'}
           </button>
-          <button className="btn btn-sm" disabled={empty} onClick={() => addToCalendar(platforms[0] || 'xiaohongshu')}>
+          <button className="btn btn-sm" disabled={empty} onClick={() => addToCalendar(platforms[0] || 'twitter-x')}>
             <IconCalendar size={14} /> 存草稿并排期
           </button>
           <button className="btn btn-sm btn-primary" disabled={empty || publishing || checking || !canPublish}

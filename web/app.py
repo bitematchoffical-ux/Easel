@@ -346,23 +346,15 @@ _WHOAMI_LOCK = threading.Lock()
 _WHOAMI_TASKS: dict[str, asyncio.Task] = {}
 _LOGIN_START_LOCKS: dict[str, asyncio.Lock] = {}
 
+# EU-Fork: China-Plattformen (Xiaohongshu, Kuaishou, Kanäle, Zhihu, Juejin, Bilibili,
+# Douyin, Toutiao, WeChat OA) entfernt. Alle Endpunkte prüfen `platform in LOGIN_RUNNERS`,
+# deren Zweige sind damit unerreichbar und werden in einem späteren Schritt gelöscht.
 LOGIN_RUNNERS: dict[str, dict] = {
-    "xiaohongshu": {"name": "小红书", "backend": "xhs", "profile": "XiaohongshuProfile"},
-    "kuaishou": {"name": "快手", "backend": "web", "wp": "kuaishou", "profile": "KuaishouProfile"},
-    "weixin-channels": {"name": "微信视频号", "backend": "web", "wp": "weixin-channels", "profile": "ChannelsProfile"},
-    "zhihu": {"name": "知乎", "backend": "web", "wp": "zhihu", "profile": "ZhihuProfile"},
-    "juejin": {"name": "掘金", "backend": "web", "wp": "juejin", "profile": "JuejinProfile"},
     # X 无扫码登录 → login_window：登录时弹有头浏览器窗口由用户手动完成
     # （web_publisher login-qr --headed 窗口模式，状态走 window_login）；国际站需外网代理
     # （web_publisher 按 needs_proxy 读 EASEL_PROXY/https_proxy，未配则回退系统代理）。
     "twitter-x": {"name": "推特 X", "backend": "web", "wp": "twitter-x",
                   "profile": "TwitterXProfile", "login_window": True},
-    "bilibili": {"name": "B站", "backend": "biliup"},
-    "douyin": {"name": "抖音", "backend": "douyin", "profile": "DouyinProfile"},
-    # 今日头条：自带专用 publisher（skill-toutiao-publisher），backend=='toutiao' 在各处分派。
-    "toutiao": {"name": "今日头条", "backend": "toutiao", "profile": "ToutiaoProfile"},
-    # 微信公众号：扫码登录后台会话（发布+数据都走它），backend=='wechat-oa' 在各处单独分支处理。
-    "wechat-oa": {"name": "微信公众号", "backend": "wechat-oa"},
 }
 
 # ---- 微信公众号（wechat-oa）凭证式接入 ----
@@ -4904,7 +4896,7 @@ async def api_logout(platform: str):
 
 # 归因层：可抓创作数据的平台（多数走 Playwright 登录态；bilibili 用 biliup cookies 不起浏览器、
 # wechat-oa 走 mp 后台会话 Playwright 拦截数据 XHR）
-ANALYTICS_PLATFORMS = {"xiaohongshu", "douyin", "kuaishou", "zhihu", "weixin-channels", "bilibili", "wechat-oa", "juejin", "twitter-x", "toutiao"}
+ANALYTICS_PLATFORMS = {"twitter-x"}
 _analytics_inflight: dict[str, asyncio.Task] = {}
 
 

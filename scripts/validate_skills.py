@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SKILLS_DIR = ROOT / "skills" / "builtin"
 ALLOWED_KEYS = {"name", "description", "layer", "metadata"}
 LAYERS = {"discover", "plan", "produce", "publish", "attribute", "general"}
-INTENTIONAL_NAME_MISMATCHES = {"skill-xhs-analyzer": "redbook"}
+INTENTIONAL_NAME_MISMATCHES: dict[str, str] = {}
 KEY_RE = re.compile(r"^([A-Za-z][A-Za-z0-9_-]*):(?:\s*(.*))?$")
 TRIGGER_RE = re.compile(r"当用户|触发|使用时机|适用场景|用户说|用户问|用户需要|用于")
 LEGACY_OUTPUT_DIRS = {
@@ -25,28 +25,7 @@ LEGACY_OUTPUT_DIRS = {
     "video-intro-outro", "video-reframe", "video-to-article", "voice-clone",
 }
 PUBLISH_SCRIPT_CONTRACTS = {
-    "skills/builtin/skill-bilibili-upload/scripts/bili_upload.py": (
-        "content_guard.guard_or_die", 'add_argument("--exec"',
-    ),
-    "skills/builtin/skill-wechat-publisher/scripts/publish.py": (
-        "content_guard.guard_or_die", '"--exec"',
-    ),
-    "skills/builtin/skill-wechat-publisher/scripts/multi_publish.py": (
-        "content_guard.guard_or_die", '"--exec"',
-    ),
-    "skills/builtin/skill-toutiao-publisher/scripts/toutiao_publish.py": (
-        "content_guard.guard_or_die", '"--exec"',
-    ),
-    "skills/shared/scripts/xhs_publish.py": (
-        "content_guard.guard_or_die", 'add_argument("--exec"',
-    ),
-    "skills/shared/scripts/douyin_publish.py": (
-        "content_guard.guard_or_die", 'add_argument("--exec"',
-    ),
     "skills/shared/scripts/web_publisher.py": (
-        "content_guard.guard_or_die", 'add_argument("--exec"',
-    ),
-    "skills/shared/scripts/zhihu_answer.py": (
         "content_guard.guard_or_die", 'add_argument("--exec"',
     ),
 }
@@ -171,17 +150,6 @@ def validate_execution_contracts() -> list[str]:
             if marker not in text:
                 errors.append(f"{relative_path}: missing safety marker {marker!r}")
 
-    analyzer_docs = [
-        ROOT / "skills/builtin/skill-xhs-analyzer/SKILL.md",
-        ROOT / "skills/builtin/skill-xhs-analyzer/references/commands.md",
-        ROOT / "skills/builtin/skill-xhs-analyzer/references/modules.md",
-    ]
-    forbidden = re.compile(r"redbook\s+(?:post|comment|reply|batch-reply|like|collect)\b")
-    for path in analyzer_docs:
-        if match := forbidden.search(path.read_text(encoding="utf-8")):
-            errors.append(
-                f"{path.relative_to(ROOT)}: analyzer must stay read-only; found {match.group()!r}"
-            )
     return errors
 
 

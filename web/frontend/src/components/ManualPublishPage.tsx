@@ -6,16 +6,7 @@ import { renderMarkdown } from '../lib/sanitize';
 import { IconCalendar, IconCheck, IconCopy, IconEdit, IconPublish, IconSkills, IconStop, IconTrash } from './icons';
 
 const PLATFORMS = [
-  { key: 'xiaohongshu', label: '小红书', titleLimit: 20, bodyLimit: 1000, url: 'https://creator.xiaohongshu.com/publish/publish?source=official', hint: '在官方创作平台选择图文或视频，核对封面与话题。' },
-  { key: 'douyin', label: '抖音', titleLimit: 55, bodyLimit: 55, url: 'https://creator.douyin.com/', hint: '进入官方创作者中心，选择发布体裁并上传素材。' },
-  { key: 'kuaishou', label: '快手', titleLimit: 30, bodyLimit: 1000, url: 'https://cp.kuaishou.com/article/publish/video', hint: '在官方发布页核对描述、封面与素材。' },
-  { key: 'weixin-channels', label: '视频号', titleLimit: 0, bodyLimit: 1000, url: 'https://channels.weixin.qq.com/platform/post/create', hint: '在视频号助手登录，上传视频并检查预览。' },
-  { key: 'zhihu', label: '知乎', titleLimit: 0, bodyLimit: 5000, url: 'https://zhuanlan.zhihu.com/write', hint: '打开官方文章编辑器，粘贴正文后检查排版。' },
-  { key: 'juejin', label: '掘金', titleLimit: 100, bodyLimit: 20000, url: 'https://juejin.cn/editor/drafts/new?v=2', hint: '在官方编辑器粘贴 Markdown，选择分类与标签，检查摘要后发布。' },
-  { key: 'toutiao', label: '今日头条', titleLimit: 30, bodyLimit: 10000, url: 'https://mp.toutiao.com/profile_v4/graphic/publish', hint: '在头条号后台检查图文、封面和话题，再亲自保存或发布。' },
-  { key: 'twitter-x', label: '推特 X', titleLimit: 0, bodyLimit: 280, url: 'https://x.com/compose/post', hint: '将标题与正文合并到官方发帖框，按平台计数检查长度后亲自发布。' },
-  { key: 'bilibili', label: 'B站', titleLimit: 80, bodyLimit: 2000, url: 'https://member.bilibili.com/', hint: '进入官方创作中心投稿，核对分区、简介和封面。' },
-  { key: 'wechat-oa', label: '公众号', titleLimit: 64, bodyLimit: 20000, url: 'https://mp.weixin.qq.com/', hint: '在官方后台新建草稿，上传图片并检查手机版预览。' },
+  { key: 'twitter-x', label: 'X', titleLimit: 0, bodyLimit: 280, url: 'https://x.com/compose/post', hint: '将标题与正文合并到官方发帖框，按平台计数检查长度后亲自发布。' },
 ];
 
 function sections(text: string): Record<string, string> {
@@ -176,7 +167,7 @@ export default function ManualPublishPage({ persona }: { persona: string }) {
       <h1 className="page-title"><IconPublish size={21} /> 发布中心 · 人工发布</h1>
       <p className="page-subtitle">AI 排版 → 人工审核 → 复制 / 导出 → 在官方发布页亲自提交。</p>
       <div className="panel" style={{ marginBottom: 16, fontSize: 13 }}>
-        <strong>最终提交由你完成。</strong> 本页不自动登录、上传或点击发布。官方页面的登录与 Easel 账号页相互独立。
+        <strong>最终提交由你完成。</strong> 本页不自动登录、上传或点击发布。官方页面的登录与 Postloop 账号页相互独立。
       </div>
       <label className="field-label" htmlFor="manual-title">标题</label>
       <input id="manual-title" className="field" value={title} placeholder="请输入标题" onChange={(e) => setTitle(e.target.value)} />

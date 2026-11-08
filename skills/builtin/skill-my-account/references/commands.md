@@ -17,16 +17,8 @@ python skills/shared/scripts/account_stats.py check
 输出单行 JSON：`{"loggedIn": true/false, "name": "昵称", "avatar": "头像URL"}`。
 
 ```bash
-# 小红书（必须直连，走代理常被判风险）
-python skills/shared/scripts/xhs_publish.py whoami --no-proxy
-
-# 抖音（走代理，默认取 env，勿加 --no-proxy）
-python skills/shared/scripts/douyin_publish.py whoami
-
-# 知乎 / 快手 / 视频号（web_publisher，--platform 三选一）
-python skills/shared/scripts/web_publisher.py whoami --platform zhihu
-python skills/shared/scripts/web_publisher.py whoami --platform kuaishou
-python skills/shared/scripts/web_publisher.py whoami --platform weixin-channels
+# X（Postloop：目前唯一的浏览器登录平台；China 平台已移除）
+python skills/shared/scripts/web_publisher.py whoami --platform twitter-x
 ```
 
 - `loggedIn=false` → 告诉用户"你还没登录 X，去 Web『账号』页扫码"。

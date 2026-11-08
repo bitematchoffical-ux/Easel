@@ -1,0 +1,20 @@
+Postloop
+Copyright 2026 David Schubert-Lakatos
+
+This product is a modified version of Easel (https://github.com/ZJU-REAL/Easel),
+developed by ZJU-REAL and contributors and licensed under the Apache License,
+Version 2.0.
+
+Modifications made in Postloop (from 2026-11-08):
+- Removed publishing, login and analytics integrations for Xiaohongshu, Douyin,
+  Kuaishou, WeChat Channels, WeChat Official Accounts, Zhihu, Bilibili, Toutiao
+  and Juejin, including their skills, scripts and tests.
+- Removed the AGPL-licensed gzh-design skill and the paper skills that depended
+  on PyMuPDF (AGPL); removed the PyMuPDF and biliup dependencies.
+- Removed the original project's logos, posters, showcase media and project page;
+  replaced the visible product name and icon.
+- Further changes are recorded in the git history of this repository.
+
+Bundled third-party components keep their own licenses, for example:
+- skills/builtin/video-production/vendor/video-pipeline-sdk (MIT, includes Remotion
+  dependencies under the Remotion License)

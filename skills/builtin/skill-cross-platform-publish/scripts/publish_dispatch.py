@@ -26,30 +26,10 @@ import sys
 # 平台注册表：约束 + 对应发布 SKILL
 # title/body 上限为字符数；0 表示无硬限或不适用。aspect 为推荐视频比例。
 PLATFORMS: dict[str, dict] = {
-    "xiaohongshu": {"publisher": "skill-xhs-publisher", "types": ["image", "video"],
-                    "title": 20, "body": 1000, "tags": 10, "aspect": "3:4/9:16",
-                    "note": "标题≤20字；图 3:4 或 1:1，视频竖版；话题#放正文"},
-    "douyin": {"publisher": "skill-douyin-upload", "types": ["video", "image"],
-               "title": 30, "body": 1000, "tags": 5, "aspect": "9:16",
-               "note": "作品标题≤30字（发布脚本硬限）；文案/简介另计；竖版 9:16；话题# 3-5 个"},
-    "wechat": {"publisher": "skill-wechat-publisher", "types": ["article"],
-               "title": 64, "body": 0, "tags": 0, "aspect": "-",
-               "note": "公众号图文；首图 2.35:1；正文富文本"},
-    "bilibili": {"publisher": "skill-bilibili-upload", "types": ["video"],
-                 "title": 80, "body": 2000, "tags": 10, "aspect": "16:9",
-                 "note": "标题≤80字；横版 16:9 为主；分区+标签必填"},
-    "kuaishou": {"publisher": "skill-kuaishou-upload", "types": ["video", "image"],
-                 "title": 500, "body": 500, "tags": 5, "aspect": "9:16",
-                 "note": "竖版 9:16；描述含话题#"},
-    "weixin-channels": {"publisher": "skill-channels-upload", "types": ["video"],
-                        "title": 22, "body": 1000, "tags": 5, "aspect": "9:16",
-                        "note": "视频号；标题短≤22字；竖版；可带话题与位置"},
-    "zhihu": {"publisher": "skill-zhihu-publisher", "types": ["article", "answer"],
-              "title": 100, "body": 0, "tags": 5, "aspect": "-",
-              "note": "文章/回答；专业排版；话题标签"},
-    "toutiao": {"publisher": "skill-toutiao-publisher", "types": ["article"],
-                "title": 30, "body": 0, "tags": 5, "aspect": "-",
-                "note": "头条号图文；标题≤30字；资讯式长文 800-2500 字；话题≤5 个；可存草稿"},
+    # EU-Fork: China-Plattformen entfernt. Instagram/TikTok/YouTube folgen in Paket B.
+    "twitter-x": {"publisher": "web_publisher", "types": ["image", "video"],
+                  "title": 0, "body": 280, "tags": 3, "aspect": "16:9/1:1",
+                  "note": "Post = Titel + Text, max. 280 Zeichen"},
 }
 
 
@@ -125,43 +105,13 @@ def _read(path: str) -> str:
 
 def cmd_selftest(_a) -> int:
     print("publish_dispatch 自检 ...", file=sys.stderr)
-    # 路由映射存在
-    assert PLATFORMS["xiaohongshu"]["publisher"] == "skill-xhs-publisher"
-    assert PLATFORMS["toutiao"]["publisher"] == "skill-toutiao-publisher"
-    # 头条标题上限 30 字：31 字应告警，30 字不应告警
-    over = _check_platform("toutiao", {"title": "标" * 31, "media_type": "article"})
-    assert any("标题" in w for w in over["warnings"]), "头条标题超长未告警"
-    fit = _check_platform("toutiao", {"title": "标" * 30, "tags": ["a"],
-                                      "media_type": "article"})
-    assert not fit["warnings"], f"头条合规内容不应告警：{fit}"
-    # 约束检查：超长标题应告警
-    r = _check_platform("xiaohongshu", {"title": "一" * 30, "tags": list(range(12)),
-                                        "media_type": "article"})
-    assert r["ok"] and r["warnings"], "越限内容应产生 warnings"
-    assert any("标题" in w for w in r["warnings"]), "标题超长未告警"
-    assert any("标签" in w for w in r["warnings"]), "标签超量未告警"
-    assert any("类型" in w for w in r["warnings"]), "类型不符未告警"
-    # 合规内容无告警
-    ok = _check_platform("douyin", {"title": "短标题", "tags": ["a", "b"],
-                                    "media_type": "video"})
+    assert PLATFORMS["twitter-x"]["publisher"] == "web_publisher"
+    ok = _check_platform("twitter-x", {"title": "", "body": "kurz", "tags": ["a"],
+                                       "media_type": "image"})
     assert ok["ok"] and not ok["warnings"], f"合规内容不应告警：{ok}"
-    # 未知平台
     bad = _check_platform("nope", {})
     assert not bad["ok"], "未知平台应 ok=False"
-    # plan 端到端（stdin 风格）
-    import io
-    m = {"content": {"title": "测试", "body": "正文", "tags": ["x"], "media_type": "video"},
-         "platforms": ["douyin", "bilibili", "kuaishou"]}
-    import tempfile
-    from pathlib import Path
-    with tempfile.TemporaryDirectory() as td:
-        f = Path(td) / "m.json"
-        f.write_text(json.dumps(m), encoding="utf-8")
-        # 直接调用 _check_platform 汇总（cmd_plan 打印到 stdout）
-        plan = [_check_platform(p, m["content"]) for p in m["platforms"]]
-        assert len(plan) == 3 and all(x["ok"] for x in plan), "plan 生成异常"
-        assert plan[0]["publisher"] == "skill-douyin-upload"
-    print("✅ selftest 通过（约束检查/告警/路由/plan）")
+    print("✅ selftest 通过（约束检查/路由）")
     return 0
 
 

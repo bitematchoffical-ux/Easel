@@ -16,13 +16,11 @@ import pytest
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJECT_ROOT))
 sys.path.insert(0, str(PROJECT_ROOT / "web"))
-sys.path.insert(0, str(PROJECT_ROOT / "skills" / "builtin" / "paper-explainer" / "scripts"))
 sys.path.insert(0, str(PROJECT_ROOT / "scripts"))
 
 from easel.commands import skill as cli_skill  # noqa: E402
 from easel import persona  # noqa: E402
 import app as web  # noqa: E402
-import paper_ingest  # noqa: E402
 import render_slides  # noqa: E402
 from model_registry import (configured_providers, env_aliases, provider_ids,
                             provider_required_env)  # noqa: E402
@@ -95,148 +93,6 @@ def test_resolve_input_text_file(tmp_path):
     p = tmp_path / "note.txt"
     p.write_text("文件内容", encoding="utf-8")
     assert cli_skill._resolve_input(str(p)) == "文件内容"
-
-
-def test_paper_fetch_copies_local_pdf_to_project_output(tmp_path):
-    source = tmp_path / "uploaded.pdf"
-    source.write_bytes(b"%PDF-local-paper")
-    target = tmp_path / "project" / "assets" / "paper.pdf"
-
-    returned = paper_ingest.fetch(str(source), str(target))
-
-    assert Path(returned) == target.resolve()
-    assert target.read_bytes() == source.read_bytes()
-
-
-def test_paper_slide_plan_rejects_repeated_template_and_long_copy(tmp_path):
-    plan = render_slides._sample_plan()
-    plan["slides"] = [dict(plan["slides"][0]) for _ in range(3)]
-    plan["slides"][0]["title"] = "过长标题" * 10
-
-    problems = render_slides.validate_plan(tmp_path / "slide-plan.json", plan)
-
-    assert any("title" in problem and "字符" in problem for problem in problems)
-    assert any("连续超过两页" in problem for problem in problems)
-
-
-def test_paper_slide_plan_accepts_arbitrary_style_transfer(tmp_path):
-    plan = render_slides._sample_plan()
-    plan["style"] = "雨夜都市超级英雄漫画"
-    plan["base_style"] = "noir"
-    plan["treatment"] = "comic"
-    plan["theme"] = {
-        "bg": "#10131a",
-        "accent": "#f2c94c",
-        "font": "sans",
-        "radius": 4,
-        "heading_weight": 900,
-        "texture": "halftone",
-    }
-
-    assert render_slides.validate_plan(tmp_path / "slide-plan.json", plan) == []
-
-
-def test_paper_slide_plan_requires_base_for_arbitrary_style(tmp_path):
-    plan = render_slides._sample_plan()
-    plan["style"] = "任意未预设风格"
-
-    problems = render_slides.validate_plan(tmp_path / "slide-plan.json", plan)
-
-    assert any("base_style" in problem for problem in problems)
-
-
-def test_paper_slide_plan_supports_controlled_motifs(tmp_path):
-    plan = render_slides._sample_plan()
-    plan["motif"] = "brackets"
-    plan["slides"][0]["motif"] = "index"
-
-    assert render_slides.validate_plan(tmp_path / "slide-plan.json", plan) == []
-    html = render_slides.build_html(tmp_path / "slide-plan.json", plan)
-    assert "motif-index" in html
-    assert "data-layout-box" in html
-
-
-def test_paper_slide_plan_rejects_unknown_motif(tmp_path):
-    plan = render_slides._sample_plan()
-    plan["motif"] = "random-decoration"
-
-    assert any("motif" in problem for problem in render_slides.validate_plan(
-        tmp_path / "slide-plan.json", plan
-    ))
-
-
-@pytest.mark.parametrize("theme", [
-    {"accent": "hotpink"},
-    {"raw_css": "body { display: none; }"},
-])
-def test_paper_slide_plan_rejects_unsafe_theme(tmp_path, theme):
-    plan = render_slides._sample_plan()
-    plan["theme"] = theme
-
-    assert render_slides.validate_plan(tmp_path / "slide-plan.json", plan)
-
-
-def test_paper_slide_plan_rejects_low_contrast_body_colors(tmp_path):
-    plan = render_slides._sample_plan()
-    plan["theme"] = {"muted": "#eeeeee"}
-
-    problems = render_slides.validate_plan(tmp_path / "slide-plan.json", plan)
-
-    assert any("theme.muted" in problem and "4.5:1" in problem for problem in problems)
-
-
-def test_paper_slide_presets_meet_body_contrast_gate(tmp_path):
-    for base_style in render_slides.BASE_STYLES:
-        plan = render_slides._sample_plan()
-        plan["style"] = base_style
-        assert not [
-            problem for problem in render_slides.validate_plan(tmp_path / "slide-plan.json", plan)
-            if "对比度" in problem
-        ], base_style
-
-
-def test_paper_slide_uses_readable_semantic_color_for_bright_accent(tmp_path):
-    plan = render_slides._sample_plan()
-    plan["style"] = "任意柔和彩色风格"
-    plan["base_style"] = "cute-anime"
-    plan["theme"] = {"accent": "#ffb7cf"}
-
-    html = render_slides.build_html(tmp_path / "slide-plan.json", plan)
-
-    assert ".kicker{color:#25304b" in html
-    assert "background:#ffb7cf;\ncolor:#25304b" in html
-
-
-def test_paper_slide_rejects_underexplained_balanced_content(tmp_path):
-    plan = render_slides._sample_plan()
-    plan["slides"] = [{
-        "type": "comparison",
-        "title": "两条路线有什么区别？",
-        "columns": [
-            {"title": "路线 A", "body": "更快"},
-            {"title": "路线 B", "body": "更稳"},
-        ],
-        "claim": "选择取决于实际目标。",
-    }]
-
-    problems = render_slides.validate_plan(tmp_path / "slide-plan.json", plan)
-
-    assert sum("完整对比依据" in problem for problem in problems) == 2
-
-
-def test_paper_slide_allows_explicit_visual_first_figure_page(tmp_path):
-    figure = tmp_path / "figure.png"
-    figure.write_bytes(b"placeholder")
-    plan = render_slides._sample_plan()
-    plan["slides"] = [{
-        "type": "evidence",
-        "density": "visual",
-        "title": "先读这张关键图",
-        "claim": "高亮区域就是论文报告的主要差异。",
-        "figure": {"path": "figure.png", "caption": "Figure 2", "fit": "contain"},
-    }]
-
-    assert render_slides.validate_plan(tmp_path / "slide-plan.json", plan) == []
 
 
 # ---- CLI: _find_skill ----

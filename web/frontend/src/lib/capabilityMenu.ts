@@ -6,7 +6,7 @@ export interface CapabilityGroup { id?: string; label: string; items: Capability
 export interface CapabilityTab { id: string; label: string; groups: CapabilityGroup[]; }
 export const CAPABILITY_MENU: { meta?: unknown; tabs: CapabilityTab[] } = {
  "meta": {
-  "name": "Easel 能力菜单",
+  "name": "Postloop 能力菜单",
   "version": "v1-draft",
   "date": "2026-10-03",
   "legend": {
@@ -134,12 +134,6 @@ export const CAPABILITY_MENU: { meta?: unknown; tabs: CapabilityTab[] } = {
        "status": "ready"
       },
       {
-       "skill": "gzh-design",
-       "label": "公众号排版",
-       "desc": "微信公众号文章排版引擎：把 Markdown / Word(.docx) / PDF / 纯文本转成可直接粘贴进公众号编辑器的 HTML，自动章节编号、关键词标记、引言卡、目录、代码块、图片/GIF、作者签名；主题从 r",
-       "status": "ready"
-      },
-      {
        "skill": "copywriting",
        "label": "营销 / 带货文案",
        "desc": "国内带货转化营销文案：提炼卖点并产出种草、信息流广告、活动促销、电商详情页或落地页的标题、正文和 CTA。 当用户说“写种草/广告/活动/促销/详情页/落地页文案、提炼卖点、广告语”时使用。 整套小红书笔记用 xhs-n",
@@ -161,12 +155,6 @@ export const CAPABILITY_MENU: { meta?: unknown; tabs: CapabilityTab[] } = {
        "skill": "novel-writer",
        "label": "小说连载",
        "desc": "长篇小说/网文连载创作：从世界观、人设和三级大纲写到逐章正文，并用文件化状态维护伏笔、前情和跨章一致性。 当用户说“写小说/网文/盐选故事、连载、续写下一章、小说大纲、人物设定、世界观、黄金三章”时使用。 通用文章用 a",
-       "status": "ready"
-      },
-      {
-       "skill": "paper-explainer",
-       "label": "论文解读",
-       "desc": "科研论文解读：解析 arXiv/PDF 的公式与图表，提炼问题、贡献、方法、关键图和结论，再产出 B站/视频号解读视频或知乎/公众号图文。 当用户说“论文解读、讲论文、论文转视频/图文、科研科普、arXiv、学术视频”时",
        "status": "ready"
       },
       {
@@ -268,7 +256,7 @@ export const CAPABILITY_MENU: { meta?: unknown; tabs: CapabilityTab[] } = {
       {
        "skill": "auto-short-video",
        "label": "一句话出片",
-       "desc": "一句话主题 → 成品短视频：自动串联 文案→配图/AI视频→配音→字幕→BGM→合成，把 Easel 制作层零件编排成一条'一键出片'流水线。**单条视频、口播/资讯向，画面默认逐句配图 + Ken Burns 缓动，需",
+       "desc": "一句话主题 → 成品短视频：自动串联 文案→配图/AI视频→配音→字幕→BGM→合成，把 Postloop 制作层零件编排成一条'一键出片'流水线。**单条视频、口播/资讯向，画面默认逐句配图 + Ken Burns 缓动，需",
        "status": "ready"
       },
       {
@@ -362,60 +350,6 @@ export const CAPABILITY_MENU: { meta?: unknown; tabs: CapabilityTab[] } = {
      "id": "publish",
      "label": "发布分发",
      "items": [
-      {
-       "skill": "skill-xhs-publisher",
-       "label": "小红书",
-       "desc": "将图文/视频内容发布到小红书（XHS）。基于 Playwright + 持久化登录态，headless 即可运行， 流程与选择器移植自成熟开源实现 xiaohongshu-mcp（含发布成功校验、上传完成等待、话题联想绑",
-       "status": "need"
-      },
-      {
-       "skill": "skill-douyin-upload",
-       "label": "抖音",
-       "desc": "将视频/图文内容发布到抖音（creator.douyin.com）。基于 Playwright + 持久化登录态，headless 即可运行， 流程与选择器移植自开源实现 douyin-upload-mcp-skill（",
-       "status": "done"
-      },
-      {
-       "skill": "skill-kuaishou-upload",
-       "label": "快手",
-       "desc": "快手视频发布：把竖版短视频发布到快手创作者中心。当用户说\"发快手\"\"上传快手\"\"快手投稿\" \"发布到快手\"\"快手视频发布\"时使用。基于通用浏览器发布框架（Playwright + 登录态持久化）。",
-       "status": "done"
-      },
-      {
-       "skill": "skill-zhihu-publisher",
-       "label": "知乎专栏",
-       "desc": "知乎发布：把文章发布到知乎专栏（也可用于回答草稿）。当用户说\"发知乎\"\"知乎发布\" \"发布知乎文章\"\"知乎专栏\"\"投知乎\"时使用。基于通用浏览器发布框架（Playwright + 登录态持久化）。",
-       "status": "ready"
-      },
-      {
-       "skill": "skill-zhihu-answer",
-       "label": "知乎回答",
-       "desc": "知乎问答回答发布：在知乎问题下发布原创回答——搜热门问题、检查可答性、写内容、 Playwright 发布（绕 header 遮挡 + JS 遍历发布按钮）。当用户说\"回答知乎问题\"\"在知乎问答下回答\" \"发知乎回答\"\"",
-       "status": "ready"
-      },
-      {
-       "skill": "skill-bilibili-upload",
-       "label": "B站",
-       "desc": "B站视频投稿：把视频投稿到哔哩哔哩，支持标题/简介/分区/标签/封面/转载声明/定时发布。 当用户说\"投稿B站\"\"发B站\"\"上传到哔哩哔哩\"\"B站视频发布\"\"投个稿\"\"发到bilibili\"时使用。 包装成熟的 bili",
-       "status": "ready"
-      },
-      {
-       "skill": "skill-channels-upload",
-       "label": "微信视频号",
-       "desc": "微信视频号发布：把竖版短视频发布到微信视频号（channels.weixin.qq.com）。当用户说 \"发视频号\"\"上传视频号\"\"视频号发布\"\"发到微信视频号\"\"视频号投稿\"时使用。基于通用浏览器 发布框架（Playw",
-       "status": "ready"
-      },
-      {
-       "skill": "skill-wechat-publisher",
-       "label": "公众号",
-       "desc": "微信公众号文章自动创作与发布工具。给定参考文章、文字或文档，自动搜索整理全网相关信息、生成图文并茂的公众号文章，并发布到微信公众号草稿箱。特别强调反 AI 检测写作。 触发场景（沾边就用）：用户提到\"公众号 / 微信文章",
-       "status": "ready"
-      },
-      {
-       "skill": "skill-toutiao-publisher",
-       "label": "今日头条",
-       "desc": "今日头条（头条号）图文发布：把已成稿的文章发布到 mp.toutiao.com，支持标题、 封面、话题标签、存草稿与直接发布，走 Playwright 浏览器自动化 + 登录态持久化。 当用户说\"发头条\"\"发布到今日头条\"\"头条号发文章\"\"同步到头条\"\"头条存草稿\"\"头条图文发布\"时使用。 与 skill-cross-platform-publish 的区别：那个是一稿多发的编排层，本 SKILL 只管头条单平台落地发布； 正文生产交给制作层 SKILL（copywriting / article-outline）。",
-       "status": "ready"
-      },
       {
        "skill": "skill-cross-platform-publish",
        "label": "跨平台一键",
@@ -657,12 +591,6 @@ export const CAPABILITY_MENU: { meta?: unknown; tabs: CapabilityTab[] } = {
        "status": "ready"
       },
       {
-       "skill": "skill-xhs-comment-reply",
-       "label": "小红书评论",
-       "desc": "小红书评论互动运营：列出我的笔记、抓取某条笔记下的评论、按画像语气逐条回复、以及删除评论 （含自己发的回复）。基于 Playwright + 持久化登录态，headless 即可运行，与 skill-xhs-publis",
-       "status": "need"
-      },
-      {
        "skill": "skill-publish-notify",
        "label": "发布通知",
        "desc": "发布通知推送：内容发布成功/失败后，把结果推送到飞书/钉钉/企业微信群机器人、 Telegram、Slack 或任意 webhook。当用户说\"发布通知\"\"发到飞书群\"\"通知钉钉\"\"推送到企微\" \"发布成功提醒\"\"web",
@@ -729,12 +657,6 @@ export const CAPABILITY_MENU: { meta?: unknown; tabs: CapabilityTab[] } = {
        "status": "ready"
       },
       {
-       "skill": "skill-xhs-analyzer",
-       "label": "小红书分析",
-       "desc": "小红书内容分析：搜索笔记、拉取互动数据、分析爆款规律、创作者画像、限流检测，支持 CLI 自动化操作。 当用户说\"小红书数据分析\"\"小红书爆款分析\"\"笔记数据\"\"小红书限流检测\"\"小红书创作者画像\"\"分析小红书账号\"时使",
-       "status": "need"
-      },
-      {
        "skill": "roi-calculator",
        "label": "ROI 计算",
        "desc": "计算内容营销 ROI：根据投放数据算出 CTR/CPC/CPM/ROAS 等指标，对比行业基准，支持单活动分析与多活动横向比较。 当用户说\"算ROI\"\"投放效果\"\"CTR/CPC/CPM/ROAS\"\"投产比\"\"广告效果\"",
@@ -749,7 +671,7 @@ export const CAPABILITY_MENU: { meta?: unknown; tabs: CapabilityTab[] } = {
       {
        "skill": "skill-my-account",
        "label": "账号查询",
-       "desc": "查询用户自己在 Easel 已登录的小红书、抖音、快手、知乎和视频号身份、粉丝、获赞、关注及作品列表。 当用户问“我登录了哪些号、我是谁、我的粉丝/获赞、我最近发了什么、我有哪些帖子”时，先用本 SKILL 查本地登录态",
+       "desc": "查询用户自己在 Postloop 已登录的小红书、抖音、快手、知乎和视频号身份、粉丝、获赞、关注及作品列表。 当用户问“我登录了哪些号、我是谁、我的粉丝/获赞、我最近发了什么、我有哪些帖子”时，先用本 SKILL 查本地登录态",
        "status": "done"
       },
       {

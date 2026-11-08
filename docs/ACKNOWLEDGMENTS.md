@@ -23,13 +23,11 @@ Easel 的 SKILL 集合在自研基础上，参考、改编或借鉴了大量优�
 | [enescingoz/awesome-n8n-templates](https://github.com/enescingoz/awesome-n8n-templates) | template-library | 模板分类 + 目录组织 |
 | [danielmiessler/fabric](https://github.com/danielmiessler/fabric) | template-library | patterns 模板复用模式 |
 | [liangdabiao/ecom-details-image](https://github.com/liangdabiao/ecom-details-image) | ecom-details-image | 电商详情图视觉方案（原始来源） |
-| [isjiamu/gzh-design-skill](https://github.com/isjiamu/gzh-design-skill) | gzh-design | 公众号排版（Markdown/docx/pdf → 可粘贴进编辑器的 HTML）；**整包集成（vendored），随原项目 AGPL-3.0 许可**；作者 甲木 (Jiamu) × 摸鱼小李 (Moyu Xiaoli)，2026 |
 
 ## 文案 / 写作 / 风格
 
 | 项目 | 用于 SKILL | 借鉴点 |
 |------|-----------|--------|
-| [hongxingli319 原创技能](https://github.com/hongxingli319/Easel/tree/d94dd0bd9b22c2f9d90521e2c8b4b16ec251c489/skills/builtin/real-lab-paper-promotion) | real-lab-paper-promotion | 原创代码、文档、六篇写作案例与 Easel 适配，由作者按 Apache-2.0 公开。完整来源、版本、许可文本及声明见 [EASEL-META.md](../skills/builtin/real-lab-paper-promotion/EASEL-META.md)。 |
 | [langgptai/LangGPT](https://github.com/langgptai/LangGPT) | post-formatter | 结构化提示词框架 |
 | [kangarooking/system-prompt-skills](https://github.com/kangarooking/system-prompt-skills) | post-formatter | 中文销售型文案框架 |
 | [MrGeDiao/shuorenhua（说人话）](https://github.com/MrGeDiao/shuorenhua) | post-formatter / text-polisher | 中文去 AI 味改写规则 |
@@ -56,7 +54,6 @@ Easel 的 SKILL 集合在自研基础上，参考、改编或借鉴了大量优�
 
 | 项目 | 用于 SKILL | 借鉴点 |
 |------|-----------|--------|
-| [hongxingli319 原创技能](https://github.com/hongxingli319/Easel/tree/65f657f4b0755295226f942fc117794e7f2bcea5/skills/builtin/real-lab-paper2video-v1) | real-lab-paper2video-v1 | 原创代码、文档、模板与 Easel 适配，Apache-2.0；内置 paper2assets 来自 Microsoft ResearchStudio，固定提交 `664cc8951f4c0e6de8d578993b76f9e0bb035141`，保留 MIT 许可及原版权声明。完整来源、版本、许可文本及声明见 [EASEL-META.md](../skills/builtin/real-lab-paper2video-v1/EASEL-META.md)。 |
 | [xiph/rnnoise](https://github.com/xiph/rnnoise) | audio-denoise | RNNoise 降噪算法 |
 | [GregorR/rnnoise-models](https://github.com/GregorR/rnnoise-models) | audio-denoise | RNNoise 预训练模型 |
 | [timsainb/noisereduce](https://github.com/timsainb/noisereduce) | audio-denoise | 频谱降噪 |
@@ -67,10 +64,6 @@ Easel 的 SKILL 集合在自研基础上，参考、改编或借鉴了大量优�
 
 | 项目 | 用于 SKILL | 借鉴点 |
 |------|-----------|--------|
-| [WJZ-P/douyin-upload-mcp-skill](https://github.com/WJZ-P/douyin-upload-mcp-skill) | skill-douyin-upload | 原始来源：抖音发布 MCP |
-| [jiji262/wechat-publisher](https://github.com/jiji262/wechat-publisher) | skill-wechat-publisher | 原始来源：公众号发布 |
-| [lucasygu/redbook](https://github.com/lucasygu/redbook) | skill-xhs-analyzer | 原始来源：小红书分析 CLI |
-| [white0dew/XiaohongshuSkills](https://github.com/white0dew/XiaohongshuSkills) | skill-xhs-publisher | 主来源（祖先 Angiin/Post-to-xhs） |
 | [NanmiCoder/MediaCrawler](https://github.com/NanmiCoder/MediaCrawler) | competitor-analysis / content-gap-analysis / ugc-discovery / data-tracker / cross-platform-diff | 多平台采集字段、反爬现状、节奏参数 |
 | [cv-cat/Spider_XHS](https://github.com/cv-cat/Spider_XHS) | competitor-analysis | 小红书竞品报表维度 |
 | [ReaJason/xhs](https://github.com/ReaJason/xhs) | competitor-analysis | 小红书笔记公开字段 |
