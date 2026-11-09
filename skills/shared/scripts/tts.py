@@ -38,7 +38,7 @@ from pathlib import Path
 # ── 常用中文音色（名称 → 简介）───────────────────────────────────────
 # edge-tts --list-voices 里 zh- 开头的一批，挑最常用、素质好的列出。
 COMMON_ZH_VOICES: list[tuple[str, str]] = [
-    ("zh-CN-XiaoxiaoNeural", "晓晓 · 女声，温暖亲和，通用首选（默认）"),
+    ("zh-CN-XiaoxiaoNeural", "晓晓 · 女声，温暖亲和，通用首选"),
     ("zh-CN-XiaoyiNeural", "晓伊 · 女声，活泼年轻，适合口播/种草"),
     ("zh-CN-YunxiNeural", "云希 · 男声，清朗自然，适合旁白/解说"),
     ("zh-CN-YunyangNeural", "云扬 · 男声，专业沉稳，适合新闻/播报"),
@@ -52,7 +52,20 @@ COMMON_ZH_VOICES: list[tuple[str, str]] = [
     ("zh-HK-WanLungNeural", "雲龍 · 香港男声，粤语"),
 ]
 
-DEFAULT_VOICE = "zh-CN-XiaoxiaoNeural"
+# Postloop: deutsche Stimmen zuerst, Standard deutsch
+COMMON_DE_VOICES = [
+    ("de-DE-KatjaNeural", "Katja · weiblich, klar und freundlich, Allrounder (Standard)"),
+    ("de-DE-ConradNeural", "Conrad · männlich, ruhig, Erklärvideos/Erzähler"),
+    ("de-DE-AmalaNeural", "Amala · weiblich, jung und lebendig, Social-Clips"),
+    ("de-DE-KillianNeural", "Killian · männlich, jung, locker"),
+    ("de-DE-SeraphinaMultilingualNeural", "Seraphina · weiblich, natürlich, mehrsprachig"),
+    ("de-DE-FlorianMultilingualNeural", "Florian · männlich, natürlich, mehrsprachig"),
+    ("de-AT-IngridNeural", "Ingrid · weiblich, österreichisch"),
+    ("de-AT-JonasNeural", "Jonas · männlich, österreichisch"),
+    ("de-CH-LeniNeural", "Leni · weiblich, Schweiz"),
+    ("de-CH-JanNeural", "Jan · männlich, Schweiz"),
+]
+DEFAULT_VOICE = "de-DE-KatjaNeural"
 
 
 # ── 基础设施 ────────────────────────────────────────────────────────
@@ -370,15 +383,15 @@ def cmd_voices(args) -> int:
             )
         printed = False
         for line in proc.stdout.splitlines():
-            if line.startswith("zh-") or line.startswith("Name") or not line.strip():
+            if line.startswith(("de-", "en-", "zh-", "Name")) or not line.strip():
                 print(line)
                 printed = True
         if not printed:
             print(proc.stdout)
         return 0
 
-    print("常用中文音色（--voice 传左侧名称；--all 查看全量 zh- 音色）：\n")
-    for name, desc in COMMON_ZH_VOICES:
+    print("Deutsche und chinesische Stimmen (--voice mit dem Namen links; --all für alle de-/en-/zh-Stimmen):\n")
+    for name, desc in COMMON_DE_VOICES + COMMON_ZH_VOICES:
         mark = "  ← 默认" if name == DEFAULT_VOICE else ""
         print(f"  {name:<34} {desc}{mark}")
     print("\n语速/音量/音调示例：--rate +10% / --volume +20% / --pitch +2Hz")
@@ -397,7 +410,7 @@ def cmd_selftest(_args=None) -> int:
     with tempfile.TemporaryDirectory() as d:
         out = Path(d) / "selftest.mp3"
         ns = argparse.Namespace(
-            text="配音测试，你好", file=None, output=str(out),
+            text="Sprachtest, hallo", file=None, output=str(out),
             voice=DEFAULT_VOICE, rate=None, volume=None, pitch=None,
             subtitle=None, proxy=None, format="mp3", engine="edge",  # selftest 固定 edge，离线可测
         )

@@ -1,87 +1,106 @@
 ---
 name: auto-short-video
-description: "一句话主题 → 成品短视频：自动串联 文案→配图/AI视频→配音→字幕→BGM→合成，把 Easel 制作层零件编排成一条'一键出片'流水线。**单条视频、口播/资讯向，画面默认逐句配图 + Ken Burns 缓动，需要动态时才逐段图生视频**。当用户说 一键生成视频、自动做短视频、主题生成视频、帮我做条视频、口播视频一条龙、自动出片、短视频一键生成 时使用。**有剧情/角色/对白/反转/多集的短剧改用 short-drama（每镜强制图生视频、不用静态图冒充）；只写脚本用 video-script；只生成单个片段用 ai-video-gen。**"
+description: "Vom Thema zum fertigen Kurzvideo: Skript → Bilder/KI-Video → Vertonung → Untertitel → Musik → Schnitt als eine Pipeline. Für Erklär- und Talking-Head-Videos mit Bildern und Ken-Burns-Bewegung. Verwenden, wenn der Nutzer automatisch ein Kurzvideo, Reel oder TikTok aus einem Thema erstellen will."
 layer: produce
 ---
 
-# 一键短视频（端到端编排）
+# Kurzvideo auf Knopfdruck (End-to-End)
 
-> 输入一个主题，自动产出一条短视频。本 SKILL 是**编排层**：把已有制作零件串成流水线——
-> 文案(video-script) → 逐句配图(ai-image-gen)或片段(ai-video-gen) → 配音(tts-voiceover) →
-> 字幕(auto-subtitle) → BGM(ai-music) → **合成(scripts/assemble.py)**。
-> 沉淀自 Pixelle-Video / MoneyPrinterTurbo 的自动短视频引擎思路。
+> Aus einem Thema wird automatisch ein Kurzvideo. Dieser SKILL ist die **Ablaufsteuerung**: Er verbindet vorhandene
+> Bausteine zu einer Pipeline: Skript (video-script) → Bild je Satz (ai-image-gen) oder Clip (ai-video-gen) →
+> Vertonung (tts-voiceover) → Untertitel (auto-subtitle) → Musik (ai-music) → **Zusammenschnitt (scripts/assemble.py)**.
+> Ideen aus Pixelle-Video und MoneyPrinterTurbo.
+>
+> **Geschichten mit Figuren, Dialogen, Wendungen oder mehreren Folgen** → `short-drama` (jede Szene als Bild-zu-Video,
+> keine Standbilder). **Nur Skript** → `video-script`. **Nur ein einzelner Clip** → `ai-video-gen`.
 
-## 输入
+## Eingaben
 
-- 主题 / 文案（必填）
-- 可选：目标时长、风格、是否要配音/字幕/BGM、配图用 AI 生图还是用户素材
-- **画幅确认硬门**：用户或上游任务未明确横版/竖版（或 16:9/9:16/具体分辨率）时，制作/付费调用前必须追问并等确认；不得从平台、Profile 或默认值静默推断，已明确则不重复问
+- Thema / Text (Pflicht)
+- Optional: Ziellänge, Stil, Vertonung/Untertitel/Musik ja oder nein, KI-Bilder oder eigenes Material
+- **Format muss bestätigt sein:** Ist nicht ausdrücklich Hochformat oder Querformat (bzw. 9:16/16:9/Auflösung)
+  festgelegt, vor jeder Produktion oder kostenpflichtigen Anfrage nachfragen und auf Bestätigung warten. Nicht still
+  aus Plattform, Profil oder Standard ableiten; ist es festgelegt, nicht erneut fragen. Für TikTok, Reels und Shorts
+  ist 9:16 (1080×1920) üblich.
 
-## 输出
+## Ausgabe
 
-成品短视频写入 `outputs/主题名/final.mp4`；分镜图、配音、字幕和 storyboard 写入 `outputs/主题名/assets/`。
+Fertiges Video in `outputs/<Thema>/final.mp4`; Szenenbilder, Vertonung, Untertitel und Storyboard in `outputs/<Thema>/assets/`.
 
-## 执行步骤（按需裁剪，缺 API key 的环节自动降级或询问）
+## Ablauf (je nach Bedarf kürzen; ohne API-Schlüssel automatisch vereinfachen oder nachfragen)
 
-1. **写脚本分镜**：用 [video-script](../video-script/SKILL.md) 把主题写成口播文案，拆成 N 句（每句一个分镜），每句配一个画面描述。
+1. **Skript und Szenen:** Mit [video-script](../video-script/SKILL.md) einen Sprechtext schreiben, in N Sätze teilen
+   (ein Satz = eine Szene) und je Satz eine Bildbeschreibung.
 
-2. **生成画面**（每个分镜一张图/一段片）：
-   - 有图像 API key → [ai-image-gen](../ai-image-gen/SKILL.md) 逐句 text2img（按已确认画幅）
-   - 要动态 → [ai-video-gen](../ai-video-gen/SKILL.md) text2video/image2video
-   - 用户自带素材 → 用 [image-editing](../image-editing/SKILL.md) `pad` 到已确认画幅
-   - 都没有 → 按已确认画幅选图卡（竖版用 card-xiaohongshu/poster-hero，横版用 card-quote）再 pad，避免画幅错配。
+2. **Bilder erzeugen** (ein Bild oder Clip pro Szene):
+   - Mit Bild-API-Schlüssel → [ai-image-gen](../ai-image-gen/SKILL.md) Text-zu-Bild pro Satz (im bestätigten Format)
+   - Mit Bewegung → [ai-video-gen](../ai-video-gen/SKILL.md) Text- oder Bild-zu-Video
+   - Eigenes Material → mit [image-editing](../image-editing/SKILL.md) `pad` auf das Format bringen
+   - Nichts davon → Grafikkarten im passenden Format (Hochformat: card-xiaohongshu/poster-hero, Querformat: card-quote), dann `pad`.
 
-3. **配音**：[tts-voiceover](../tts-voiceover/SKILL.md) 把文案合成口播（同时出 SRT）。**配了 `VOICE_PROVIDER` 默认走闭源好嗓子**（有情感、像真人），没 key 才退 edge（机械）——想要口播不"生硬"务必配闭源 key。不需要配音才跳过。
+3. **Vertonung:** [tts-voiceover](../tts-voiceover/SKILL.md) erzeugt die Sprachspur (mit SRT). **Mit `VOICE_PROVIDER`
+   werden natürliche Cloud-Stimmen genutzt**, ohne Schlüssel edge (mechanischer). Für deutsche edge-Stimmen Standard
+   `de-DE-KatjaNeural`. Nur ohne Vertonung überspringen.
 
-4. **字幕**：用 TTS 附带的 SRT，或对配音跑 [auto-subtitle](../auto-subtitle/SKILL.md)；也可让 assemble 用各分镜 caption 自动生成。
-   SRT/caption 自动折行保留英文词间空格，避免闭标点落到行首、开标点落到行尾；字体可由 `--sub-font` 选择。有 Fontconfig 和 Pillow 时按所选字体真实度量估宽，否则使用保守估计；不强制两行，也不改变用户提供的 ASS 排版。
+4. **Untertitel:** SRT aus TTS nutzen oder [auto-subtitle](../auto-subtitle/SKILL.md) über die Vertonung laufen lassen;
+   alternativ erzeugt assemble sie aus den Captions der Szenen. Umbruch nur an Wortgrenzen; Schrift per `--sub-font`
+   (für Deutsch eine Schrift mit Umlauten, z. B. Inter). Mit Fontconfig und Pillow wird die Breite echt gemessen.
 
-5. **BGM**：[ai-music](../ai-music/SKILL.md) 生成，或用用户提供的音乐。可选。
+5. **Musik:** [ai-music](../ai-music/SKILL.md) oder vom Nutzer gelieferte Musik (nur mit Nutzungsrechten). Optional.
 
-6. **合成成片**：把上面的素材写成 storyboard JSON，调合成器：
+6. **Zusammenschnitt:** Storyboard-JSON schreiben und den Schnitt starten:
    ```bash
    python skills/builtin/auto-short-video/scripts/assemble.py assemble \
-     --storyboard outputs/主题名/assets/storyboard.json \
-     -o outputs/主题名/final.mp4
+     --storyboard outputs/thema/assets/storyboard.json \
+     -o outputs/thema/final.mp4
    ```
-   storyboard 结构（图/片二选一，narration/bgm/subtitle 可选，缺 duration 时按配音均分）：
+   Aufbau (Bild oder Video pro Szene; narration/bgm/subtitle optional; ohne duration wird nach Vertonung verteilt):
    ```json
    {
-     "size": "<已确认尺寸，如1080x1920或1920x1080>",
+     "size": "<bestätigte Größe, z. B. 1080x1920 oder 1920x1080>",
      "image_motion": "ken-burns",
      "shots": [
-       {"image": "outputs/主题名/assets/shot1.png", "duration": 3, "caption": "第一句", "motion": "static"},
-       {"video": "outputs/主题名/assets/clip2.mp4", "caption": "第二句"}
+       {"image": "outputs/thema/assets/shot1.png", "duration": 3, "caption": "Erster Satz", "motion": "static"},
+       {"video": "outputs/thema/assets/clip2.mp4", "caption": "Zweiter Satz"}
      ],
-     "narration": "outputs/主题名/assets/voice.mp3",
-     "bgm": "outputs/主题名/assets/bgm.mp3",
-     "subtitle": "outputs/主题名/assets/voice.srt"
+     "narration": "outputs/thema/assets/voice.mp3",
+     "bgm": "outputs/thema/assets/bgm.mp3",
+     "subtitle": "outputs/thema/assets/voice.srt"
    }
    ```
-   `image_motion` 设整条图片默认运动，单镜 `motion` 可覆写：照片用 `ken-burns`，含文字的 slide/图表/界面必须用
-   `static`（等比缩放 + 补边，不裁切、不平移）。
-   合成器自动做：按 `image_motion` 生成静帧或 Ken Burns、补边到画幅、拼接、配音+BGM 混音（BGM 自动压低）、烧录字幕。
+   `image_motion` legt die Standardbewegung für Bilder fest, `motion` pro Szene überschreibt: Fotos `ken-burns`,
+   Folien/Diagramme/Oberflächen mit Text immer `static` (proportional skaliert + aufgefüllt, kein Zuschnitt, kein Schwenk).
+   Der Schnitt erzeugt automatisch Standbild oder Ken Burns, füllt aufs Format auf, fügt zusammen, mischt Stimme und
+   Musik (Musik automatisch leiser) und brennt Untertitel ein.
 
-   长流程可在首次合成时加 `--resume`，中断后用同样的参数再次运行：
+   Lange Abläufe beim ersten Schnitt mit `--resume` starten und nach Abbruch mit denselben Parametern erneut aufrufen:
    ```bash
    python skills/builtin/auto-short-video/scripts/assemble.py assemble --resume \
-     --storyboard outputs/成都旅行指南/assets/storyboard.json \
-     -o outputs/成都旅行指南/final.mp4
+     --storyboard outputs/thema/assets/storyboard.json \
+     -o outputs/thema/final.mp4
    ```
-   已完成镜头在输入参数、素材内容和产物摘要均匹配时复用；修改素材、时长、画幅、运动方式或渲染器会失效。
-   检查点存于成片旁的 `.final.mp4.checkpoints/`，不重复生成图片/视频、不调用付费 API。
-   拼接、混音和字幕每次重新执行；失败时保留上一份成片。未加 `--resume` 时仍使用原有临时目录流程。
-   清单损坏会报错，不自动清空；仅在确认相关进程全部退出后才能人工清理检查点目录。
+   Fertige Szenen werden wiederverwendet, wenn Parameter, Material und Ergebnis übereinstimmen; Änderungen an Material,
+   Dauer, Format, Bewegung oder Renderer machen sie ungültig. Checkpoints liegen neben dem Video in
+   `.final.mp4.checkpoints/`; Bilder/Videos werden nicht neu erzeugt, kostenpflichtige APIs nicht erneut gerufen.
+   Zusammenfügen, Mischen und Untertitel laufen jedes Mal neu; bei Fehlern bleibt das vorige Video erhalten.
+   Ohne `--resume` wird wie bisher ein temporärer Ordner genutzt. Beschädigte Checkpoint-Listen führen zu einem Fehler
+   und werden nicht automatisch gelöscht; den Ordner nur von Hand löschen, wenn kein Prozess mehr läuft.
 
-7. **交付**：产出 final.mp4，附一句制作说明（用了哪些环节、哪些降级了）。
+7. **Übergabe:** final.mp4 mit einem Satz zur Produktion (welche Bausteine genutzt, was vereinfacht wurde).
+   Enthält das Video KI-Bilder, KI-Clips, KI-Stimmen oder KI-Personen: darauf hinweisen, dass es beim Export als
+   KI-Inhalt gekennzeichnet werden muss.
 
-## 编排原则
+## Grundsätze
 
-- **零件可缺**：缺图像/视频/TTS API key 的环节自动降级（图卡兜底 / 跳过配音），不阻断整体，并如实告知用户降级了什么。
-- **先出 Plan**：涉及多个付费 API（生图/生视频/生乐）时，先向用户说明将调用哪些、大致耗时/花费，确认后再跑。
-- **中间产物留档**：分镜图、配音、字幕和 storyboard 都写进 `outputs/主题名/assets/`，方便单独替换后重新合成。
+- **Bausteine dürfen fehlen:** Ohne Bild-, Video- oder TTS-Schlüssel automatisch vereinfachen (Grafikkarten statt
+  Bilder, ohne Vertonung) und dem Nutzer ehrlich sagen, was vereinfacht wurde.
+- **Erst Plan, dann Kosten:** Bei mehreren kostenpflichtigen APIs (Bild/Video/Musik) vorher sagen, welche genutzt
+  werden und mit welcher Dauer und welchen Kosten ungefähr zu rechnen ist; erst nach Bestätigung starten.
+- **Zwischenergebnisse aufheben:** Szenenbilder, Vertonung, Untertitel und Storyboard in `outputs/<Thema>/assets/`,
+  damit einzelne Teile ersetzt und neu geschnitten werden können.
 
-## Profile 感知
+## Profil-Bezug
 
-- 有 Profile：从 `style.md` 取调性/视觉风格贯穿文案与配图 prompt；`platforms.md` 只用于给出画幅/时长建议，画幅仍须确认；`preferences.md` 红线过滤。
-- 无 Profile：先确认横版/竖版，再用通用口播风格。
+- Mit Profil: Ton und Bildstil aus `style.md` für Skript und Bild-Prompts; `platforms.md` nur für Format- und
+  Längenvorschläge (Format trotzdem bestätigen lassen); Tabus aus `preferences.md` beachten.
+- Ohne Profil: erst Hoch-/Querformat klären, dann allgemeiner Erklärstil.

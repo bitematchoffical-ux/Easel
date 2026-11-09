@@ -5417,47 +5417,55 @@ def _form_to_instruction(name: str, form: dict) -> str:
 
 
 def _write_baseline_profile(name: str, form: dict) -> None:
-    """从表单确定性生成六维基线文件。链接派生字段标 [待 AI 分析]。"""
+    """Erzeugt aus dem Formular die 6 Basisdateien (Postloop: deutsche Überschriften wie profiles/_template).
+
+    Felder, die erst die KI aus Links ableiten soll, werden mit [KI-Analyse offen] markiert.
+    """
     pd = PROFILES_DIR / name
     pd.mkdir(parents=True, exist_ok=True)
 
     def g(k: str, default: str = '') -> str:
         v = form.get(k)
         if isinstance(v, list):
-            return '、'.join(str(x) for x in v)
+            return ', '.join(str(x) for x in v)
         return str(v).strip() if v not in (None, '') else default
-    direction = g('direction') or '[待补充]'
-    reason = g('reason') or '[待补充]'
+    direction = g('direction') or '[offen]'
+    reason = g('reason') or '[offen]'
     goal = g('goal')
     formats = g('formats')
-    tone = g('tone') or '[待分析]'
+    tone = g('tone') or '[KI-Analyse offen]'
     likes = g('likes')
     avoid = g('avoid')
     platforms = form.get('platforms') or []
     links = form.get('links') or {}
     (pd / 'identity.md').write_text(
-        f"# 身份定位\n\n## 我是谁\n\n{direction}\n\n## 差异化\n\n{reason}\n\n## 内容方向\n\n{direction}"
-        f"{'（形式：' + formats + '）' if formats else ''}\n"
-        f"{'运营目标：' + goal if goal else ''}\n",
+        f"# Identität und Positionierung\n\n## Wer bin ich\n\n{direction}\n\n## Alleinstellung\n\n{reason}"
+        f"\n\n## Inhaltsrichtung\n\n{direction}"
+        f"{' (Formate: ' + formats + ')' if formats else ''}\n"
+        f"{'Ziel: ' + goal if goal else ''}\n",
         encoding='utf-8')
     (pd / 'style.md').write_text(
-        f"# 内容风格\n\n## 语气\n\n{tone}\n\n## 开头结构\n\n[待 AI 分析已发内容]\n\n## 视觉风格\n\n[待 AI 分析]\n\n## 内容节奏\n\n{formats or '[待补充]'}\n\n## 标志性元素\n\n[待 AI 分析]\n",
+        f"# Stil\n\n## Ton\n\n{tone}\n\n## Einstieg\n\n[KI-Analyse der Posts offen]\n\n## Bildsprache"
+        f"\n\n[KI-Analyse offen]\n\n## Tempo\n\n{formats or '[offen]'}\n\n## Markenzeichen\n\n[KI-Analyse offen]\n",
         encoding='utf-8')
     (pd / 'audience.md').write_text(
-        '# 目标受众\n\n## 核心人群\n\n[待 AI 分析/待补充]\n\n## 兴趣标签\n\n[待补充]\n\n## 痛点\n\n[待补充]\n\n## 互动特征\n\n[待 AI 分析已发内容]\n',
+        '# Zielgruppe\n\n## Kernzielgruppe\n\n[KI-Analyse/offen]\n\n## Interessen\n\n[offen]'
+        '\n\n## Probleme und Anlässe\n\n[offen]\n\n## Interaktionsverhalten\n\n[KI-Analyse der Posts offen]\n',
         encoding='utf-8')
     plat_lines = []
     for p in platforms:
         url = links.get(p, '')
-        plat_lines.append(f"## {p}\n\n主页：{url or '[待补充]'}\n粉丝量级 / 内容形式：[待补充]\n")
+        plat_lines.append(f"## {p}\n\nProfil: {url or '[offen]'}\nFollower / Formate: [offen]\n")
     (pd / 'platforms.md').write_text(
-        '# 平台运营\n\n' + ('\n'.join(plat_lines) if plat_lines else '[待补充]\n'),
+        '# Plattformen\n\n' + ('\n'.join(plat_lines) if plat_lines else '[offen]\n'),
         encoding='utf-8')
     (pd / 'preferences.md').write_text(
-        f"# 偏好与红线\n\n## 要做的\n\n{direction}\n\n## 不做的\n\n{avoid or '[待补充]'}\n\n## 合规底线\n\n{avoid or '[待补充]'}\n",
+        f"# Vorlieben und Tabus\n\n## Machen\n\n{direction}\n\n## Nicht machen\n\n{avoid or '[offen]'}"
+        f"\n\n## Rechtliche Grenzen\n\n{avoid or '[offen]'}\nKI-generierte Inhalte immer kennzeichnen.\n",
         encoding='utf-8')
     (pd / 'memory.md').write_text(
-        f"# 经验沉淀\n\n## 内容洞察\n\n{'喜欢的内容/对标：' + likes if likes else '[待 AI 分析已收藏/点赞]'}\n\n## 踩过的坑\n\n[待积累]\n",
+        f"# Erfahrungen\n\n## Was funktioniert\n\n{'Vorlieben/Vorbilder: ' + likes if likes else '[KI-Analyse offen]'}"
+        f"\n\n## Fehler, die wir nicht wiederholen\n\n[noch keine]\n",
         encoding='utf-8')
 
 

@@ -33,12 +33,14 @@ _CJK = (
 )
 _CJK_RE = re.compile(f"[{_CJK}]")
 # 英文/拉丁单词（连字符、撇号视作词内字符）
-_WORD_RE = re.compile(r"[A-Za-z]+(?:['\-][A-Za-z]+)*")
+# Postloop: inkl. Umlaute, ß und weitere lateinische Buchstaben (vorher wurde „Wörter“ als „W“ + „rter“ gezählt)
+_LATIN = r"A-Za-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u024F\u1E00-\u1EFF"
+_WORD_RE = re.compile(f"[{_LATIN}]+(?:['\\-’][{_LATIN}]+)*")
 # 数字串（含小数点、千分位逗号）
 _NUM_RE = re.compile(r"\d+(?:[.,]\d+)*")
 # 标点/符号（非空白、非 CJK、非字母数字）
 _PUNCT_RE = re.compile(
-    f"[^\\s0-9A-Za-z{_CJK}]"
+    f"[^\\s0-9{_LATIN}{_CJK}’]"
 )
 
 
@@ -62,6 +64,7 @@ def count(text: str) -> dict:
         "total_chars": total_chars,   # 总字符数（含空白，len 计）
         "no_space_chars": no_space_chars,  # 去空白字符数
         "social_count": social,       # 社媒计数口径（推荐用于字数限制判定）
+        "words": en_words + num_groups,  # Postloop: gesprochene Wörter (Latein + Zahlen), für Sprechtempo
     }
 
 
@@ -146,6 +149,12 @@ def _selftest() -> int:
     cases.append(("check over", r["status"] == "over" and r["adjust"] > 0))
     r = check("", 0, 0.05, "social_count")
     cases.append(("empty target 0", r["pass"]))
+    s = count("Größere Wörter für Mädchen, über 3 Straßen.")
+    cases.append(("de umlauts", s["en_words"] == 6 and s["words"] == 7 and s["punct"] == 2))
+    s = count("Geht’s dir gut?")
+    cases.append(("de apostrophe", s["en_words"] == 3 and s["punct"] == 1))
+    r = check("Das sind genau fünf Wörter", 5, 0.0, "words")
+    cases.append(("check words", r["pass"]))
 
     ok = True
     for name, passed in cases:
@@ -172,7 +181,7 @@ def main() -> None:
                     help="容差比例，默认 0.05（±5%%）")
     pk.add_argument("--metric", default="social_count",
                     choices=["social_count", "cjk_chars", "no_space_chars",
-                             "total_chars"],
+                             "total_chars", "words"],
                     help="判定口径，默认 social_count（社媒计数）")
     pk.add_argument("-f", "--file", help="从文件读入（默认 stdin）")
     pk.add_argument("--json", action="store_true", help="JSON 输出")

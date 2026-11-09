@@ -1,23 +1,23 @@
-# 经验沉淀
+# Erfahrungen
 
-<!-- 
-此文件记录真正有价值的洞察，不是每次做完任务都写。
-更新时机：
-  - 用户主动说"记住这个偏好"
-  - 发布后用户反馈效果好/差，归因总结
-  - 累积一段时间后做一次凝练（去重、提炼规律）
+<!--
+Hier stehen nur wirklich wertvolle Erkenntnisse, nicht nach jeder Aufgabe ein Eintrag.
+Wann aktualisieren:
+  - Der Nutzer sagt ausdrücklich „merk dir das“
+  - Nach dem Posten: Rückmeldung zur Wirkung, mit Begründung
+  - Nach einer Weile verdichten (Dopplungen entfernen, Muster herausarbeiten)
 
-不要在这里堆流水账。每条记录应该是一个可复用的认知。
+Kein Tagebuch. Jeder Eintrag ist eine wiederverwendbare Erkenntnis.
 -->
 
-## 内容洞察
+## Was funktioniert
 
-<!-- 什么题材/结构/风格效果好，为什么 -->
+<!-- Welche Themen/Strukturen/Stile laufen gut und warum -->
 
-## 踩过的坑
+## Fehler, die wir nicht wiederholen
 
-<!-- 什么不能做，做了效果差，为什么 -->
+<!-- Was schlecht lief und warum -->
 
-## 受众反馈规律
+## Muster im Feedback
 
-<!-- 评论区、私信里反复出现的需求或反馈 -->
+<!-- Wünsche oder Rückmeldungen, die in Kommentaren und DMs immer wieder auftauchen -->

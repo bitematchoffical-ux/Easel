@@ -1,125 +1,134 @@
 ---
 name: social-content
 description: >-
-  通用多平台社媒内容（单条/兜底）：钩子文案、正文、标签策略和互动引导，主打**涨粉/互动/内容运营**，
-  支持微博/抖音/B站/知乎/公众号/X 等；平台不确定或要多平台一次成稿时的默认选择。
-  当用户说"写条微博""发个帖子""社媒文案""发什么内容""帮我写个帖""涨粉内容""互动内容"时使用。
-  边界：**小红书整套笔记/图文/种草**找 xhs-note-creator；**带货转化/卖点/详情页**找 copywriting；
-  **严格套 PAS/AIDA 框架排版**找 post-formatter。
+  Organische Social-Media-Posts für Instagram, TikTok, YouTube Shorts, X und LinkedIn: Hook, Text,
+  Hashtags und Interaktion, für Reichweite und Community. Standard, wenn die Plattform unklar ist oder mehrere
+  bedient werden. Verwenden, wenn der Nutzer einen Post oder eine Caption will.
 layer: produce
 ---
 
-# 社媒内容创作
+# Social-Media-Posts
 
-> 跨平台通用/兜底的社媒内容生成器。为国内平台（小红书 / 抖音 / B站 / 微博 / 公众号 / 知乎）为主、出海平台（X、LinkedIn）为辅，生成原生格式的钩子文案、正文、标签策略和互动引导。
+> Allgemeiner Generator für Posts auf mehreren Plattformen (Instagram, TikTok, YouTube Shorts, X, LinkedIn):
+> plattformgerechte Hooks, Texte, Hashtags und Interaktionsaufrufe. Texte auf Deutsch, außer die Zielgruppe
+> braucht eine andere Sprache.
 
-## 职责边界
+## Zuständigkeit
 
-本 SKILL 定位是**跨平台通用/兜底**：多平台一次成稿、快速起草、平台不确定时的默认选择。遇到下列专精场景，交给下游 SKILL 出精品：
+Dieser SKILL ist der **allgemeine Standard**: mehrere Plattformen auf einmal, schnelle Entwürfe, unklare Plattform.
+Für Spezialfälle an die passenden SKILLs übergeben:
 
-| 场景 | 交给 |
+| Fall | An |
 |------|------|
-| 小红书整套笔记（多卡片 + 去 AI 化 + caption + hashtags 全流程） | `xhs-note-creator` |
-| 具体某条视频的分镜/口播脚本（Hook 评分、分秒计时、留存优化） | `video-script` |
-| 落地页 / 产品页 / 详情页 / 信息流等带货转化文案（种草卖点、标题/正文/CTA + 备选） | `copywriting` |
-| 严格套 PAS/AIDA/BAB 等框架的结构化帖子 | `post-formatter` |
+| Instagram-Karussell (Kartenplan + Karten + Caption) | `skill-carousel-planner` → `card-xiaohongshu` |
+| Konkretes Videoskript (Hook-Bewertung, Sekunden-Timing, Retention) | `video-script` |
+| Verkaufstexte (Anzeigen, Produkt-/Landingpage, App Store) | `copywriting` |
+| Posts streng nach PAS/AIDA/BAB | `post-formatter` |
 
-本 SKILL 保留完整通用能力：用户直接调它做任意平台内容都成立，不强制转下游。
+Der SKILL kann trotzdem alles allein; Weitergeben ist kein Zwang.
 
-## 输入
+## Eingaben
 
-用户 prompt 中提供以下信息（部分可省略，SKILL 自动补全默认值）：
+Teilweise optional; Fehlendes aus dem Profil oder mit Standardwerten ergänzen.
 
-| 字段 | 说明 | 示例 |
+| Feld | Bedeutung | Beispiel |
 |------|------|------|
-| 平台 | 目标平台，可多选 | 小红书、抖音、B站、微博、公众号、知乎（出海兜底：X、LinkedIn） |
-| 内容类型 | 图文笔记、短视频脚本、长文、微博短博、thread、carousel | 图文笔记 |
-| 主题 | 帖子主题或素材 | 一段文本或一篇文章的 URL |
-| 目标 | 互动、引流、品牌、获客、种草、社区 | 互动 |
-| 受众 | 关注者画像 | 一二线城市职场女性 |
-| 调性 | 专业、轻松、犀利、种草、教育、励志 | 种草 |
-| 素材 | 可用的图片、视频、数据 | 无 |
+| Plattform | eine oder mehrere | Instagram, TikTok, YouTube Shorts, X, LinkedIn |
+| Format | Caption, Reel-/TikTok-Skript, Karussell, Text-Post, Thread | Reel |
+| Thema | Inhalt oder Material | Text oder URL |
+| Ziel | Interaktion, Reichweite, Marke, Downloads, Community | Interaktion |
+| Zielgruppe | wer folgt | Schüler und Studis 15–25 |
+| Ton | sachlich, locker, frech, inspirierend, lehrreich | locker |
+| Material | Bilder, Videos, Zahlen | keins |
 
-## 输出
+## Plattform-Eckdaten (Stand 2026, im Zweifel in der App prüfen)
 
-为每个目标平台输出以下结构：
+| Plattform | Text | Sichtbar ohne „mehr“ | Format | Hashtags |
+|---|---|---|---|---|
+| Instagram | Caption bis 2.200 Zeichen | ca. erste 125 Zeichen | Feed 4:5 (1080×1350), Reels/Stories 9:16 (1080×1920), Karussell bis 20 Bilder | wenige gezielte (3–5) |
+| TikTok | Beschreibung bis 4.000 Zeichen | erste Zeile | Video 9:16 (1080×1920), Foto-Modus | 3–5 |
+| YouTube Shorts | Titel bis 100, Beschreibung bis 5.000 | Titel | vertikal 9:16, bis 3 Minuten | 2–3 im Titel/Beschreibung |
+| X | 280 Zeichen (ohne Premium) | alles | Bild 16:9 oder 1:1, Video | 1–2 |
+| LinkedIn | bis 3.000 Zeichen | ca. erste 210 Zeichen | Text, Bild, Dokument-Karussell (PDF) | 3–5 |
 
-### 1. 平台帖子正文
+Die Referenzdateien [platform-specs.md](references/platform-specs.md), [content-formats.md](references/content-formats.md)
+und [hashtag-strategy.md](references/hashtag-strategy.md) sind auf Chinesisch und für chinesische Plattformen
+geschrieben: Grundideen übernehmen, Plattformwerte aus der Tabelle oben verwenden.
+
+## Ausgabe
+
+Für jede Zielplattform:
+
+### 1. Post-Text
 
 ```
-[钩子首行]
+[Hook-Zeile]
 
-[正文内容]
+[Text]
 
-[CTA 行动引导]
+[CTA / Interaktionsaufruf]
 
-[标签]
+[Hashtags]
 
-字符数：N / 平台上限
+Zeichen: N / Limit der Plattform
+KI-Inhalt: ja/nein (bei ja: KI-Label beim Export setzen)
 ```
 
-### 2. 互动策略
+### 2. Interaktionsstrategie
 
-- 最佳发布时间
-- 发布后跟进动作（回复评论、转发等）
-- 跨平台联动计划
+- gute Posting-Zeit (aus Profil/Insights, sonst Faustregel nennen und als Annahme markieren)
+- Nachbereitung (Kommentare beantworten, Story teilen, anpinnen)
+- Verzahnung über Plattformen
 
-### 3. 视觉方向
+### 3. Bildidee
 
-- 配图/封面/配视频描述
-- 小红书图文卡片组大纲（如适用）
-- 短视频脚本钩子（如适用）
+- Bild/Cover/Video in 1–2 Sätzen
+- Kartenplan fürs Karussell (falls passend)
+- Hook für Kurzvideo (falls passend)
 
-### 4. 变体
+### 4. Varianten
 
-- 每个平台 2-3 个帖子变体，用于 A/B 测试或分日发布。
+- 2–3 Varianten je Plattform für A/B-Tests oder spätere Tage.
 
-## 执行步骤
+## Ablauf
 
-1. **收集需求** — 从用户 prompt 提取上述输入字段。缺失字段时：有 Profile 则从中补全，无 Profile 则用通用默认值。
+1. **Anforderungen sammeln:** Felder aus der Nachricht ziehen; Fehlendes aus dem Profil, sonst Standardwerte.
+2. **Plattformregeln laden:** Tabelle oben.
+3. **Hook schreiben:** Formeln aus `skills/shared/references/hook-title-formulas.md` sinngemäß oder `skill-hook-generator`. Der Hook entscheidet über 90 % der Wirkung.
+4. **Format bauen:**
+   - Instagram-Karussell → Titelkarte mit Hook + Kartenplan + Caption
+   - Reel/TikTok/Short → Hook (0–2 s) + Inhalt + CTA, Text-Overlay mitdenken
+   - X → eine starke Aussage, ggf. Thread
+   - LinkedIn → Hook-Zeile, kurze Absätze, persönliche Erfahrung, Frage am Ende
+   - Repurposing → aus einem Inhalt Material für mehrere Plattformen
+5. **Hashtags:** wenige, präzise: 1–2 große, 2–3 Nischen-, ggf. 1 Marken-Hashtag. Keine Hashtag-Wände.
+6. **Regeln prüfen:** **Zeichen per Skript zählen, nicht schätzen.** Text per stdin an
+   `python3 skills/shared/scripts/wordcount.py count` geben und `total_chars` mit dem Limit vergleichen
+   (`social_count` gilt für chinesische Texte). Bei Überschreitung kürzen (ggf. `text-condenser`) und neu zählen.
+   Außerdem: Werbung als „Anzeige“/„Werbung“ kennzeichnen, keine irreführenden Aussagen, Links passend zur Plattform
+   (Instagram: „Link in Bio“, TikTok: Link im Profil).
+7. **KI-Ton und Qualität (Pflicht, nicht überspringen):**
+   - **KI-Ton entfernen:** Floskeln wie „Tauche ein in“, „In der heutigen Zeit“, „Entdecke die Magie“, „Lass uns gemeinsam“,
+     leere Dreierlisten, Emoji-Ketten ohne Funktion, übertriebene Adjektive streichen. Die chinesischen Prüflisten in
+     `../text-polisher/references/` gelten sinngemäß. Selbstcheck: klingt das wie ein echter Mensch aus der Zielgruppe?
+   - **Qualität:** Klarheit, Rhythmus, Echtheit, Informationsdichte, Ton-Passung je 1–10 bewerten, zusammen mindestens 35/50.
+   - Erst wenn beides passt, weiter.
+8. **Varianten:** 2–3 je Plattform.
+9. **Ausgabe:** im Format oben, gespeichert in `outputs/<Thema>/`. Zum Posten auf den Export-Tab verweisen.
 
-2. **加载平台规范** — 根据目标平台，参照 [platform-specs.md](references/platform-specs.md) 获取字符限制、图片尺寸、发布时间、平台规则。
+## Profil-Bezug
 
-3. **撰写钩子** — 参照公共源 `skills/shared/references/hook-title-formulas.md`，为每个平台选合适的钩子公式，写出首行。钩子决定 90% 的表现。
+### Mit Profil
 
-4. **编排内容格式** — 参照 [content-formats.md](references/content-formats.md)，按内容类型组织正文：
-   - 小红书图文笔记 → 封面钩子 + 卡片组大纲 + 正文
-   - 短视频脚本（抖音/B站/视频号）→ 钩子 + 正文 + CTA
-   - 公众号/知乎长文 → 标题 + 开头 + 分段主体 + 收尾
-   - 微博短博 → 140 字精华 + 话题
-   - 内容复用 → 从一稿拆解为多平台素材
-   - （出海兜底）X thread / LinkedIn carousel
+Aus `=== EASEL ACCOUNT PROFILE ===` übernehmen:
 
-5. **添加标签** — 参照 [hashtag-strategy.md](references/hashtag-strategy.md)，按平台规则选择话题层级和数量。
+- **platform** → Zielplattformen und Regeln
+- **audience** → Wortwahl und Tiefe
+- **tone/style** → gewohnter Kontostil
+- **hashtag_sets** → bevorzugte Hashtags
+- **posting_schedule** → Posting-Zeiten
 
-6. **检查合规** — **字数用脚本校验，不靠肉眼数**：把每个平台的正文喂给
-   `python3 skills/shared/scripts/wordcount.py count`（stdin 传入），读 `social_count`
-   （社媒计数口径 = 中文字符 + 英文单词 + 数字串 + 标点），与 [platform-specs.md](references/platform-specs.md)
-   的字符上限比对，超限就据结果压缩后重数（可交给 `text-condenser`）。再规避违禁/限流词
-   （小红书/抖音尤其重要），确认话题数量符合平台规范，外链放置符合平台习惯。
+### Ohne Profil
 
-7. **去 AI + 质量门（强制，不可跳过）** — 每个平台正文按 text-polisher 权威源过两道门，不达标先改再交付：
-   - **去 AI 味**：按 `../text-polisher/references/zh-ai-markers.md`（中文，含小红书特化）+ `../text-polisher/references/phrases-to-remove.md` + `structures-to-avoid.md` 扫描重写；AI 味自检 **≥45/50**。
-   - **综合质量**：按 text-polisher 通用五维（清晰/节奏/真实/价值密度/语气匹配）自评 **≥35/50**。
-   - 两门都过才进下一步；这是本 SKILL 唯一的内容质量闸，别省。
-
-8. **生成变体** — 为每个平台输出 2-3 个帖子变体。
-
-9. **输出** — 按「输出」章节的格式交付全部内容，写入 `outputs/` 目录。
-
-## Profile 感知
-
-### 有 Profile 时
-
-从 `=== EASEL ACCOUNT PROFILE ===` 上下文中提取：
-
-- **platform** — 锁定目标平台，加载对应规范
-- **audience** — 用于调整用语和深度
-- **tone / style** — 匹配账号一贯风格
-- **hashtag_sets** — 优先使用账号常用标签
-- **posting_schedule** — 用于推荐发布时间
-
-### 无 Profile 时
-
-- 退回通用模式：询问用户目标平台，使用通用最佳实践
-- 在输出末尾附注："如提供账号 Profile 可获得更精准的平台适配和风格匹配"
+- Nach Zielplattform fragen, allgemeine Best Practices nutzen
+- Am Ende: „Mit einem Konto-Profil passe ich Plattform und Stil genauer an.“

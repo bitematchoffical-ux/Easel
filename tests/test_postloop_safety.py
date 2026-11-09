@@ -53,7 +53,7 @@ def test_turn_reminder_requires_ai_labelling_instead_of_hiding_it():
 
 def test_agent_rules_put_cost_protection_first():
     agents = (ROOT / "agents" / "workspace" / "AGENTS.md").read_text(encoding="utf-8")
-    assert agents.index("## Kostenschutz") < agents.index("## 核心执行规则")
+    assert agents.index("## Kostenschutz") < agents.index("## Grundregeln")
     assert "Exec completed" in agents
 
 

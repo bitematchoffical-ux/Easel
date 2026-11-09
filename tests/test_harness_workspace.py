@@ -96,7 +96,7 @@ def test_shared_identity_does_not_assume_openclaw_gateway_or_env_authentication(
     root = Path(__file__).resolve().parents[1]
     identity = (root / "agents" / "workspace" / "AGENTS.md").read_text(encoding="utf-8")
     assert "运行在 OpenClaw gateway" not in identity
-    assert "当前执行引擎的配置管理" in identity
+    assert "Chat-Modell und Anmeldung verwaltet die jeweilige Engine" in identity
     assert not (root / "openclaw" / "workspace" / "AGENTS.md").exists()
 
 

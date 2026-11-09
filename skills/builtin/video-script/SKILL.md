@@ -1,162 +1,162 @@
 ---
 name: video-script
 description: >
-  生成视频脚本，覆盖短视频（7-60秒）到中长视频（1-30分钟）全时长。
-  短视频：Hook 变体评分、分秒计时、字幕文案、封面方案。
-  中长视频：留存率优化、节奏中断点、前向钩子、章节结构。
-  适用于抖音、视频号、小红书视频、B站、YouTube 等平台。
-  当用户说"视频脚本"、"短视频脚本"、"抖音脚本"、"B站脚本"、
-  "视频号脚本"、"竖版视频"、"Reel 脚本"、"写个视频文案"时使用。
-  和 video-strategy 的区别：video-strategy 做视频内容规划和系列策划，
-  video-script 写具体某一条视频的脚本。
+  Schreibt Videoskripte von 7 Sekunden bis 30 Minuten: Kurzvideos mit bewerteten Hooks, Sekunden-Timing,
+  Untertiteln und Cover; längere Videos mit Retention-Bausteinen und Kapiteln. Für TikTok, Reels, Shorts und
+  YouTube. Verwenden, wenn der Nutzer ein Videoskript, Reel- oder TikTok-Skript will.
 layer: produce
 ---
 
-# 视频脚本生成
+# Videoskript
 
-> 根据目标时长自动适配短视频或中长视频模式，生成留存率优化的结构化脚本。
+> Wählt je nach Ziellänge den Kurz- oder Langvideo-Modus und schreibt ein auf Zuschauerbindung optimiertes Skript.
+> Skript auf Deutsch, außer die Zielgruppe braucht eine andere Sprache. Serien und Videoplanung: `video-strategy`.
 
-## 输入
+## Eingaben
 
-| 字段 | 必填 | 说明 | 示例 |
+| Feld | Pflicht | Bedeutung | Beispiel |
 |------|------|------|------|
-| 主题 | 是 | 视频主题 | "为什么 Rust 正在替代 C++" |
-| 目标时长 | 是 | 秒数或分钟数 | 30 秒 / 10 分钟 |
-| 平台 | 否 | 抖音/视频号/小红书/B站（默认按时长推断）| 抖音 |
-| 内容类型 | 否 | 科普/教程/评测/种草/解说/杂谈 | 科普 |
-| 核心要点 | 是 | 要覆盖的关键信息 | 内存安全、性能… |
-| 调性 | 否 | 专业/轻松/犀利/对话感（默认：对话感）| 轻松 |
+| Thema | ja | Videothema | „Warum Gruppen nie wissen, wo sie essen sollen“ |
+| Ziellänge | ja | Sekunden oder Minuten | 30 Sekunden / 10 Minuten |
+| Plattform | nein | TikTok / Instagram Reels / YouTube Shorts / YouTube (sonst aus Länge ableiten) | TikTok |
+| Inhaltstyp | nein | Erklärung / Tutorial / Test / Empfehlung / Kommentar / Sketch | Sketch |
+| Kernpunkte | ja | was rein muss | Problem, App-Demo, Ergebnis |
+| Ton | nein | sachlich / locker / frech / Gesprächston (Standard: Gesprächston) | locker |
 
-## 模式自动判定
+## Modus nach Länge
 
-| 时长 | 模式 | 典型平台 | 关键指标 |
+| Länge | Modus | Typische Plattform | Kennzahl |
 |------|------|----------|----------|
-| 7-15 秒 | 短视频·极速 | 抖音/视频号 | 3 秒完播率 |
-| 15-60 秒 | 短视频·标准 | 抖音/视频号/小红书 | 完播率、DM 转发、收藏 |
-| 1-5 分钟 | 中视频 | 视频号/抖音/B站 | 5 秒留存、互动率 |
-| 5-30 分钟 | 长视频 | B站/YouTube | 30 秒留存、播放完成率 |
+| 7–15 s | Kurz · Express | TikTok / Reels / Shorts | Zuschauerbindung in den ersten 3 s |
+| 15–60 s | Kurz · Standard | TikTok / Reels / Shorts | Durchsehrate, Teilen per DM, Speichern |
+| 1–5 min | Mittel | TikTok / YouTube | Bindung nach 5 s, Interaktionsrate |
+| 5–30 min | Lang | YouTube | Bindung nach 30 s, Wiedergabedauer |
 
-**语速基准**：中文约 250 字/分钟。
+**Sprechtempo:** Deutsch etwa 140 Wörter pro Minute (ruhig 120, schnell 160).
 
 ---
 
-## 短视频模式（≤60 秒）
+## Kurzvideo-Modus (≤ 60 s)
 
-### Step 1 — Hook 设计（3 个变体）
+### Schritt 1: Hooks (3 Varianten)
 
-从 5 种 Hook 类型中选 3 个，各生成一个变体：
+Aus 5 Hook-Typen 3 wählen, je eine Variante:
 
-| 类型 | 适用场景 | 示例 |
+| Typ | Wann | Beispiel |
 |------|---------|------|
-| 好奇缺口 | 冷知识、反直觉 | "你每天做的这件事其实在伤害你" |
-| 模式打断 | 反常规、挑战认知 | "忘掉你以前学的所有XX" |
-| 身份触发 | 精准受众 | "如果你是XX，这条一定要看完" |
-| 痛点共鸣 | 真实困扰 | "明明很努力了还是没效果？" |
-| 权威背书 | 数据/研究支撑 | "最新研究发现：XX 竟然是错的" |
+| Neugierlücke | Fun Facts, Überraschendes | „Das machst du jeden Tag, und es schadet dir“ |
+| Musterbruch | gegen Erwartungen | „Vergiss alles, was du über XY gelernt hast“ |
+| Identität | genaue Zielgruppe | „Wenn du in einer Gruppe nie entscheiden willst, schau bis zum Ende“ |
+| Schmerzpunkt | echte Frustration | „Ihr diskutiert 20 Minuten und landet wieder beim selben Laden“ |
+| Autorität | Daten, Studien | „Laut Studie dauert die Restaurantwahl in Gruppen …“ (nur mit echter Quelle) |
 
-每个 Hook 按 4 维度评分（每项 1-5，满分 20）：好奇强度、打断效果、身份触发、3 秒清晰度。选最高分作为主 Hook。
+Jeden Hook in 4 Dimensionen bewerten (je 1–5, max. 20): Neugier, Musterbruch, Identität, Klarheit in 3 Sekunden.
+Der beste wird Haupt-Hook.
 
-### Step 2 — 分秒脚本
+### Schritt 2: Skript mit Sekunden
 
-按时长压缩结构：
-
-| 时长 | 结构 |
+| Länge | Aufbau |
 |------|------|
-| 7-15 秒 | Hook(0-2s) + 核心价值(2-10s) + 收尾(10-15s) |
-| 15-30 秒 | Hook(0-3s) + 痛点(3-8s) + 方案(8-20s) + 收尾CTA(20-30s) |
-| 30-60 秒 | Hook(0-3s) + 痛点(3-8s) + 方案(8-40s) + 洞察+CTA(40-60s) |
+| 7–15 s | Hook (0–2 s) + Kernnutzen (2–10 s) + Abschluss (10–15 s) |
+| 15–30 s | Hook (0–3 s) + Problem (3–8 s) + Lösung (8–20 s) + Abschluss/CTA (20–30 s) |
+| 30–60 s | Hook (0–3 s) + Problem (3–8 s) + Lösung (8–40 s) + Erkenntnis + CTA (40–60 s) |
 
-脚本格式：
+Format:
 ```
 [0-3s] HOOK
-口播: "..."
-字幕: "..."
-画面: [描述]
+Sprechtext: „…“
+Text-Overlay: „…“
+Bild: [Beschreibung]
 
-[3-8s] 痛点
-口播: "..."
-画面: [描述]
+[3-8s] PROBLEM
+Sprechtext: „…“
+Bild: [Beschreibung]
 ```
 
-每句 ≤15 字，口语化，加括号注释（停顿/强调/表情）。
+Jeder Satz höchstens ~10 Wörter, gesprochene Sprache, Regieanweisungen in Klammern (Pause/Betonung/Mimik).
+Text-Overlays in der sicheren Zone halten (nicht in die unteren ~20 % und rechten ~15 %, dort liegen die App-Bedienelemente).
 
-### Step 3 — caption + 封面
+### Schritt 3: Caption und Cover
 
-**caption**：100-300 字，Hook 变体开头（不重复视频 Hook），DM 转发 > 收藏 > 点赞。
-**hashtags**：3-5 个垂直标签，不用泛标签。
-**封面**：3-5 字大标题 + 画面描述 + 表情。
+**Caption:** 1–3 Sätze bei TikTok/Reels, Hook-Variante als Einstieg (nicht der Video-Hook wörtlich); Ziel: DM-Shares > Speichern > Likes.
+**Hashtags:** 3–5 präzise Nischen-Hashtags, keine Allerweltstags.
+**Cover:** 2–4 Wörter große Schrift + Bildbeschreibung + Gesichtsausdruck.
+**KI-Inhalte** (KI-Stimme, KI-Personen, KI-Bilder) markieren → beim Export „Ja“ bei der KI-Frage.
 
-### Step 4 — 质量评分（满分 100）
+### Schritt 4: Qualitätsbewertung (max. 100)
 
-| 维度 | 权重 | 检查点 |
+| Dimension | Gewicht | Prüfpunkte |
 |------|------|--------|
-| Hook 强度 | 25 | 好奇缺口、打断效果、3 秒清晰度 |
-| 内容质量 | 25 | 价值密度、结构、痛点-方案清晰度 |
-| caption+CTA | 20 | 长度 100+字、转发型 CTA、Hook 变体 |
-| 格式合规 | 15 | 9:16 安全区、时长匹配、封面 |
-| 算法信号 | 15 | 收藏/转发优化、原创性 |
+| Hook-Stärke | 25 | Neugierlücke, Musterbruch, Klarheit in 3 s |
+| Inhalt | 25 | Informationsdichte, Struktur, klares Problem→Lösung |
+| Caption + CTA | 20 | Hook-Variante, CTA zum Teilen/Speichern |
+| Format | 15 | 9:16, sichere Zone, Länge passt, Cover |
+| Algorithmus-Signale | 15 | Speichern/Teilen gefördert, Originalität |
 
-≥80 分交付，<60 分返工后重评。
+Ab 80 übergeben, unter 60 überarbeiten und neu bewerten.
 
 ---
 
-## 中长视频模式（>60 秒）
+## Mittel- und Langvideo (> 60 s)
 
-> 留存率优化的详细方法（节奏中断点 / 前向钩子 / 章节结构 / 留存曲线）见 `references/retention-scripting-guide.md`。
+> Ausführliche Methoden (Rhythmusbrüche, Vorwärts-Hooks, Kapitel, Retentionskurve) in
+> `references/retention-scripting-guide.md` (auf Chinesisch, sinngemäß anwenden).
 
-### Step 1 — 结构计算
+### Schritt 1: Aufbau berechnen
 
-根据目标时长分配各段：
-- **Hook**：0:00-0:30（短视频缩短到 0:00-0:10）
-- **开场**：0:30-2:00
-- **首次 CTA**：约 25% 处
-- **留存再拉回**：约 60% 处
-- **结尾**：最后 60 秒
-- **目标字数** = 时长(分钟) × 250
+- **Hook:** 0:00–0:30 (bei kurzen Videos 0:00–0:10)
+- **Einstieg:** 0:30–2:00
+- **Erster CTA:** bei ~25 %
+- **Zurückholen:** bei ~60 %
+- **Schluss:** letzte 60 Sekunden
+- **Zielwörter** = Länge (Minuten) × 140
 
-### Step 2 — 写 Hook（三段式）
+### Schritt 2: Hook in drei Teilen
 
-| 阶段 | 时间 | 目标 |
+| Teil | Zeit | Ziel |
 |------|------|------|
-| 抓眼 | 0-5s | 全片最重要的一句话，不加片头 |
-| 承诺 | 5-15s | 看完能获得什么，具体可感知 |
-| 悬念 | 15-30s | 不看会损失什么 |
+| Fangen | 0–5 s | wichtigster Satz des Videos, kein Intro davor |
+| Versprechen | 5–15 s | was man am Ende konkret hat |
+| Spannung | 15–30 s | was man verpasst, wenn man abbricht |
 
-### Step 3 — 内容段落
+### Schritt 3: Abschnitte
 
-每段结构：节奏中断 → 正文 → 微总结 → 前向钩子。
-**节奏中断**每 60-90 秒一次（短视频每 15-30 秒），类型：【镜头切换】【画面】【音效】【数据冲击】。
+Jeder Abschnitt: Rhythmusbruch → Inhalt → Mini-Fazit → Vorwärts-Hook.
+**Rhythmusbruch** alle 60–90 s (bei Kurzvideos alle 15–30 s): [Schnitt] [Grafik] [Sound] [Zahl].
 
-### Step 4 — CTA 与结尾
+### Schritt 4: CTA und Schluss
 
-- 首次 CTA（25% 处）：软性、对话式、10-15 秒
-- 留存再拉回（60% 处）："接下来是最关键的部分"
-- 结尾 CTA：硬性号召 + 下期预告，**不说"感谢观看"**
+- Erster CTA (25 %): weich, im Gesprächston, 10–15 s
+- Zurückholen (60 %): „Jetzt kommt der wichtigste Teil“
+- Schluss-CTA: klarer Aufruf + Ausblick aufs nächste Video, **kein „Danke fürs Zuschauen“**
 
-### Step 5 — 留存风险标注
+### Schritt 5: Retention-Risiken
 
-扫描全稿，在危险区标 ⚠️ 警告（至少 3 处）+ 应对方案。
+Gesamtes Skript prüfen und mindestens 3 Gefahrenstellen mit ⚠️ und Gegenmaßnahme markieren.
 
-## 输出格式
+## Ausgabe
 
-产物写入 `outputs/`。包含：
-- 脚本元数据（主题/时长/平台/字数）
-- 完整分段脚本（含时间码、口播、字幕、画面提示）
-- 节奏中断日志（时间戳/类型/说明）
-- 留存风险地图（中长视频）/ 质量评分（短视频）
-- 剪辑备注
+Nach `outputs/<Thema>/` schreiben, mit:
+- Metadaten (Thema, Länge, Plattform, Wortzahl)
+- vollständigem Skript (Zeitcodes, Sprechtext, Overlays, Bildhinweise)
+- Liste der Rhythmusbrüche (Zeit/Typ/Beschreibung)
+- Retention-Risikokarte (lang) bzw. Qualitätsbewertung (kurz)
+- Hinweisen für den Schnitt
 
-## 质量检查
+## Qualitätsprüfung
 
-- [ ] 字数与时长匹配（250 字/分钟，±10%）：**用脚本判定，不靠估算**。把全部口播文案（去掉时间码、画面提示等非口播行）喂给
-  `python3 skills/shared/scripts/wordcount.py check --target <时长分钟×250> --tolerance 0.1`（stdin 传入），退出码 0 = 达标；非 0 时脚本给出「还需增/删 X 字」，据结果增删口播后重跑，直到通过。
-- [ ] Hook 完整（短视频 3 变体评分；中长视频三段式）
-- [ ] 节奏中断频率达标
-- [ ] CTA 位置正确
-- [ ] 全稿口语化，短句，不像书面文
-- [ ] 结尾有能量，不含收尾废话
+- [ ] Wortzahl passt zur Länge (140 Wörter/Minute, ±10 %): **zählen, nicht schätzen.** Den reinen Sprechtext (ohne
+  Zeitcodes und Bildhinweise) per stdin an
+  `python3 skills/shared/scripts/wordcount.py check --metric words --target <Minuten × 140> --tolerance 0.1`
+  geben. Exit-Code 0 = passt; sonst nennt das Skript, wie viele Wörter zu viel oder zu wenig sind. Anpassen und neu prüfen.
+- [ ] Hook vollständig (kurz: 3 bewertete Varianten; lang: dreiteilig)
+- [ ] Rhythmusbrüche oft genug
+- [ ] CTA an der richtigen Stelle
+- [ ] Durchgehend gesprochene Sprache, kurze Sätze, kein Schriftdeutsch
+- [ ] Schluss mit Energie, ohne Floskeln
+- [ ] KI-Inhalte markiert
 
-## Profile 感知
+## Profil-Bezug
 
-- **有 Profile**：读取 platform 锁定平台、audience 调整用语、tone 匹配风格、cta_style 使用惯用话术
-- **无 Profile**：默认按时长推断平台，对话感调性
+- **Mit Profil:** Plattform aus `platform`, Wortwahl aus `audience`, Ton aus `tone`, gewohnte CTA-Formulierungen aus `cta_style`
+- **Ohne Profil:** Plattform aus der Länge ableiten, Gesprächston

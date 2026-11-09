@@ -1,47 +1,45 @@
 ---
 name: skill-persona-check
 description: >-
-  人设一致性检查与品牌调性检查：对比内容与创作者画像的账号定位、内容赛道、形式、受众、
-  风格和偏好，
-  输出一致性评分和具体偏离点。当用户说"符合我的人设吗"、"一致性检查"、"风格对不对"、
-  "像我写的吗"、"品牌一致"、"调性检查"、"这是我的风格吗"、"人设偏了没"、
-  "语气对不对"、"品牌声音检查"时触发。
-  必须有 Profile 才能工作；无 Profile 时提示先创建。
+  Prüft, ob ein Inhalt zum Konto-Profil passt (Positionierung, Themenfeld, Format, Zielgruppe, Stil,
+  Tabus) und gibt Punktzahl und Abweichungen aus. Verwenden, wenn der Nutzer fragt „passt das zu mir?“,
+  „klingt das nach uns?“ oder eine Marken- bzw. Stilprüfung will. Braucht ein Profil.
 layer: publish
 ---
 
-# 人设一致性检查
+# Profil-Passung prüfen
 
-> 检查内容是否符合创作者人设和品牌调性，输出一致性评分与偏离诊断。
+> Prüft, ob ein Inhalt zu Persona und Markenton passt, und liefert Punktzahl und Abweichungsanalyse.
+> Antwort an den Nutzer auf Deutsch.
 
-## 与其他 SKILL 的区别
+## Abgrenzung
 
-| SKILL | 定位 | 关注点 |
+| SKILL | Rolle | Fokus |
 |---|---|---|
-| **persona-check**（本 SKILL） | 人设/品牌一致性 | 账号定位、题材、形式、受众、风格是否匹配画像 |
-| skill-quality-gate | 深度合规 + 质量审核 | 平台规则、内容质量 |
-| skill-publish-checklist | 完整性检查 | 有没有漏标题、漏封面等 |
+| **persona-check** (dieser) | Persona-/Markenpassung | Positionierung, Thema, Format, Zielgruppe, Stil |
+| skill-quality-gate | Regel- und Qualitätsprüfung | Plattformregeln, Inhaltsqualität |
+| skill-publish-checklist | Vollständigkeit | Titel, Cover usw. vorhanden? |
 
-## 前提条件
+## Voraussetzung
 
-本 SKILL **必须有 Profile 才能工作**。Profile 中应包含以下信息（部分或全部）：
+**Ohne Profil keine Prüfung.** Das Profil sollte (ganz oder teilweise) enthalten:
 
-- `identity.md`：账号定位、主线赛道、内容方向
-- `style.md`：语气、叙事、视觉和内容形式
-- `audience.md`：目标受众及其需求
-- `preferences.md`：要做、不做和明确红线
-- `memory.md`：当前画像已验证的经验与踩坑
+- `identity.md`: Positionierung, Hauptthema, Inhaltsrichtung
+- `style.md`: Ton, Erzählweise, Bildsprache, Formate
+- `audience.md`: Zielgruppe und ihre Bedürfnisse
+- `preferences.md`: Machen, Nicht machen, klare Tabus
+- `memory.md`: bestätigte Erfahrungen und Fehler dieses Profils
 
-如果没有 Profile，直接返回提示，不做检查。
+Ohne Profil sofort einen Hinweis zurückgeben und nicht prüfen.
 
-## 输入
+## Eingaben
 
-- **待检查内容**：文案文本或产物路径
-- **Profile**：通过 `=== EASEL ACCOUNT PROFILE ===` 标记注入，或指定画像名称
+- **Zu prüfender Inhalt:** Text oder Pfad zum Ergebnis
+- **Profil:** per Markierung `=== EASEL ACCOUNT PROFILE ===` eingefügt oder per Profilname
 
-## 输出
+## Ausgabe
 
-输出结构化一致性报告，JSON 格式：
+Strukturierter Bericht als JSON (Schlüssel bleiben englisch, Texte auf Deutsch):
 
 ```json
 {
@@ -51,109 +49,100 @@ layer: publish
   "warning": "",
   "dimensions": [
     {
-      "dimension": "检查维度名",
+      "dimension": "Name der Dimension",
       "score": 90,
       "status": "aligned | drifted",
-      "evidence": "具体证据文本",
-      "suggestion": "调整建议"
+      "evidence": "konkreter Beleg",
+      "suggestion": "Vorschlag"
     }
   ],
-  "drift_summary": ["偏离点概述列表"],
-  "rewrite_hints": ["具体修改建议"],
-  "summary": "一句话总结"
+  "drift_summary": ["Abweichungen in Kürze"],
+  "rewrite_hints": ["konkrete Änderungsvorschläge"],
+  "summary": "Ein-Satz-Fazit"
 }
 ```
 
-评分标准：
-- 80-100：一致（consistent），无需人设警告
-- 60-79：轻微偏离（minor_drift），明确警告并给出修改建议
-- 0-59：明显偏离（major_drift），醒目警告账号定位/题材/形式偏离
+Bewertung:
+- 80–100: passend (consistent), keine Warnung
+- 60–79: leichte Abweichung (minor_drift), klare Warnung mit Vorschlägen
+- 0–59: deutliche Abweichung (major_drift), auffällige Warnung zu Positionierung, Thema oder Format
 
-**人设评分只做提醒，不是发布权限。** `publish_allowed` 始终为 `true`；低分不得阻断发布、
-不得要求用户为了通过评分而强制改稿。用户已经明确要发布时，展示警告后继续发布。内容安全、
-平台合规、敏感信息等独立硬门禁不在本 SKILL 范围内，仍按对应规则处理。
+**Die Profilprüfung ist nur ein Hinweis, keine Freigabe.** `publish_allowed` ist immer `true`. Niedrige Werte
+blockieren nie und zwingen nicht zum Umschreiben. Hat der Nutzer das Posten ausdrücklich verlangt, Warnung zeigen
+und weitermachen. Inhaltssicherheit, Plattformregeln und sensible Daten sind eigene harte Prüfungen außerhalb dieses SKILLs.
 
-## 执行步骤
+## Ablauf
 
-### Step 1 — 解析 Profile 画像
+### Schritt 1: Profil lesen
 
-1. 检测是否有 Profile 上下文（`=== EASEL ACCOUNT PROFILE ===` 标记）
-2. **无 Profile** → 直接输出提示信息并终止：
+1. Prüfen, ob Profil-Kontext vorhanden ist (Markierung `=== EASEL ACCOUNT PROFILE ===`).
+2. **Kein Profil** → diesen Hinweis ausgeben und abbrechen:
    ```
-   未检测到账号 Profile，无法进行人设一致性检查。
-   请先创建 Profile：用 skill-profile-builder 引导创建，或复制 profiles/_template/ 手动填写。
-   Profile 的 style.md 应包含：写作风格、语气基调、人格特征、标志性表达。
+   Kein Konto-Profil gefunden, daher keine Profilprüfung möglich.
+   Bitte zuerst ein Profil anlegen: geführt mit skill-profile-builder oder profiles/_template/ kopieren und ausfüllen.
+   style.md sollte Schreibstil, Grundton, Persönlichkeit und typische Formulierungen enthalten.
    ```
-3. **有 Profile** → 必须读取当前画像的 `identity.md`、`style.md`、`audience.md`、
-   `preferences.md`、`memory.md`；发布场景再读取 `platforms.md`。先提取账号主线、允许题材、
-   内容形式和受众，再提取语气、用词和平台习惯。不得只读 `style.md` 后凭语言相似度评分。
+3. **Profil vorhanden** → `identity.md`, `style.md`, `audience.md`, `preferences.md`, `memory.md` lesen, beim
+   Veröffentlichen zusätzlich `platforms.md`. Zuerst Hauptthema, erlaubte Themen, Formate und Zielgruppe
+   herausziehen, dann Ton, Wortwahl und Plattformgewohnheiten. Nicht nur `style.md` lesen und nach Sprachähnlichkeit bewerten.
 
-### Step 2 — 分析待检查内容
+### Schritt 2: Inhalt analysieren
 
-对输入内容进行多维度语言分析：
+1. **Thema und Absicht:** Worum geht es, gehört es zum Kernthema oder ist es eine sinnvolle Erweiterung?
+2. **Format:** Karussell, Reel, Talking Head, Review, Animation usw. passend zur Positionierung?
+3. **Zielgruppe:** Nutzen, Emotion und Einstiegshürde passend zur Profil-Zielgruppe?
+4. **Sprache:** Ton, Wortwahl, Satzbau, Perspektive, Emotion
+5. **Plattform und Vorlieben:** passend zur Zielplattform, kein Verstoß gegen „Nicht machen“?
 
-1. **题材与意图**：这条内容在讲什么，是否属于账号主线或合理延展
-2. **内容形式**：小说、动画、口播、测评、图文等是否匹配账号定位
-3. **目标受众**：内容解决的问题、情绪价值和阅读门槛是否面向画像受众
-4. **语言风格**：语气、用词、句式、叙事视角和情感色彩
-5. **平台与偏好**：是否适合目标平台，是否触碰画像明确的“不做”项
+### Schritt 3: Dimension für Dimension vergleichen
 
-### Step 3 — 逐维度对比
-
-将内容特征与 Profile 特征逐维度对比，每个维度独立评分：
-
-| 维度 | 对比内容 | 权重 |
+| Dimension | Vergleich | Gewicht |
 |---|---|---|
-| **账号定位与内容赛道** | 题材/主题 vs `identity.md` 主线、内容方向、选题池 | 30% |
-| **内容形式一致性** | 小说/动画/图文/口播等 vs 画像规定的主要内容形式 | 15% |
-| **目标受众匹配** | 内容价值与阅读/观看人群 vs `audience.md` | 15% |
-| **语气与叙事风格** | 语气、节奏、视角 vs `style.md` | 15% |
-| **人格与用词** | 表达人格、词汇、标志性表达 vs 画像 | 10% |
-| **平台适配** | 内容形态和表达 vs `platforms.md`（无目标平台时给中性分） | 10% |
-| **偏好与经验** | `preferences.md` 与当前画像 `memory.md` | 5% |
+| **Positionierung und Themenfeld** | Thema vs. Hauptlinie, Inhaltsrichtung, Themenpool in `identity.md` | 30 % |
+| **Format** | Karussell/Reel/Talking Head usw. vs. Hauptformate des Profils | 15 % |
+| **Zielgruppe** | Nutzen und Publikum vs. `audience.md` | 15 % |
+| **Ton und Erzählweise** | Ton, Tempo, Perspektive vs. `style.md` | 15 % |
+| **Persönlichkeit und Wortwahl** | Ausdruck, Vokabular, Markenformulierungen | 10 % |
+| **Plattform** | Form und Ausdruck vs. `platforms.md` (ohne Zielplattform neutral bewerten) | 10 % |
+| **Vorlieben und Erfahrungen** | `preferences.md` und `memory.md` | 5 % |
 
-每个维度评分 0-100，加权计算总分。
+Jede Dimension 0–100, daraus gewichtete Gesamtpunktzahl.
 
-为防止语言相似掩盖根本性错位，计算后应用以下上限：
+Damit sprachliche Ähnlichkeit keine grundsätzliche Fehlpassung überdeckt, gelten Obergrenzen:
 
-- **账号定位与内容赛道 < 40**：总分最高 59，必须判定 `major_drift`。
-- **内容形式一致性 < 40**：总分最高 69，至少判定 `minor_drift`。
-- 触碰画像已确认的“不做”项或红线：总分最高 39，并明确指出证据；但仍只警告，不代替用户决定是否发布。
-- 用户主动要求跨赛道，只代表这是有意识的选择，不能因此虚增一致性分；报告中注明“用户主动跨赛道”即可。
+- **Positionierung und Themenfeld < 40:** Gesamt höchstens 59, zwingend `major_drift`.
+- **Format < 40:** Gesamt höchstens 69, mindestens `minor_drift`.
+- Verstoß gegen bestätigte „Nicht machen“-Punkte oder Tabus: Gesamt höchstens 39, Beleg nennen; trotzdem nur warnen.
+- Will der Nutzer bewusst ein anderes Themenfeld, erhöht das die Punktzahl nicht; im Bericht „bewusster Themenwechsel“ vermerken.
 
-示例：`2D 搞笑动画博主` 发布纯恐怖文字小说，即使同样口语化、有画面感、有反转，
-账号赛道和内容形式仍严重不符，总分必须低于 60，不能因语言技巧给出 80+。
+Beispiel: Ein Food-App-Konto mit witzigen Reels postet einen ernsten Langtext über Finanzen. Auch bei lockerem Ton
+passen Thema und Format nicht: Gesamt unter 60, kein 80+ wegen guter Formulierungen.
 
-### Step 4 — 定位偏离点
+### Schritt 4: Abweichungen belegen
 
-对于 score < 80 的维度，给出具体偏离证据：
+Für jede Dimension unter 80:
 
-1. **引用原文**：指出内容中偏离人设的具体段落或句子
-2. **对比说明**：说明 Profile 期望的表达方式 vs 实际表达
-3. **严重程度**：标记该偏离是否影响整体人设感知
+1. **Zitat:** konkreten Satz oder Abschnitt nennen
+2. **Vergleich:** Erwartung laut Profil vs. tatsächliche Umsetzung
+3. **Schwere:** beeinflusst es die Wahrnehmung der Persona insgesamt?
 
-### Step 5 — 生成修改建议
+### Schritt 5: Vorschläge
 
-针对每个偏离点，给出可操作的修改建议：
+Für jede Abweichung umsetzbare Vorschläge auf Wort-, Satz- und Absatzebene.
 
-- 具体到词级别：建议替换的词汇
-- 具体到句级别：建议调整的句式
-- 具体到段级别：建议重写的方向
+### Schritt 6: Bericht
 
-### Step 6 — 输出报告
+1. Gewichtete Summe berechnen, Obergrenzen anwenden
+2. verdict festlegen (consistent / minor_drift / major_drift)
+3. Abweichungen zusammenfassen
+4. Vorschläge nach Priorität ordnen
+5. `publish_allowed` immer `true`; unter 80 eine deutliche `warning`
+6. Ein-Satz-Fazit mit dem Hinweis „Das ist ein Persona-Hinweis und hält dich nicht vom Posten ab.“
 
-汇总所有维度评分，生成结构化报告：
+## Profil-Bezug
 
-1. 计算加权总分并应用严重偏离上限
-2. 判定 verdict（consistent / minor_drift / major_drift）
-3. 列出所有偏离点摘要
-4. 给出优先级排序的修改建议
-5. `publish_allowed` 固定输出 `true`；低于 80 分时填写醒目的 `warning`
-6. 生成一句话总结，明确“这是人设提醒，不阻止用户发布”
+- **Mit Profil:** volle Prüfung über alle Dimensionen (Standardfall).
+- **Ohne Profil:** **nicht möglich**. Auf das Anlegen eines Profils hinweisen und abbrechen. Dies ist der einzige
+  SKILL in Postloop, der zwingend ein Profil braucht.
 
-## Profile 感知
-
-- **有 Profile**：从 Profile 提取完整人设特征，进行全维度对比。这是本 SKILL 的标准工作模式。
-- **无 Profile**：**无法工作**。直接提示用户创建 Profile，说明所需内容（style、tone、personality），并终止执行。本 SKILL 是 Easel 中唯一强制要求 Profile 的 SKILL。
-
-> 自研溯源与参考项目见同目录 `EASEL-META.md`。
+> Herkunft und Referenzprojekte siehe `EASEL-META.md` im selben Ordner.

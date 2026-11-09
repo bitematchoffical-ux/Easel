@@ -1,89 +1,95 @@
 ---
 name: copywriting
 description: >
-  国内带货转化营销文案：提炼卖点并产出种草、信息流广告、活动促销、电商详情页或落地页的标题、正文和 CTA。
-  当用户说“写种草/广告/活动/促销/详情页/落地页文案、提炼卖点、广告语”时使用。
-  整套小红书笔记用 xhs-note-creator；涨粉互动内容用 social-content；严格套 PAS/AIDA 等框架用 post-formatter。
+  Verkaufsstarke Marketingtexte: Nutzen herausarbeiten und Headlines, Fließtext und CTA für Werbeanzeigen,
+  Aktionen, Produktseiten, Landingpages und App-Store-Texte schreiben. Verwenden, wenn der Nutzer Werbetexte,
+  Anzeigen, Slogans oder Verkaufsargumente will. Organische Posts: social-content.
 layer: produce
 ---
 
-# 营销文案写作
+# Marketingtexte
 
-> 为国内营销场景撰写和优化高转化文案：种草、信息流广告、卖点提炼、活动促销、电商详情页、落地页。套经典框架，落国内语境。
+> Schreibt und verbessert Texte mit klarem Conversion-Ziel: Werbeanzeigen (Meta, TikTok, Google), Nutzenargumente,
+> Aktionen, Produkt- und Landingpages, App-Store-Beschreibungen. Bewährte Frameworks, europäischer Kontext,
+> Texte auf Deutsch (oder in der Sprache der Zielgruppe).
 
-## 职责边界
+## Zuständigkeit
 
-| 场景 | 交给谁 | 为什么 |
+| Fall | Wer | Warum |
 |------|--------|--------|
-| **卖货/转化导向的营销文案**（种草卖点、信息流广告、活动、详情页、落地页） | **本 SKILL** | 以"促成购买/转化"为目标，讲卖点、讲收益、给 CTA |
-| **整套小红书笔记**（多卡片 + caption + hashtags + 去 AI + 校验全流程） | `xhs-note-creator` | 小红书图文/种草的总入口，不是单条文案 |
-| 通用社媒内容（多平台原生格式、钩子、标签、互动引导） | `social-content` | 偏内容运营/涨粉互动，不强转化 |
-| 严格套 PAS/AIDA/BAB/STAR 框架的结构化帖子（200-250 字、移动端排版） | `post-formatter` | 专做单一框架的规范化帖子 |
+| **Verkaufs-/Conversion-Texte** (Nutzen, Anzeigen, Aktionen, Produkt- und Landingpages, App Store) | **dieser SKILL** | Ziel ist Kauf, Download, Anmeldung: Nutzen, Belege, CTA |
+| Komplette Karussell-Posts (Karten + Caption + Hashtags) | `skill-carousel-planner` + `card-xiaohongshu` | Gesamtpaket statt Einzeltext |
+| Organische Social-Posts (plattformgerechte Formate, Hooks, Hashtags, Interaktion) | `social-content` | Reichweite und Community, kein harter Verkauf |
+| Posts streng nach PAS/AIDA/BAB/STAR (200–250 Wörter, mobil formatiert) | `post-formatter` | ein festes Framework sauber umgesetzt |
 
-一句话分工：**要卖货找 copywriting，要整套小红书笔记找 xhs-note-creator，要涨粉找 social-content，要套固定框架排版找 post-formatter。** 可串联（本 SKILL 出卖点文案 → post-formatter 排成帖子 → social-content 适配多平台）。
+Kurz: **verkaufen → copywriting, organisch wachsen → social-content, festes Framework → post-formatter.**
+Kombinierbar (copywriting liefert Argumente → post-formatter baut den Post → social-content passt an Plattformen an).
 
-## 输入
+## Eingaben
 
-用户 prompt 中提供以下信息（缺失时主动询问）：
+Fehlendes aktiv erfragen:
 
-1. **文案类型** — 种草 / 信息流广告 / 卖点提炼 / 活动促销 / 详情页 / 落地页
-2. **产品/服务** — 卖什么、核心卖点、与竞品的差异、能带来的结果
-3. **目标动作** — 希望用户做什么（下单、领券、加购、点击链接、私信咨询、到店）
-4. **投放场景/平台** — 小红书 / 抖音信息流 / 朋友圈广告 / 电商平台 / 落地页等（影响长度、语气、CTA 形式）
-5. **证据素材**（如有）— 销量、评价、成分/参数、案例、资质
-6. **受众** — 谁看、什么消费顾虑
+1. **Texttyp:** Anzeige / Nutzenargumente / Aktion / Produktseite / Landingpage / App-Store-Text
+2. **Produkt/Leistung:** Was, Kernnutzen, Unterschied zur Konkurrenz, Ergebnis für den Nutzer
+3. **Zielaktion:** App laden, registrieren, kaufen, Link klicken, DM schreiben, vorbeikommen
+4. **Kanal:** Instagram/Facebook-Anzeige, TikTok-Anzeige, Google, App Store, Website (bestimmt Länge, Ton, CTA)
+5. **Belege** (falls vorhanden): Nutzerzahlen, Bewertungen, Tests, Fallbeispiele, Auszeichnungen
+6. **Zielgruppe:** Wer liest das, welche Bedenken hat sie?
 
-## 输出
+## Ausgabe
 
-按文案类型交付对应结构（详见 `references/copy-frameworks.md`），通常包含：
+Je nach Texttyp (Strukturen in `references/copy-frameworks.md`, auf Chinesisch), meist:
 
-- **主标题/开头钩子** + 2-3 个备选
-- **正文**（按所选框架组织：痛点→方案→卖点→信任→CTA 等）
-- **卖点清单**（FAB：功能→优势→利益，逐条）
-- **CTA/行动引导** + 2-3 个备选
-- **关键元素标注**：说明选择理由和所用框架/原则
+- **Headline/Hook** + 2–3 Alternativen
+- **Fließtext** im gewählten Framework (Problem → Lösung → Nutzen → Vertrauen → CTA)
+- **Nutzenliste** nach FAB (Feature → Vorteil → Nutzen), Punkt für Punkt
+- **CTA** + 2–3 Alternativen
+- **Begründung:** gewähltes Framework und Prinzipien
 
-## 执行步骤
+## Ablauf
 
-1. **收集上下文** — 确认文案类型、产品卖点、目标动作、投放场景、受众、证据；缺失项主动询问。
-2. **确定语气** — 按 Profile 或用户指示定调（种草偏亲切真实、信息流偏直给、活动偏紧迫、详情页偏专业）。
-3. **提炼卖点** — 用 FAB 把产品特性翻译成用户利益（框架定义见 `skills/shared/references/copy-frameworks.md`），排出主次。
-4. **选框架搭结构** — 按内容目的从 `skills/shared/references/copy-frameworks.md` 选框架（AIDA / PAS / FAB / 4U / BAB），再按文案类型从 `references/copy-frameworks.md` 取对应**结构模板**。
-5. **写标题/钩子** — 用 `skills/shared/references/hook-title-formulas.md` 的标题/钩子公式产出 2-3 个备选。
-6. **填正文** — 逐段推进，一段一论点；用 `references/natural-transitions.md` 保持衔接自然、口语流畅。
-7. **打磨风格 + 去 AI 门（强制）** — 按 `references/writing-style-rules.md` 抓**营销文案特有**的风格（讲利益、信任前置、反问/类比、CTA 给理由）；**去 AI 味走 text-polisher 权威源并过门禁**（`../text-polisher/references/{phrases-to-remove,structures-to-avoid,zh-ai-markers}.md`）——AI 味自检 **≥45/50**、综合质量 **≥35/50**，不达标先改再交付。本 SKILL 不维护去 AI 副本。
-8. **写 CTA** — 按目标动作产出 2-3 个 CTA 备选。
-9. **字数校验（有长度约束的类型必做）** — 信息流广告、详情页首屏、落地页等有字符/篇幅限制的，用脚本判定不靠肉眼数：
+1. **Kontext klären:** Texttyp, Nutzen, Zielaktion, Kanal, Zielgruppe, Belege; Fehlendes nachfragen.
+2. **Ton festlegen:** nach Profil oder Vorgabe (Anzeige: direkt; Aktion: dringlich; Produktseite: kompetent; Social Ads: locker und echt).
+3. **Nutzen herausarbeiten:** mit FAB Features in Nutzen übersetzen (Definitionen in `skills/shared/references/copy-frameworks.md`) und priorisieren.
+4. **Framework und Struktur wählen:** AIDA / PAS / FAB / 4U / BAB aus `skills/shared/references/copy-frameworks.md`, Strukturvorlage je Texttyp aus `references/copy-frameworks.md`.
+5. **Headlines/Hooks:** 2–3 Varianten nach `skills/shared/references/hook-title-formulas.md` (sinngemäß übertragen).
+6. **Fließtext:** ein Argument pro Absatz; flüssige Übergänge (Ideen in `references/natural-transitions.md`).
+7. **Stil schärfen und KI-Ton entfernen (Pflicht):** Nutzen statt Features, Vertrauen früh, Bilder und Vergleiche, CTA mit Grund. KI-typische Floskeln entfernen („In der heutigen schnelllebigen Welt“, „Tauche ein in“, „Entdecke die Magie“, Dreierlisten ohne Inhalt, übertriebene Adjektive). Die chinesischen Prüflisten in `../text-polisher/references/` gelten sinngemäß. Selbstprüfung: klingt der Text wie von einem Menschen aus der Zielgruppe? Wenn nicht, überarbeiten.
+8. **CTA:** 2–3 Varianten passend zur Zielaktion.
+9. **Längen prüfen (bei Limits Pflicht):** nicht schätzen, zählen:
    ```bash
-   python3 skills/shared/scripts/wordcount.py count -f outputs/主题名/copy.txt
+   python3 skills/shared/scripts/wordcount.py count -f outputs/thema/copy.txt
    ```
-   读 `social_count` 与投放位的字符上限比对，超限交给 `text-condenser` 压缩后重数。
-10. **组装交付** — 按「输出」格式组装文案 + 标注 + 备选，写入 `outputs/`。
+   `total_chars` mit dem Limit des Kanals vergleichen (z. B. Meta-Anzeige: Primärtext ~125 Zeichen sichtbar,
+   Headline ~40; App Store Untertitel 30). Bei Überschreitung mit `text-condenser` kürzen und neu zählen.
+10. **Zusammenstellen:** Text + Begründung + Alternativen nach `outputs/` schreiben.
 
-## 文案核心原则
+## Grundsätze
 
-- **清晰优先** — 清晰与创意冲突时选清晰，用户 3 秒内看懂在卖什么。
-- **讲利益不讲功能** — 特性说"它是什么"，利益说"这对你意味着什么"（FAB 的核心）。
-- **要具体** — "早八通勤 10 分钟出门不迟到" > "省时高效"；有数字用数字。
-- **用用户的话** — 镜像评论区、笔记、咨询里的真实说法，不用品牌自嗨词。
-- **一段一论点** — 每段只推进一个论据，沿文案构建"心动→信任→行动"链路。
-- **信任前置** — 国内消费决策重口碑与从众，销量/评价/资质等信任信号要早出现。
-- **CTA 要给理由** — 不只说"点击购买"，配上为什么现在买（限时、限量、赠品、价格锚点）。
+- **Klarheit vor Kreativität:** In 3 Sekunden muss klar sein, worum es geht.
+- **Nutzen statt Features:** „In 30 Sekunden wisst ihr, wo ihr esst“ statt „schneller Algorithmus“.
+- **Konkret sein:** Zahlen statt Adjektive, wo es echte Zahlen gibt.
+- **Sprache der Nutzer:** Formulierungen aus Kommentaren, Bewertungen und DMs spiegeln, kein Marketing-Sprech.
+- **Ein Argument pro Absatz:** Schritt für Schritt „Interesse → Vertrauen → Handlung“.
+- **Vertrauen früh:** Bewertungen, Nutzerzahlen, Tests früh zeigen, aber nur echte.
+- **CTA mit Grund:** nicht nur „Jetzt laden“, sondern warum jetzt (kostenlos, nur heute, für eure nächste Gruppe).
+- **Rechtlich sauber (EU):** keine irreführenden Aussagen (UWG), Superlative nur mit Beleg, Preise inklusive MwSt.,
+  Werbung als solche erkennbar, KI-generierte Personen/Bilder kennzeichnen, bei Minderjährigen als Zielgruppe
+  keine direkten Kaufaufforderungen.
 
-## 文案类型速览
+## Texttypen im Überblick
 
-各类型的结构模板与写法要点见 `references/copy-frameworks.md`（框架定义见 `skills/shared/references/copy-frameworks.md`）。核心差异：
-
-| 类型 | 主用框架 | 语气 | 关键 |
+| Typ | Framework | Ton | Kern |
 |------|----------|------|------|
-| 种草文案 | 痛点-方案 / 亲测体验 | 亲切、真实、去广告感 | 场景代入、真实体验、避免硬广被限流 |
-| 信息流广告 | AIDA / 4U | 直给、抓眼 | 前 1 行定生死、利益前置、CTA 明确 |
-| 卖点提炼 | FAB | 精炼 | 特性→优势→利益逐条翻译，排主次 |
-| 活动/促销 | 紧迫+价值锚点 | 有节奏、有紧迫感 | 力度清晰、制造紧迫、降低决策成本 |
-| 详情页 | FAB + 异议处理 | 专业、可信 | 卖点分层、参数可视化、打消顾虑 |
-| 落地页/产品页 | AIDA + 结构化版块 | 依受众 | 首屏价值主张、信任背书、单一主 CTA |
+| Social-Ad (Instagram/TikTok) | AIDA / 4U | locker, nativ | Hook in der ersten Zeile, wirkt wie ein normaler Post |
+| Such-/Display-Anzeige | AIDA / 4U | direkt | Nutzen zuerst, klarer CTA |
+| Nutzenargumente | FAB | knapp | Feature → Vorteil → Nutzen, priorisiert |
+| Aktion | Dringlichkeit + Wertanker | rhythmisch | klares Angebot, echte Frist, wenig Hürde |
+| Produktseite | FAB + Einwandbehandlung | kompetent | Nutzen in Ebenen, Einwände ausräumen |
+| Landingpage | AIDA + Abschnitte | je Zielgruppe | Wertversprechen oben, Vertrauen, ein Haupt-CTA |
+| App-Store-Text | FAB + Keywords | klar | Untertitel 30 Zeichen, erste 3 Zeilen entscheiden |
 
-## Profile 感知
+## Profil-Bezug
 
-- **有 Profile**：读 `style.md`（语气/表达风格）、`audience.md`（受众画像）、`preferences.md`（红线禁忌），文案调性、措辞、卖点角度全部对齐 Profile。
-- **无 Profile**：主动询问语气偏好（亲切/专业/紧迫）、受众、品牌个性；未提供则退回通用专业语气，交付末尾附注"如提供账号 Profile 可获得更贴合品牌的文案"。
+- **Mit Profil:** `style.md` (Ton), `audience.md` (Zielgruppe), `preferences.md` (Tabus) lesen; Ton, Wortwahl und Argumente daran ausrichten.
+- **Ohne Profil:** nach Ton (locker/kompetent/dringlich), Zielgruppe und Markenpersönlichkeit fragen; sonst neutral-professionell und am Ende anmerken: „Mit einem Konto-Profil werden die Texte markengenauer.“

@@ -1,101 +1,108 @@
 ---
 name: auto-subtitle
-description: "自动字幕 / 语音转字幕：把音频或视频里的语音识别成字幕文件（SRT/ASS/TXT/JSON），可选把字幕烧录进视频。当用户说自动字幕、语音转字幕、视频加字幕、上字幕、转录、听写、字幕文件、生成字幕、烧字幕时使用。"
+description: "Automatische Untertitel: Sprache aus Audio oder Video als Untertiteldatei (SRT/ASS/TXT/JSON) erkennen und optional ins Video einbrennen. Verwenden, wenn der Nutzer Untertitel, Transkription, Captions im Video oder eingebrannte Untertitel will."
 layer: produce
 ---
 
-# 自动字幕（语音转字幕）
+# Automatische Untertitel
 
-把音频/视频里的人声识别成字幕。基于共享脚本 `skills/shared/scripts/asr.py`（faster-whisper 封装），
-参数确定、可复现，做中文友好断句。可选把字幕烧录进视频（复用 `skills/shared/scripts/video_ops.py` / ffmpeg subtitles 滤镜）。
+Erkennt Sprache in Audio/Video und erzeugt Untertitel. Grundlage ist `skills/shared/scripts/asr.py` (faster-whisper),
+mit festen, reproduzierbaren Parametern und sprachabhängigem Zeilenumbruch. Optional werden die Untertitel
+eingebrannt (über `skills/shared/scripts/video_ops.py` bzw. den ffmpeg-Filter `subtitles`).
 
-> 只做"语音 → 字幕文件 (+ 可选烧录)"。通用视频剪辑见 **video-editing**；纯降噪见 **audio-denoise**；长视频智能切片+烧字幕见 **clipify**。
+> Nur „Sprache → Untertiteldatei (+ optional einbrennen)“. Allgemeiner Schnitt: **video-editing**;
+> Entrauschen: **audio-denoise**; lange Videos in Clips mit Untertiteln: **clipify**.
 
-## 输入
+Für TikTok, Reels und Shorts sind eingebrannte Untertitel wichtig, weil viele ohne Ton schauen.
 
-| 字段 | 必填 | 说明 |
+## Eingaben
+
+| Feld | Pflicht | Bedeutung |
 |------|------|------|
-| input_file | 是 | 音频或视频文件路径（视频自动提取音轨） |
-| format | 否 | `srt`（默认）/ `ass` / `txt` / `json` |
-| language | 否 | `auto`（默认）或 `zh`/`en` 等 ISO 639-1 码 |
-| model | 否 | `tiny`/`base`（默认）/`small`/`medium`/`large-v3`，越大越准越慢 |
-| burn | 否 | 是否把字幕烧录进视频（需视频输入） |
+| input_file | ja | Audio- oder Videodatei (bei Video wird die Tonspur extrahiert) |
+| format | nein | `srt` (Standard) / `ass` / `txt` / `json` |
+| language | nein | `auto` (Standard) oder ISO-639-1 wie `de`/`en` |
+| model | nein | `tiny`/`base` (Standard)/`small`/`medium`/`large-v3`; größer = genauer, langsamer |
+| burn | nein | Untertitel ins Video einbrennen (nur mit Videoeingabe) |
 
-支持：mp3/wav/m4a/aac/flac 等音频；mp4/mkv/mov/webm 等视频。
+Unterstützt: mp3/wav/m4a/aac/flac sowie mp4/mkv/mov/webm.
 
-## 输出
+## Ausgabe
 
-- 字幕文件放入 `outputs/主题名/`（SRT/ASS/TXT/JSON）
-- 若烧录：带硬字幕的视频（`*-sub.mp4`）
-- 报告：识别语言、字幕条数、所用模型、输出路径
+- Untertiteldatei in `outputs/<Thema>/` (SRT/ASS/TXT/JSON)
+- Beim Einbrennen: Video mit festen Untertiteln (`*-sub.mp4`)
+- Bericht: erkannte Sprache, Anzahl Untertitel, Modell, Pfade
 
-## 前置
+## Voraussetzungen
 
-- 首次运行会从 HuggingFace 下模型，**需外网代理**。脚本读取 `EASEL_PROXY` 或 `http(s)_proxy` 环境变量作代理；
-  都未设则直连。也可先 `export https_proxy=... http_proxy=...` 指定。
-- CPU 环境用默认 `--device cpu --compute-type int8` 即可。
+- Beim ersten Lauf wird das Modell von HuggingFace geladen, **dafür braucht es Internet**. Das Skript nutzt
+  `EASEL_PROXY` oder `http(s)_proxy`, sonst eine direkte Verbindung.
+- Auf CPU reichen die Standardwerte `--device cpu --compute-type int8`.
 
-## 执行步骤
+## Ablauf
 
-脚本路径（相对项目根）：`skills/shared/scripts/asr.py`、`skills/shared/scripts/video_ops.py`。
+Skripte (relativ zum Projektverzeichnis): `skills/shared/scripts/asr.py`, `skills/shared/scripts/video_ops.py`.
 
-### 1. 生成字幕文件
-
-```bash
-# 视频 → SRT（自动提取音轨 + 自动检测语言）
-python skills/shared/scripts/asr.py transcribe \
-  -i input.mp4 -o outputs/主题名/input.srt --language zh
-
-# 视频 → ASS（带样式，**字号/边距按视频横竖屏自适应**）：视频输入自动探测宽高
-python skills/shared/scripts/asr.py transcribe \
-  -i input.mp4 -o outputs/主题名/input.ass --format ass --model small
-# 纯音频 → ASS：无法探测尺寸，默认竖屏 1080x1920；横屏加 --res 1920x1080
-python skills/shared/scripts/asr.py transcribe \
-  -i voice.mp3 -o outputs/主题名/voice.ass --format ass --res 1920x1080
-```
-
-- **ASS 样式按目标视频宽高自适应**：字号按**短边**(min(w,h)*0.05，竖/横屏都≈合适、不再横屏过大)，
-  底边距按高、左右边距按宽，`PlayRes`=真实宽高。视频输入自动探测；纯音频用 `--res 宽x高` 指定。
-  **要带样式的硬字幕优先烧这份 ASS**（下节），比裸 SRT + 手填 force_style 更省心、且自适应。
-- 中文默认每行 ~18 字，超长自动断行/拆条；`--max-line-chars` 可调。
-- 不给 `-o` 时按输入文件名建项目目录，例如 `talk.mp4` 输出到 `outputs/talk/talk.srt`；已有项目应显式 `-o outputs/主题名/<文件名>.<format>`。
-- 查看可用模型/语言：`python skills/shared/scripts/asr.py info`。
-
-### 2.（可选）把字幕烧录进视频
-
-用户要"硬字幕/烧进视频"时，用 ffmpeg 的 `subtitles`（SRT）或 `ass`（ASS）滤镜：
+### 1. Untertiteldatei erzeugen
 
 ```bash
-# 烧 SRT（可定制样式）
-ffmpeg -y -i input.mp4 \
-  -vf "subtitles=outputs/主题名/input.srt:force_style='FontName=Noto Sans CJK SC,FontSize=20,PrimaryColour=&H00FFFFFF,OutlineColour=&H80000000,BorderStyle=1,Outline=2'" \
-  -c:a copy outputs/主题名/input-sub.mp4
+# Video → SRT (Tonspur automatisch, Sprache Deutsch)
+python skills/shared/scripts/asr.py transcribe \
+  -i input.mp4 -o outputs/thema/input.srt --language de
 
-# 烧 ASS（样式已在 ass 文件里，保真）
-ffmpeg -y -i input.mp4 \
-  -vf "ass=outputs/主题名/input.ass" \
-  -c:a copy outputs/主题名/input-sub.mp4
+# Video → ASS (mit Stil; Schriftgröße/Ränder passen sich Hoch-/Querformat an)
+python skills/shared/scripts/asr.py transcribe \
+  -i input.mp4 -o outputs/thema/input.ass --format ass --model small
+# reines Audio → ASS: Größe unbekannt, Standard Hochformat 1080x1920; Querformat mit --res 1920x1080
+python skills/shared/scripts/asr.py transcribe \
+  -i voice.mp3 -o outputs/thema/voice.ass --format ass --res 1920x1080
 ```
 
-- 路径含特殊字符时，把 `subtitles=` 的值用单引号包裹并转义冒号。
-- 需要软字幕（可关闭）而非烧录：`ffmpeg -i in.mp4 -i sub.srt -c copy -c:s mov_text out.mp4`。
+- **ASS passt sich an Breite/Höhe an:** Schriftgröße nach der kurzen Seite (min(w,h)·0,05), unterer Rand nach Höhe,
+  seitliche Ränder nach Breite, `PlayRes` = echte Auflösung. Bei Video automatisch, bei Audio per `--res`.
+  **Für gestylte, eingebrannte Untertitel diese ASS-Datei nehmen** (siehe unten).
+- **Zeilenlänge nach Sprache:** Deutsch und andere lateinische Sprachen 42 Zeichen pro Zeile, Umbruch nur an
+  Wortgrenzen; Chinesisch/Japanisch/Koreanisch 18. Mit `--max-line-chars` änderbar (für Kurzvideos im Hochformat oft 32 besser).
+- Ohne `-o` wird ein Projektordner nach dem Dateinamen angelegt (`talk.mp4` → `outputs/talk/talk.srt`); bei bestehenden
+  Projekten `-o outputs/<Thema>/<Datei>.<format>` angeben.
+- Modelle und Sprachen anzeigen: `python skills/shared/scripts/asr.py info`.
 
-### 3. 产物与报告
+### 2. (optional) Untertitel einbrennen
 
-- 字幕文件、烧录视频均写入 `outputs/主题名/`。
-- 向用户报告：识别语言、字幕条数、模型、文件路径；提示可换 `--model`/`--max-line-chars` 重跑。
+Für „feste Untertitel im Video“ den ffmpeg-Filter `subtitles` (SRT) oder `ass` (ASS):
 
-## 规则
+```bash
+# SRT einbrennen (Stil anpassbar)
+ffmpeg -y -i input.mp4 \
+  -vf "subtitles=outputs/thema/input.srt:force_style='FontName=Inter,FontSize=20,PrimaryColour=&H00FFFFFF,OutlineColour=&H80000000,BorderStyle=1,Outline=2'" \
+  -c:a copy outputs/thema/input-sub.mp4
 
-1. **视频先提取音轨** — 脚本自动用 ffmpeg 提取 16kHz 单声道 wav，不改原视频。
-2. **中文友好断句** — 按标点/长度断行，避免一行过长。
-3. **绝不删原文件** — 只产出新文件到 `outputs/`。
-4. **模型选择** — 求快用 `base`，求准用 `small`/`medium`；CPU 用 int8。
-5. **烧录需视频输入** — 纯音频无法烧录，只出字幕文件。
-6. **无 Profile 依赖** — 转录不需要账号画像。
+# ASS einbrennen (Stil steckt in der Datei)
+ffmpeg -y -i input.mp4 \
+  -vf "ass=outputs/thema/input.ass" \
+  -c:a copy outputs/thema/input-sub.mp4
+```
 
-## 自研参考
+- Pfade mit Sonderzeichen: Wert von `subtitles=` in einfache Anführungszeichen und Doppelpunkte escapen.
+- Abschaltbare Untertitel statt eingebrannter: `ffmpeg -i in.mp4 -i sub.srt -c copy -c:s mov_text out.mp4`.
+- Untertitel im Hochformat nicht in die unteren ~20 % setzen (dort liegen die Bedienelemente von TikTok/Reels/Shorts).
 
-- [SYSTRAN/faster-whisper](https://github.com/SYSTRAN/faster-whisper) — CTranslate2 加速的 Whisper 推理
-- [openai/whisper](https://github.com/openai/whisper) — 原始 Whisper 模型与 ASR 方法
-- FFmpeg `subtitles` / `ass` 滤镜（字幕烧录）
+### 3. Ergebnis und Bericht
+
+- Untertitel und Video in `outputs/<Thema>/`.
+- Dem Nutzer melden: Sprache, Anzahl, Modell, Pfade; Hinweis, dass `--model`/`--max-line-chars` angepasst werden kann.
+
+## Regeln
+
+1. **Erst Tonspur extrahieren:** Das Skript erzeugt per ffmpeg 16-kHz-Mono-wav, das Originalvideo bleibt unverändert.
+2. **Sinnvoll umbrechen:** an Satzzeichen und Wortgrenzen, keine überlangen Zeilen.
+3. **Nie Originale löschen:** nur neue Dateien in `outputs/`.
+4. **Modellwahl:** schnell `base`, genau `small`/`medium`; auf CPU int8.
+5. **Einbrennen nur mit Video:** Bei Audio nur die Untertiteldatei.
+6. **Kein Profil nötig.**
+
+## Grundlagen
+
+- [SYSTRAN/faster-whisper](https://github.com/SYSTRAN/faster-whisper): Whisper-Inferenz mit CTranslate2
+- [openai/whisper](https://github.com/openai/whisper): ursprüngliches Whisper-Modell
+- FFmpeg-Filter `subtitles` / `ass`

@@ -1,21 +1,21 @@
-# 内容风格
+# Stil
 
-## 语气
+## Ton
 
-<!-- 轻松幽默 / 专业严谨 / 亲切日常 / 犀利吐槽 / ... -->
+<!-- locker und witzig / sachlich-kompetent / nahbar und alltäglich / frech / ... -->
 
-## 开头结构
+## Einstieg
 
-<!-- 提问式 / 冲突式 / 故事式 / 直入主题 / 数据开场 / ... -->
+<!-- Frage / Konflikt / Geschichte / direkt zur Sache / Zahl als Aufhänger / ... -->
 
-## 视觉风格
+## Bildsprache
 
-<!-- 极简 / 色彩鲜艳 / 电影感 / vlog 风 / 科技感 / ... -->
+<!-- minimalistisch / knallige Farben / filmisch / Vlog / Tech-Look / ... -->
 
-## 内容节奏
+## Tempo
 
-<!-- 短平快(15-30s) / 中等(1-3min) / 深度长内容(5min+) / 图文为主 / ... -->
+<!-- schnell (15–30 s) / mittel (1–3 min) / ausführlich (5 min+) / vor allem Karussells / ... -->
 
-## 标志性元素
+## Markenzeichen
 
-<!-- 口头禅、固定栏目、固定BGM、片头片尾等辨识度元素 -->
+<!-- Sprüche, feste Formate, wiederkehrende Musik, Intro/Outro, feste Figuren -->

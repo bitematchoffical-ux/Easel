@@ -1,17 +1,17 @@
-# 目标受众
+# Zielgruppe
 
-## 核心人群
+## Kernzielgruppe
 
-<!-- 年龄段、性别偏向、职业特征 -->
+<!-- Alter, Lebenssituation, Beruf/Schule -->
 
-## 兴趣标签
+## Interessen
 
-<!-- 他们关注什么话题 -->
+<!-- Welche Themen verfolgen sie? -->
 
-## 痛点
+## Probleme und Anlässe
 
-<!-- 他们在什么场景下会搜索/刷到我的内容 -->
+<!-- In welcher Situation suchen sie nach meinem Inhalt oder stoßen darauf? -->
 
-## 互动特征
+## Interaktionsverhalten
 
-<!-- 什么内容容易引发评论/收藏/转发 -->
+<!-- Was löst Kommentare, Speichern, Teilen aus? -->

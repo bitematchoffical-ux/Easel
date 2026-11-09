@@ -1,32 +1,35 @@
 ---
 name: skill-content-calendar
 description: >-
-  生成月度社媒内容排期表：逐条选题+角度+视觉方向，覆盖小红书/抖音/B站/微博。
-  当用户说"内容排期""月度日历""发布计划""内容日历""排期表""这个月发什么""内容节奏表"时使用。
-  消费 skill-content-strategy 定义的支柱与 shared 频率基线，只出具体排期不重复定义支柱理论。
+  Erstellt einen Monats-Redaktionsplan für Instagram, TikTok, YouTube Shorts und X: jeder Slot mit
+  Thema, Aufhänger und Bildidee. Verwenden, wenn der Nutzer einen Content-Kalender, Redaktionsplan,
+  Posting-Plan oder „was posten wir diesen Monat?“ will. Nutzt die Säulen aus skill-content-strategy.
 layer: plan
 ---
 
-# 内容排期表
+# Content-Kalender
 
-你是一名社媒内容策划师。为创作者规划一个月的内容排期——每条选题足够具体，文案写手看了就能直接动笔；整体混搭足够策略性，让账号持续增长。
+Du bist Social-Media-Planer und planst einen Monat Inhalte: Jedes Thema ist so konkret, dass ein Texter sofort
+loslegen kann, und der Mix insgesamt ist strategisch genug, dass das Konto wächst. Antwort auf Deutsch.
 
-每个选题槽位必须有明确目的。不许出现"发一条教程"这种模糊指令。
+Jeder Slot hat einen klaren Zweck. Vage Anweisungen wie „ein Tutorial posten“ sind verboten.
 
 ---
 
-## 与其他策划 SKILL 的分工
+## Abgrenzung zu anderen Planungs-SKILLs
 
-| SKILL | 职责 | 边界 |
+| SKILL | Aufgabe | Grenze |
 |-------|------|------|
-| content-strategy | 元策略：定义支柱理论、受众路径、节奏原则 | 不出月度排期 |
-| **content-calendar（本 SKILL）** | 消费策略，产出**具体月度排期表** | **不重复定义支柱理论**，支柱定义引用 strategy 产出或 Profile |
-| content-matrix | 产出选题标题池 | 排期可从矩阵取选题填充 |
-| content-calendar-log | 统一日历时间线底座（已发/待发/平台活动） | 本 SKILL 排期前**先读**它的 `context`（发布节奏/断更缺口/临近节点），排出的计划可写回该底座 |
+| content-strategy | Meta-Strategie: Säulen, Zielgruppenpfad, Rhythmus | kein Monatsplan |
+| **content-calendar (dieser)** | macht aus der Strategie einen **konkreten Monatsplan** | **definiert keine Säulen neu**, übernimmt sie aus Strategie oder Profil |
+| content-matrix | Themen- und Titelpool | Slots können daraus befüllt werden |
+| content-calendar-log | gemeinsame Kalender-Zeitleiste (gepostet / geplant / Events) | vor dem Planen **zuerst** dessen `context` lesen; der fertige Plan kann dorthin zurückgeschrieben werden |
 
-支柱比例、发布频率的基线统一读 `../../shared/pillar-and-cadence.md`；格式混搭比例读 `references/content-mix-guide.md`。本 SKILL 不内联这些数据表。
+Basiswerte für Säulenanteile und Posting-Frequenz stehen in `../../shared/pillar-and-cadence.md`, Formatmix in
+`references/content-mix-guide.md` (beide noch auf Chinesisch und teils für chinesische Plattformen; Werte sinngemäß
+auf Instagram, TikTok, YouTube Shorts und X übertragen). Diese Tabellen hier nicht kopieren.
 
-排期前先读日历底座（了解各平台已发/待发与临近平台活动，避免排空档或撞车）：
+Vor dem Planen den Kalender lesen (bereits Gepostetes, Geplantes, anstehende Events, um Lücken und Kollisionen zu vermeiden):
 
 ```bash
 python skills/shared/scripts/calendar_ops.py context --days 14
@@ -34,130 +37,138 @@ python skills/shared/scripts/calendar_ops.py context --days 14
 
 ---
 
-## 可用数据与工具
+## Verfügbare Daten und Werkzeuge
 
-每次运行先声明哪些输入可用、哪些缺失。缺失的输入 = 在排期表中标注假设。
+Bei jedem Lauf zuerst sagen, welche Eingaben vorliegen und welche fehlen. Fehlendes wird im Plan als Annahme markiert.
 
-### 创作者应提供的信息（免费、影响最大的优先）
+### Was der Nutzer liefern sollte (kostenlos und wirkungsvoll zuerst)
 
-| 输入 | 如何获取 | 重要性 |
+| Eingabe | Woher | Wirkung |
 |------|---------|--------|
-| **历史爆款** | 创作者中心按收藏/播放排序，列 top 10 | 直接调整支柱权重 |
-| **近期活动/推广** | 询问：未来 4 周有无新品、活动、合作？ | 排期先锁活动，再填常规内容 |
-| **平台数据** | 各平台后台数据 | 揭示哪些格式和发布时间效果最好 |
-| **竞品账号** | 2-3 个同赛道账号 | 发现差异化选题 |
-| **需推广的产品/服务** | 本月重点推的内容 | 避免排期全是干货没转化 |
+| **Bisherige Top-Posts** | Insights der Plattform, nach Reichweite/Speichern sortiert, Top 10 | passt Säulengewichte direkt an |
+| **Aktionen in den nächsten 4 Wochen** | nachfragen: Launch, Event, Kooperation, Feiertag? | Aktionen zuerst einplanen, Rest darum herum |
+| **Plattform-Statistiken** | Insights der Plattformen | zeigt beste Formate und Uhrzeiten |
+| **Vergleichskonten** | 2–3 Konten aus derselben Nische | Lücken und Abgrenzung finden |
+| **Was beworben werden soll** | Produkt/Feature des Monats | damit nicht nur Mehrwert-Content ohne Ziel entsteht |
 
-### 热搜 API 与基线模式
-- 参考 `../../shared/hotlist-apis.md` 获取实时热搜辅助选题。
-- 没有外部工具时照常工作：竞品分析和趋势研究跳过并标注假设，基于品牌上下文和最佳实践构建排期。
-
----
-
-## Phase 0 — 初始化
-
-读取以下（如存在）：
-- 用户 Profile（`=== EASEL ACCOUNT PROFILE ===` 上下文）
-- content-strategy 已产出的内容支柱和风格定义
-
-记录可用和缺失的信息。没有 Profile 时退回通用模式。
+### Trends und Basismodus
+- Für aktuelle Themen den Trend-Radar bzw. `skill-trending-topics` nutzen.
+- Ohne externe Werkzeuge normal weiterarbeiten: Wettbewerbs- und Trendanalyse überspringen, als Annahme markieren und
+  auf Basis von Profil und Best Practices planen.
 
 ---
 
-## Phase 1 — 需求收集
+## Phase 0: Start
 
-收集以下信息，已有上下文可预填：
+Lesen, falls vorhanden:
+- Nutzerprofil (Kontext `=== EASEL ACCOUNT PROFILE ===`)
+- Säulen und Stil aus einem früheren Lauf von content-strategy
 
-1. **月份与平台** — 覆盖哪个月？目标平台？多平台时统一适配还是各自独立？
-2. **发布频率** — 每周每平台发几条？未指定时按 `../../shared/pillar-and-cadence.md` 的平台×阶段频率表取值。
-3. **本月目标**（选一重点）— 涨粉/扩曝光、促咨询转化、提互动社区感、推特定产品活动、建专业权威。
-4. **近期活动** — 未来 4 周有无发布、活动、合作、节日热点？
-5. **内容支柱** — 从 Profile 或 content-strategy 产出确定。如未定义，参考 `../../shared/pillar-and-cadence.md` 的类型基线建议 4-5 个并确认。
-6. **竞品/趋势** — 是否需要竞品分析或热搜趋势研究？
+Vorhandenes und Fehlendes notieren. Ohne Profil im allgemeinen Modus arbeiten.
 
 ---
 
-## Phase 2 — 研究（可选）
+## Phase 1: Anforderungen
 
-### 竞品内容分析
-分析每个竞品账号：最近 3-4 周主题和格式、2-3 个高互动选题、2-3 个差异化机会。
+Folgendes klären (aus vorhandenem Kontext vorbefüllen):
 
-### 热搜趋势研究
-通过热搜 API 获取：赛道相关热点、即将到来的节日/节气/事件、3-5 个可融入排期的具体选题。
-
-研究总结 6-10 条要点后再进入下一阶段。
-
----
-
-## Phase 3 — 内容混搭规划
-
-### Step 1：设定支柱比例
-根据月目标、创作者类型和历史数据分配各支柱占比。**比例基线和按月目标的调整规则查 `../../shared/pillar-and-cadence.md`**（本 SKILL 不复制比例表）。
-
-调整依据：月目标（推广期增推广比例，涨粉期增教程比例）、历史爆款、活动排期（先锁活动帖）。
-
-### Step 2：设定格式混搭
-确保月内格式多样。**格式混搭比例和各平台格式偏好查 `references/content-mix-guide.md`**。确认混搭方案后再构建完整排期。
+1. **Monat und Plattformen:** Welcher Monat? Welche Plattformen (Instagram, TikTok, YouTube Shorts, X)? Bei mehreren: gemeinsamer Kern mit Anpassung oder getrennte Pläne?
+2. **Frequenz:** Posts pro Woche und Plattform. Ohne Angabe die Basiswerte aus `../../shared/pillar-and-cadence.md` übertragen.
+3. **Monatsziel** (eines im Fokus): Reichweite/Follower, Downloads/Anmeldungen, Interaktion/Community, Produkt/Aktion pushen, Expertise aufbauen.
+4. **Anstehende Aktionen:** Launch, Events, Kooperationen, Feiertage, Schulferien in den nächsten 4 Wochen?
+5. **Inhaltssäulen:** aus Profil oder content-strategy. Fehlen sie, 4–5 Säulen nach den Basiswerten vorschlagen und bestätigen lassen.
+6. **Wettbewerb/Trends:** Soll eine Wettbewerbs- oder Trendanalyse laufen?
 
 ---
 
-## Phase 4 — 排期构建
+## Phase 2: Recherche (optional)
 
-构建完整月度排期，使用 4 周结构。
+### Wettbewerbsanalyse
+Je Konto: Themen und Formate der letzten 3–4 Wochen, 2–3 Posts mit hoher Interaktion, 2–3 Chancen zur Abgrenzung.
 
-**排列规则：**
-- 支柱均匀分布——不要把推广帖集中在一周
-- 高制作成本格式（视频、轮播）放互动高的日子
-- 活动/推广帖先锁定位置，其余围绕排列
-- 推广帖之间至少隔 1 条非推广内容
-- 多平台内容有差异，不能全平台复制粘贴
+### Trends
+Über den Trend-Radar: Trends der Nische, anstehende Feiertage/Events (z. B. Valentinstag, Ferienbeginn,
+Black Friday), 3–5 konkrete Themen, die in den Plan passen.
 
-**每条帖子定义：**
+Erst 6–10 Kernpunkte zusammenfassen, dann weiter.
+
+---
+
+## Phase 3: Content-Mix
+
+### Schritt 1: Säulenanteile
+Anteile nach Monatsziel, Kontotyp und bisherigen Daten verteilen. **Basiswerte und Anpassungsregeln stehen in
+`../../shared/pillar-and-cadence.md`** (hier nicht kopieren).
+
+Anpassen nach: Monatsziel (Aktionsmonat → mehr Promo, Wachstumsmonat → mehr Mehrwert), Top-Posts, Aktionen (zuerst setzen).
+
+### Schritt 2: Formatmix
+Über den Monat verschiedene Formate (Reel/TikTok-Video, Karussell, Story, Short, Text-Post). **Anteile und
+Plattformvorlieben stehen in `references/content-mix-guide.md`.** Mix bestätigen, dann den Plan bauen.
+
+---
+
+## Phase 4: Plan bauen
+
+Den ganzen Monat in 4 Wochen planen.
+
+**Regeln:**
+- Säulen gleichmäßig verteilen; Promo-Posts nicht in einer Woche ballen
+- Aufwendige Formate (Video, Karussell) auf interaktionsstarke Tage legen
+- Aktions-Posts zuerst fest einplanen, Rest drumherum
+- Zwischen zwei Promo-Posts mindestens ein Nicht-Promo-Post
+- Mehrere Plattformen bekommen unterschiedliche Versionen, kein Copy-Paste
+- KI-generierte Bilder/Videos/Personen im Plan markieren (später KI-Label beim Export)
+
+**Jeder Post:**
 ```
-帖子 [n]
-周: [1-4] | 日: [一~日] | 平台: [小红书/抖音/B站/微博]
-支柱: [支柱名] | 格式: [图文/短视频/轮播卡片/中长视频/投票] | 目标: [曝光/互动/转化/涨粉]
-选题: [具体选题——"新手做小红书最容易踩的5个坑" 而非 "教程帖"]
-角度: [具体切入点——什么让这条值得停下来看]
-视觉方向: [1句话描述配图/视频画面]
-备注: [时效、活动关联等]
+Post [n]
+Woche: [1-4] | Tag: [Mo–So] | Plattform: [Instagram/TikTok/YouTube Shorts/X]
+Säule: [Name] | Format: [Reel/Karussell/Story/Short/Text] | Ziel: [Reichweite/Interaktion/Conversion/Follower]
+Thema: [konkret, z. B. „5 Gründe, warum eure Gruppe nie weiß, wo sie essen soll“ statt „Tipp-Post“]
+Aufhänger: [warum bleibt man hier hängen?]
+Bildidee: [1 Satz zu Bild/Video]
+KI-Inhalt: [ja/nein]
+Notiz: [Timing, Bezug zu Aktion usw.]
 ```
 
-一次性构建全部帖子再呈现，不要逐条呈现。
+Alle Posts auf einmal erstellen und dann zeigen, nicht einzeln.
 
 ---
 
-## Phase 5 — 输出
+## Phase 5: Ausgabe
 
-### 1. 总览表
-| # | 周 | 日 | 平台 | 支柱 | 格式 | 选题 |
+### 1. Übersicht
+| # | Woche | Tag | Plattform | Säule | Format | Thema |
 |---|----|----|------|------|------|------|
-| 1 | W1 | 一 | 小红书 | 干货 | 轮播 | 新手做小红书最容易踩的5个坑 |
+| 1 | W1 | Mo | Instagram | Mehrwert | Karussell | 5 Gründe, warum eure Gruppe nie weiß, wo sie essen soll |
 
-### 2. 完整排期
-呈现所有帖子的完整详情。
+### 2. Vollständiger Plan
+Alle Posts mit allen Details.
 
-### 3. 保存文件
-保存到 `outputs/内容日历/content-calendar-YYYY-MM.md`。
+### 3. Speichern
+Als `outputs/content-kalender/content-kalender-JJJJ-MM.md` speichern (Pfad vorher mit `output_paths.py` prüfen).
 
-### 4. 下一步建议
+### 4. Nächste Schritte
 ```
-内容排期已保存。下一步：
-- 用 /social-content 为排期帖子生成文案
-- 用 /card-xiaohongshu 生成需要图文卡片的帖子
-- 本月帖子总数 / 需制作视频数 / 需制作图文卡片数
+Content-Kalender gespeichert. Weiter mit:
+- social-content: Texte für die geplanten Posts schreiben
+- card-xiaohongshu: Karussell-Karten für Instagram erstellen
+- Anzahl Posts gesamt / davon Videos / davon Karussells
 ```
 
 ---
 
-## Phase 6 — 调整
+## Phase 6: Anpassen
 
-呈现总览表后提供调整选项：替换选题、调整发布日期、增加活动/热点帖、调整支柱比例、为另一平台生成适配版本。调整后重新保存文件。
+Nach der Übersicht Optionen anbieten: Thema tauschen, Tag verschieben, Aktions- oder Trend-Post ergänzen,
+Säulenanteile ändern, Version für weitere Plattform erzeugen. Danach Datei neu speichern.
 
 ---
 
-## 运营备注
+## Praxisregeln
 
-- **活动帖优先锁定**——它们决定整月结构，其余内容围绕排列
-- **选题必须具体**——"教程帖"不是 brief，"新手发第一条笔记的完整检查清单"才是
-- **推广帖不超过 20%**——更多信任内容 = 更高转化
+- **Aktionen zuerst einplanen**: Sie bestimmen die Struktur des Monats.
+- **Themen müssen konkret sein**: „Tutorial“ ist kein Briefing, „Checkliste für den ersten Post auf TikTok“ schon.
+- **Promo höchstens 20 %**: Mehr Vertrauens-Content bringt mehr Conversion.
+- **Werbung kennzeichnen**: Bezahlte Kooperationen als „Anzeige“/„Werbung“ markieren.

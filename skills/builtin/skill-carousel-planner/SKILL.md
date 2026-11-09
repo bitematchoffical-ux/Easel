@@ -1,174 +1,180 @@
 ---
 name: skill-carousel-planner
 description: >-
-  规划轮播图/多图笔记的分页结构：封面 Hook、内容节奏、每页文案和视觉方向、CTA 设计，附互动评分。
-  当用户说"轮播图策划""多图笔记""图集结构""分页设计""九宫格怎么排""每页写什么""carousel"时使用。
-  本 SKILL 出分页结构与文案规划（策划层）；实际渲染卡片图用 card-xiaohongshu / xhs-note-creator。
+  Plant Karussells für Instagram, TikTok-Foto-Posts und LinkedIn: Cover-Hook, Ablauf, Text und Bildidee pro Karte,
+  CTA und Caption, mit Interaktionsbewertung. Verwenden, wenn der Nutzer ein Karussell, einen Swipe-Post oder
+  „was kommt auf welche Karte?“ planen will. Rendern danach mit card-xiaohongshu.
 layer: plan
 ---
 
-# 轮播图规划
+# Karussell planen
 
-> 规划多图笔记/轮播图的分页结构：封面 Hook、内容节奏、每页文案和视觉方向、CTA 设计，附互动潜力评分。
+> Plant die Kartenstruktur eines Karussells: Cover-Hook, Spannungsbogen, Text und Bildidee pro Karte, CTA, Caption und
+> eine Bewertung des Interaktionspotenzials. Texte auf Deutsch, außer die Zielgruppe braucht eine andere Sprache.
 
-**加载后立即开始规划流程，不做摘要或等待确认。**
+**Nach dem Laden sofort mit der Planung beginnen, nicht erst zusammenfassen oder auf Bestätigung warten.**
 
-**关键参考文件：**
-- `references/format-specs.md` -- 尺寸规范、页数限制、文字大小
-- `references/hook-library.md` -- 经过验证的封面 Hook 公式及互动数据
-- `references/scoring-system.md` -- 互动评分维度与阈值
+**Referenzdateien** (auf Chinesisch, Inhalte sinngemäß übertragen):
+- `references/format-specs.md`: Formate, Kartenzahl, Schriftgrößen
+- `references/hook-library.md`: bewährte Cover-Hooks mit Interaktionsdaten
+- `references/scoring-system.md`: Bewertungsdimensionen und Schwellen
 
-## 输入
+## Eingabe
 
-用户 prompt 中提供的主题和目标。可以是关键词、一句话描述，或详细 brief。
+Thema und Ziel aus der Nachricht: Stichwort, Satz oder ausführliches Briefing.
 
-## 输出
+## Ausgabe
 
-结构化轮播图规划文档，包含：封面文案、逐页分解、配文、评分卡、制作备注。
+Ein Planungsdokument mit Cover-Text, Karte-für-Karte-Aufbau, Caption, Bewertung und Produktionshinweisen.
 
-保存到 `outputs/主题名/carousel-brief.md`。
+Speichern unter `outputs/<Thema>/carousel-brief.md`.
 
-## 执行步骤
+## Ablauf
 
-### 第一步：确认上下文
+### Schritt 1: Kontext
 
-1. 从用户 prompt 中提取主题和目标（教育、转化、建立权威、娱乐）。
-2. 识别目标受众。
-3. 加载所有关键参考文件。
-4. 查阅 `references/hook-library.md`，找到与主题最匹配的高互动 Hook 类型。
+1. Thema und Ziel herausziehen (erklären, Conversion, Expertise, Unterhaltung).
+2. Zielgruppe bestimmen.
+3. Referenzdateien laden.
+4. In `references/hook-library.md` den Hook-Typ mit der besten Passung suchen.
 
-### 第二步：封面页 Hook
+### Schritt 2: Cover-Hook
 
-封面页遵循与短视频开头相同的规则：必须在 1 秒内打断滑动。
+Das Cover folgt denselben Regeln wie der Anfang eines Kurzvideos: Es muss das Weiterscrollen in 1 Sekunde stoppen.
 
-#### 封面 Hook 规则
+#### Regeln
 
-- 封面文字不超过 12 个字
-- 必须制造好奇缺口或情绪触发
-- 使用 `references/hook-library.md` 中经过验证的 6 个公式：
-  - **反常识：** "别再XX了"
-  - **数字清单：** "5 个毁掉XX的错误"
-  - **对比冲击：** 前后对比的视觉悬念
-  - **直击痛点：** "为什么你XX总是失败"（陈述式，不加问号）
-  - **颠覆声明：** "这会改变你的一切"
-  - **身份认同：** "XX 人必看"（收藏率 + 分享率高）
-- 字体必须大、加粗，在缩略图尺寸下也清晰可读
-- 封面不放 logo 或品牌标识（会削弱好奇心）
+- Höchstens 6–8 Wörter auf dem Cover
+- Neugierlücke oder emotionaler Auslöser
+- Bewährte Formeln:
+  - **Gegen die Erwartung:** „Hör auf, XY zu machen“
+  - **Zahlenliste:** „5 Fehler, die XY ruinieren“
+  - **Vorher/Nachher:** visuelle Spannung durch Vergleich
+  - **Schmerzpunkt:** „Warum XY bei dir immer scheitert“ (als Aussage, ohne Fragezeichen)
+  - **Große Behauptung:** „Das ändert, wie du XY machst“
+  - **Zugehörigkeit:** „Für alle, die XY“ (viele Saves und Shares)
+- Große, kräftige Schrift, auch als Vorschaubild lesbar
+- Kein Logo auf dem Cover (schwächt die Neugier)
 
-记录选定的 Hook 公式和封面文案。
+Gewählte Formel und Cover-Text notieren.
 
-### 第三步：分页结构
+### Schritt 3: Kartenstruktur
 
-按 **Hook > 内容铺垫 > 揭晓 > 行动号召** 弧线编排：
+Bogen **Hook → Hinführung → Auflösung → Aufruf**:
 
-| 页码 | 角色 | 规则 |
+| Karte | Rolle | Regel |
 |------|------|------|
-| 1 | Hook / 封面 | 不超过 12 字，好奇缺口，见第二步 |
-| 2-3 | 问题 / 铺垫 | 建立痛点或抛出问题 |
-| 4-7 | 内容 / 价值 | 每页一个要点，页面文字不超过 20 字 |
-| 8-9 | 揭晓 / 收获 | 交付核心洞察或转变 |
-| 末页 | 行动号召 | 收藏/分享/关注引导 |
+| 1 | Hook / Cover | höchstens 6–8 Wörter, Neugierlücke (Schritt 2) |
+| 2–3 | Problem / Hinführung | Schmerzpunkt aufbauen oder Frage stellen |
+| 4–7 | Inhalt / Mehrwert | ein Punkt pro Karte, höchstens ~15 Wörter Text |
+| 8–9 | Auflösung / Erkenntnis | Kernaussage oder Wandel liefern |
+| letzte | Aufruf | speichern / teilen / folgen / App laden |
 
-#### 每页内容规则
+#### Regeln je Karte
 
-- **每页只讲一个点。** 需要逗号就拆页。
-- **每页文字不超过 20 字**（文字叠层）。越少越好。
-- **视觉统一：** 全篇使用相同的背景风格、字体和配色。
-- **阅读动线：** 从上到下，从左到右。不散乱排布。
-- **翻页动力：** 每页必须制造让读者翻到下一页的理由。
+- **Ein Punkt pro Karte.** Braucht es ein Komma, auf zwei Karten aufteilen.
+- **Höchstens ~15 Wörter Text-Overlay.** Weniger ist besser.
+- **Einheitliche Optik:** gleicher Hintergrundstil, gleiche Schriften und Farben.
+- **Leserichtung:** oben nach unten, links nach rechts, nichts verstreut.
+- **Wisch-Anreiz:** Jede Karte gibt einen Grund, weiterzuwischen.
 
-逐页输出：
-1. 页码
-2. 页面文案（文字叠层，不超过 20 字）
-3. 视觉描述
-4. 翻页动力说明（读者为什么会翻到下一页）
+Pro Karte:
+1. Nummer
+2. Text-Overlay (höchstens ~15 Wörter)
+3. Bildbeschreibung
+4. Wisch-Anreiz (warum weiterwischen?)
 
-### 第四步：末页行动号召
+### Schritt 4: Abschluss-CTA
 
-末页决定帖子能否被收藏和转发。根据内容类型选择：
+Die letzte Karte entscheidet über Saves und Shares:
 
-| CTA 类型 | 适用场景 | 示例 |
+| CTA-Typ | Wann | Beispiel |
 |----------|----------|------|
-| 收藏引导 | 干货教程类 | "收藏备用" / "先码住" |
-| 分享引导 | 共鸣实用类 | "@你身边的XX" / "转给需要的人" |
-| 关注引导 | 系列内容 | "关注看更多" / "下期更新XX" |
-| 评论引导 | 观点讨论类 | "你是哪种？评论区告诉我" |
-| 私信引导 | 引流转化类 | "评论区回复'方案'领取完整版" |
+| Speichern | Tipps, Anleitungen | „Speichern für später“ |
+| Teilen | Nachvollziehbares, Nützliches | „Schick das deiner Freundesgruppe“ |
+| Folgen | Serien | „Folgen für Teil 2“ |
+| Kommentar | Meinungsthemen | „Welcher Typ bist du? Schreib's in die Kommentare“ |
+| DM/Keyword | Leads | „Kommentiere ‚LISTE‘ und ich schick sie dir“ |
+| Download | App/Produkt | „Link in Bio, kostenlos testen“ |
 
-CTA 必须具体。禁止使用空泛的"点击主页"作为主要 CTA。
+Der CTA muss konkret sein; ein vages „Schau auf mein Profil“ ist als Haupt-CTA verboten.
 
-### 第五步：配文
+### Schritt 5: Caption
 
-撰写与轮播图互补（不重复）的配文：
+Ergänzt das Karussell, wiederholt es nicht:
 
-- 第一句：独立于轮播图也能打的 Hook
-- 正文：展开轮播图中的某一点，加入个人视角
-- 结尾：与末页 CTA 呼应
-- 话题标签：3-5 个垂直标签，禁用泛标签（#生活 #日常 这类无效）
-- 配文长度：300-800 字（小红书最佳区间）
+- Erster Satz: eigener Hook, der auch ohne die Karten trägt (die ersten ~125 Zeichen sind ohne „mehr“ sichtbar)
+- Hauptteil: einen Punkt aus dem Karussell vertiefen, persönliche Sicht
+- Schluss: passt zum CTA der letzten Karte
+- Hashtags: 3–5 präzise Nischen-Hashtags, keine Allerwelts-Tags (#love #instagood bringen nichts)
+- Länge: Instagram 150–400 Wörter gut, TikTok-Foto-Post kürzer, LinkedIn bis ~1.300 Zeichen
+- KI-generierte Bilder oder Personen im Karussell → beim Export „Ja“ bei der KI-Frage
 
-### 第六步：互动评分
+### Schritt 6: Interaktionsbewertung
 
-使用 `references/scoring-system.md` 中的标准评分：
+Nach `references/scoring-system.md`:
 
-| 维度 | 权重 | 评分 (1-10) |
+| Dimension | Gewicht | Punkte (1–10) |
 |------|------|-------------|
-| Hook 强度 | 25% | |
-| 翻页节奏 / 翻页动力 | 20% | |
-| 价值密度 | 20% | |
-| CTA 有效性 | 15% | |
-| 视觉统一性 | 10% | |
-| 配文质量 | 10% | |
+| Hook-Stärke | 25 % | |
+| Wisch-Rhythmus / Anreiz | 20 % | |
+| Informationsdichte | 20 % | |
+| CTA-Wirkung | 15 % | |
+| Einheitliche Optik | 10 % | |
+| Caption-Qualität | 10 % | |
 
-**最低通过分：7.0 加权平均。**
+**Mindestens 7,0 im gewichteten Schnitt.**
 
-低于 7.0 时，定位最弱维度并修改后重新评分。
+Darunter die schwächste Dimension verbessern und neu bewerten.
 
-### 第七步：输出
+### Schritt 7: Speichern
 
-将以下内容保存到 `outputs/主题名/carousel-brief.md`：
+In `outputs/<Thema>/carousel-brief.md`:
 
 ```
-## 轮播图规划
+## Karussell-Plan
 
-**主题：** [主题]
-**目标：** [目标]
-**页数：** [数量]
-**Hook 公式：** [来自 hook-library.md 的公式名]
-**评分：** [X.X / 10]
+**Thema:** [Thema]
+**Ziel:** [Ziel]
+**Plattform / Format:** [z. B. Instagram, 4:5]
+**Karten:** [Anzahl]
+**Hook-Formel:** [Formel]
+**Bewertung:** [X,X / 10]
 
-### 逐页分解
+### Karte für Karte
 
-#### 第 1 页（封面）
-- 文案："[封面文案]"
-- 视觉：[描述]
+#### Karte 1 (Cover)
+- Text: „[Cover-Text]“
+- Bild: [Beschreibung]
 
-#### 第 2 页
-- 文案："[文案]"
-- 视觉：[描述]
-- 翻页动力：[为什么读者会翻到下一页]
+#### Karte 2
+- Text: „[Text]“
+- Bild: [Beschreibung]
+- Wisch-Anreiz: [warum weiterwischen]
 
 ...
 
-### 配文
-[完整配文]
+### Caption
+[vollständige Caption]
 
-### 制作备注
-- [设计说明、素材需求、字体/配色建议]
+### Produktionshinweise
+- [Design, benötigtes Material, Schrift/Farben, KI-Inhalt ja/nein]
 ```
 
-## Profile 感知
+Danach anbieten, die Karten mit `card-xiaohongshu` zu rendern.
 
-### 有 Profile
+## Profil-Bezug
 
-- 读取 `platform` 字段，按平台调整尺寸和排版规范（小红书 3:4 / 1:1；Instagram 4:5 / 1:1 为海外可选）
-- 读取 `tone` / `voice` 字段，调整封面文案和配文的语气风格
-- 读取 `audience` 字段，确保 Hook 和内容切入点与目标受众匹配
-- 读取 `positioning` 字段，确保内容围绕账号定位展开
-- 读取 `visual_style` 字段（如有），应用到视觉描述中
+### Mit Profil
 
-### 无 Profile
+- `platform`: Format je Plattform (Instagram 4:5 Standard, 3:4 oder 1:1 möglich; TikTok-Foto 9:16 oder 4:5; LinkedIn-Dokument 4:5 oder 1:1)
+- `tone`/`voice`: Ton von Cover und Caption
+- `audience`: Hook und Einstieg passend zur Zielgruppe
+- `positioning`: Inhalt an der Positionierung ausrichten
+- `visual_style` (falls vorhanden): in die Bildbeschreibungen übernehmen
 
-- 退回通用模式，默认小红书 3:4 尺寸
-- 使用中性语气生成
-- 在输出末尾附注："如提供账号 Profile，可适配平台风格和视觉调性"
+### Ohne Profil
+
+- Allgemeiner Modus, Standard Instagram 4:5
+- Neutraler Ton
+- Am Ende: „Mit einem Konto-Profil passe ich Plattform und Bildsprache genauer an.“

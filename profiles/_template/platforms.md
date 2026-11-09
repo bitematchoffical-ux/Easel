@@ -1,31 +1,27 @@
-# 平台运营
+# Plattformen
 
-<!-- 一个画像可以跨多个平台运营，每个平台有不同的适配要求 -->
+<!-- Ein Profil kann mehrere Plattformen bespielen; jede hat eigene Anforderungen.
+     Nicht genutzte Plattformen einfach löschen. -->
 
-## 抖音
+## Instagram
 
-<!-- 账号名 / 粉丝量级 / 内容形式（竖屏短视频）/ 平台特有规则 -->
-<!-- 不运营则删除此段 -->
+<!-- Kontoname / Follower-Größenordnung / Formate (Reels, Karussell 4:5, Stories) / Besonderheiten -->
+<!-- KI-Label: „KI-Label hinzufügen“ unter Erweiterte Einstellungen -->
 
-## 小红书
+## TikTok
 
-<!-- 账号名 / 粉丝量级 / 内容形式（图文+视频）/ 平台特有规则 -->
+<!-- Kontoname / Follower-Größenordnung / Formate (Hochformat 9:16, Foto-Modus) / Besonderheiten -->
+<!-- KI-Label: Schalter „KI-generierte Inhalte“ -->
 
-## B 站
+## YouTube Shorts
 
-<!-- 账号名 / 粉丝量级 / 内容形式（中长视频）/ 平台特有规则 -->
+<!-- Kanalname / Abonnenten / Formate (vertikale Kurzvideos) / Besonderheiten -->
+<!-- KI-Angabe: „Veränderte oder synthetische Inhalte“ beim Upload -->
 
-## 知乎
+## X
 
-<!-- 账号名 / 粉丝量级 / 内容形式（图文回答）/ 平台特有规则 -->
+<!-- Kontoname / Follower-Größenordnung / Formate (kurze Posts, max. 280 Zeichen) -->
 
-## 微信公众号
+## LinkedIn
 
-<!-- 账号名 / 粉丝量级 / 内容形式（长文）/ 平台特有规则 -->
-
-## 今日头条
-
-<!-- 账号名 / 粉丝量级 / 内容形式（图文文章，偏资讯科普）/ 垂类标签 / 平台特有规则 -->
-<!-- 头条标题≤30 字，正文重信息增量；领域是否属高风险类目（医疗/财经/时政）也记在这里 -->
-
-<!-- 按需增减平台，只保留实际运营的 -->
+<!-- Seite oder Profil / Follower / Formate (Text, Dokument-Karussell) -->

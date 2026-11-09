@@ -46,6 +46,13 @@ _ZH_PUNCT = "，。！？；、：,.!?;:）】》」"
 # 硬切标点（句末，优先在这里断）
 _ZH_END_PUNCT = "。！？!?…"
 
+# Postloop: Zeilenlänge nach Sprache. 42 Zeichen ist die übliche Grenze für lateinische Untertitel.
+_CJK_LANGS = {"zh", "ja", "ko", "yue"}
+
+
+def default_line_chars(language: str | None) -> int:
+    return 18 if (language or "").split("-")[0].lower() in _CJK_LANGS else 42
+
 
 # ── 基础工具 ──────────────────────────────────────────────────────────
 def _die(msg: str, code: int = 1) -> None:
@@ -136,7 +143,9 @@ def _wrap_line(text: str, max_chars: int) -> str:
         if len(cur) >= max_chars and (ch in _ZH_PUNCT or _is_ascii_space(ch)):
             lines.append(cur.strip())
             cur = ""
-        elif len(cur) >= int(max_chars * 1.5):
+        elif len(cur) >= int(max_chars * 1.5) and " " not in text:
+            # Postloop: harter Umbruch nur bei Texten ohne Leerzeichen (CJK);
+            # deutsche/englische Wörter werden nie mitten im Wort getrennt.
             lines.append(cur.strip())
             cur = ""
     if cur.strip():
@@ -162,9 +171,11 @@ def _split_long_segment(text: str, start: float, end: float,
     # 按句末标点切分成子句
     chunks: list[str] = []
     buf = ""
+    # Postloop: in Texten mit Leerzeichen (Deutsch/Englisch) auch am Punkt teilen
+    end_punct = _ZH_END_PUNCT + ("." if " " in text else "")
     for ch in text:
         buf += ch
-        if ch in _ZH_END_PUNCT and len(buf.strip()) >= max(4, max_chars // 2):
+        if ch in end_punct and len(buf.strip()) >= max(4, max_chars // 2):
             chunks.append(buf.strip())
             buf = ""
     if buf.strip():
@@ -295,6 +306,8 @@ def _transcribe_audio(audio: Path, a) -> tuple[list[tuple[float, float, str]], d
     )
     detected = getattr(tinfo, "language", None)
     duration = getattr(tinfo, "duration", None)
+    if a.max_line_chars is None:
+        a.max_line_chars = default_line_chars(detected or language)
     print(f"[asr] 检测语言={detected} 时长={duration}s，开始转录……", file=sys.stderr)
 
     cues: list[tuple[float, float, str]] = []
@@ -379,7 +392,7 @@ def cmd_info(a) -> int:
     print("  - zh    中文 / en 英文 / ja 日文 / ko 韩文 ...（ISO 639-1 码）")
     print("\n输出格式（--format）：srt（默认）/ ass / txt / json")
     print("\nCPU 友好参数：--device cpu --compute-type int8")
-    print("每行字数：--max-line-chars（中文默认 18，超长自动断行/拆条）")
+    print("Zeichen pro Zeile: --max-line-chars (Standard: 18 für zh/ja/ko, 42 für alle anderen Sprachen)")
     print("\n模型下载走 HuggingFace，需外网代理；脚本会自动注入默认代理，")
     print("也可先 export https_proxy=... http_proxy=... 覆盖。")
     return 0
@@ -446,8 +459,8 @@ def _add_transcribe_args(p) -> None:
                    help="int8 / float16 / float32（CPU 建议 int8）")
     p.add_argument("--res", help="ASS 字幕目标视频宽高（宽x高，如 1080x1920/1920x1080）；"
                    "缺省时视频输入自动探测、纯音频按竖屏 1080x1920。字号/边距按此自适应")
-    p.add_argument("--max-line-chars", type=int, default=18,
-                   help="字幕每行字数，超长自动断行（中文默认 18）")
+    p.add_argument("--max-line-chars", type=int, default=None,
+                   help="Zeichen pro Untertitelzeile; Standard nach Sprache: 18 (zh/ja/ko), sonst 42")
     p.add_argument("--beam-size", type=int, default=5, help="beam search 宽度（默认 5）")
 
 

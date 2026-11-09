@@ -1,13 +1,13 @@
-# 身份定位
+# Identität und Positionierung
 
-## 我是谁
+## Wer bin ich
 
-<!-- 一句话描述这个画像的核心定位 -->
+<!-- Ein Satz zur Kernpositionierung dieses Profils -->
 
-## 差异化
+## Alleinstellung
 
-<!-- 跟同类型账号比，我的独特之处是什么 -->
+<!-- Was unterscheidet mich von ähnlichen Konten? -->
 
-## 内容方向
+## Inhaltsrichtung
 
-<!-- 主要做什么类型的内容 -->
+<!-- Welche Arten von Inhalten mache ich hauptsächlich? -->

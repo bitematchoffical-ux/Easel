@@ -1,13 +1,14 @@
-# 偏好与红线
+# Vorlieben und Tabus
 
-## 要做的
+## Machen
 
-<!-- 明确想要坚持的方向和原则 -->
+<!-- Richtungen und Prinzipien, an denen wir festhalten -->
 
-## 不做的
+## Nicht machen
 
-<!-- 明确拒绝的内容类型、话题、合作方式 -->
+<!-- Ausgeschlossene Inhalte, Themen, Kooperationsformen -->
 
-## 合规底线
+## Rechtliche Grenzen
 
-<!-- 绝对不能碰的：虚假宣传、医疗承诺、导流违规等 -->
+<!-- Absolut tabu: Irreführung, Heilversprechen, versteckte Werbung (immer „Anzeige“/„Werbung“ kennzeichnen),
+     KI-Inhalte ohne Kennzeichnung, Jugendschutz -->

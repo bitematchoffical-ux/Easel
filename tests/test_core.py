@@ -314,10 +314,10 @@ def test_persona_gate_low_score_warns_but_never_blocks_publish():
 
 def test_persona_skill_prioritizes_positioning_and_caps_cross_niche_scores():
     skill = (PROJECT_ROOT / "skills/builtin/skill-persona-check/SKILL.md").read_text(encoding="utf-8")
-    assert "账号定位与内容赛道" in skill and "| 30% |" in skill
-    assert "内容形式一致性" in skill and "目标受众匹配" in skill
-    assert "总分最高 59" in skill
-    assert "publish_allowed` 始终为 `true" in skill
+    assert "Positionierung und Themenfeld" in skill and "| 30 % |" in skill
+    assert "| **Format** |" in skill and "| **Zielgruppe** |" in skill
+    assert "Gesamt höchstens 59" in skill
+    assert "`publish_allowed` ist immer `true`" in skill
 
 
 # ---- Web: 输出树结构（相对路径 + kind）----
