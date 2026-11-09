@@ -6,18 +6,18 @@ import { renderMarkdown } from '../lib/sanitize';
 import { IconOutputs, IconImage, IconVideo, IconMusic, IconFile, IconFolder, IconRefresh, IconChevron, IconTrash } from './icons';
 
 const FILTERS: { key: string; label: string }[] = [
-  { key: 'all', label: '全部' },
-  { key: 'image', label: '图片' },
-  { key: 'video', label: '视频' },
-  { key: 'audio', label: '音频' },
-  { key: 'text', label: '文档' },
+  { key: 'all', label: 'Alle' },
+  { key: 'image', label: 'Bild' },
+  { key: 'video', label: 'Video' },
+  { key: 'audio', label: 'Audio' },
+  { key: 'text', label: 'Dokument' },
 ];
 
 const KIND_LABEL: Record<string, string> = {
-  article: '文章', 'xhs-note': '小红书', video: '视频', cards: '卡片',
-  poster: '海报', audio: '音频', other: '其他',
+  article: 'Artikel', 'xhs-note': 'Xiaohongshu', video: 'Video', cards: 'Karte',
+  poster: 'Poster', audio: 'Audio', other: 'Sonstiges',
 };
-const STATUS_LABEL: Record<string, string> = { draft: '草稿', ready: '待发', published: '已发' };
+const STATUS_LABEL: Record<string, string> = { draft: 'Entwurf', ready: 'Geplant', published: 'Gepostet' };
 const STATUS_COLOR: Record<string, string> = { draft: 'var(--text-tertiary)', ready: 'var(--amber)', published: 'var(--green)' };
 
 const badge: CSSProperties = {
@@ -38,8 +38,8 @@ function kindIcon(kind: string | undefined, size = 30) {
 }
 const isHtml = (name: string) => /\.html?$/i.test(name);
 const kindLabel = (f: OutputNode) =>
-  f.kind === 'text' ? (isHtml(f.name) ? '卡片' : '文档')
-    : f.kind === 'image' ? '图片' : f.kind === 'video' ? '视频' : f.kind === 'audio' ? '音频' : '文件';
+  f.kind === 'text' ? (isHtml(f.name) ? 'Karte' : 'Dokument')
+    : f.kind === 'image' ? 'Bild' : f.kind === 'video' ? 'Video' : f.kind === 'audio' ? 'Audio' : 'Datei';
 
 /** 递归找目录下第一张图/视频作封面缩略图。 */
 function firstMedia(node: OutputNode): OutputNode | null {
@@ -93,7 +93,7 @@ export default function OutputsPage({ jumpPath, onJumpHandled }: OutputsPageProp
 
   const load = useCallback(() => {
     setTreeError('');
-    fetchOutputs().then(setRoots).catch(() => setTreeError('加载产物列表失败'));
+    fetchOutputs().then(setRoots).catch(() => setTreeError('Ergebnisliste konnte nicht geladen werden'));
   }, []);
   useEffect(() => { load(); }, [load]);
 
@@ -129,14 +129,14 @@ export default function OutputsPage({ jumpPath, onJumpHandled }: OutputsPageProp
   const remove = useCallback(async (node: OutputNode, e: React.MouseEvent) => {
     e.stopPropagation();
     const isDir = node.type === 'dir';
-    const label = isDir ? `项目/文件夹「${node.meta?.title || node.name}」及其全部内容` : `文件「${node.name}」`;
-    if (!window.confirm(`确定删除${label}？\n此操作不可恢复。`)) return;
+    const label = isDir ? `Projekt/Ordner „${node.meta?.title || node.name}“ mit gesamtem Inhalt` : `Datei „${node.name}“`;
+    if (!window.confirm(`Wirklich löschen: ${label}?\nDas kann nicht rückgängig gemacht werden.`)) return;
     try {
       await deleteOutput(node.path);
       setSelected((cur) => (cur?.path === node.path ? null : cur));
       load();
     } catch (err) {
-      alert((err as Error).message || '删除失败');
+      alert((err as Error).message || 'Löschen fehlgeschlagen');
     }
   }, [load]);
 
@@ -186,14 +186,14 @@ export default function OutputsPage({ jumpPath, onJumpHandled }: OutputsPageProp
             opaque origin，脚本跑得起来但访问不到本站，安全。(修复：内嵌预览里复制按钮点了没反应) */}
         <iframe src={`${url}?v=${selected.mtime ?? 0}`} title={selected.name} sandbox="allow-scripts" allow="clipboard-write"
           style={{ width: '100%', height: '68vh', border: '1px solid var(--border)', borderRadius: 'var(--radius)', background: '#fff' }} />
-        <div style={{ marginTop: 8 }}><a href={url} target="_blank" rel="noreferrer" style={{ color: 'var(--accent-start)', fontSize: 13 }}>在新标签打开 ↗</a></div>
+        <div style={{ marginTop: 8 }}><a href={url} target="_blank" rel="noreferrer" style={{ color: 'var(--accent-start)', fontSize: 13 }}>In neuem Tab öffnen ↗</a></div>
       </>
     );
     if (selected.kind === 'text') {
-      if (loading) return <div className="loading"><div className="spinner" />加载中…</div>;
+      if (loading) return <div className="loading"><div className="spinner" />Wird geladen …</div>;
       return <div className="outputs-viewer-content" dangerouslySetInnerHTML={{ __html: renderMarkdown(content) }} />;
     }
-    return <div style={{ color: 'var(--text-secondary)', fontSize: 14 }}>无法预览。<a href={url} download style={{ color: 'var(--accent-start)' }}>下载 {selected.name}</a></div>;
+    return <div style={{ color: 'var(--text-secondary)', fontSize: 14 }}>Keine Vorschau möglich.<a href={url} download style={{ color: 'var(--accent-start)' }}>Herunterladen {selected.name}</a></div>;
   };
 
   /** 项目/文件夹卡片：顶层项目用展示头（标题/平台/状态/封面），嵌套子文件夹回退朴素样式。 */
@@ -203,8 +203,8 @@ export default function OutputsPage({ jumpPath, onJumpHandled }: OutputsPageProp
     return (
       <div key={d.path} className="card card-hover gcard" onClick={() => enterDir(d.name)}>
         <div className="gcard-thumb">
-          <span className="gcard-kind">{m?.kind ? (KIND_LABEL[m.kind] || m.kind) : '文件夹'}</span>
-          <button className="gcard-del" title="删除" onClick={(e) => remove(d, e)}><IconTrash size={14} /></button>
+          <span className="gcard-kind">{m?.kind ? (KIND_LABEL[m.kind] || m.kind) : 'Ordner'}</span>
+          <button className="gcard-del" title="Löschen" onClick={(e) => remove(d, e)}><IconTrash size={14} /></button>
           {cover ? <Thumb f={cover} big /> : <div className="gcard-ph"><IconFolder size={38} /></div>}
         </div>
         <div className="gcard-meta">
@@ -214,7 +214,7 @@ export default function OutputsPage({ jumpPath, onJumpHandled }: OutputsPageProp
           <div className="gcard-sub" style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
             {m?.platform && <span style={badge}>{m.platform}</span>}
             {m?.status && <span style={statusBadge(m.status)}>{STATUS_LABEL[m.status] || m.status}</span>}
-            <span>{d.fileCount ?? 0} 个文件</span>
+            <span>{d.fileCount ?? 0}  Dateien</span>
           </div>
         </div>
       </div>
@@ -225,7 +225,7 @@ export default function OutputsPage({ jumpPath, onJumpHandled }: OutputsPageProp
     <div key={f.path} className="card card-hover gcard" onClick={() => open(f)}>
       <div className="gcard-thumb">
         <span className="gcard-kind">{kindLabel(f)}</span>
-        <button className="gcard-del" title="删除" onClick={(e) => remove(f, e)}><IconTrash size={14} /></button>
+        <button className="gcard-del" title="Löschen" onClick={(e) => remove(f, e)}><IconTrash size={14} /></button>
         <Thumb f={f} />
       </div>
       <div className="gcard-meta">
@@ -242,7 +242,7 @@ export default function OutputsPage({ jumpPath, onJumpHandled }: OutputsPageProp
         <div>
           <h1 className="page-title">
             <IconOutputs size={21} />
-            <span className="crumb" onClick={() => goTo(0)}>内容库</span>
+            <span className="crumb" onClick={() => goTo(0)}>Inhaltsbibliothek</span>
             {stack.map((name, i) => (
               <span key={i}>
                 <span className="crumb-sep">/</span>
@@ -254,11 +254,11 @@ export default function OutputsPage({ jumpPath, onJumpHandled }: OutputsPageProp
           </h1>
           <p className="page-subtitle">
             {atTop
-              ? `按项目归档，共 ${roots.length} 个项目。点项目进去看成品与素材。`
-              : `${dirs.length} 个文件夹 · ${files.length} 个文件（可继续点开子文件夹）`}
+              ? `Nach Projekten sortiert, insgesamt ${roots.length} Projekte. Projekt öffnen, um Ergebnisse und Material zu sehen.`
+              : `${dirs.length} Ordner · ${files.length} Dateien (Unterordner lassen sich öffnen)`}
           </p>
         </div>
-        <button className="btn btn-sm" onClick={load}><IconRefresh size={14} /> 刷新</button>
+        <button className="btn btn-sm" onClick={load}><IconRefresh size={14} /> Aktualisieren</button>
       </div>
 
       {treeError && <div className="notice-error">{treeError}</div>}
@@ -274,7 +274,7 @@ export default function OutputsPage({ jumpPath, onJumpHandled }: OutputsPageProp
       {stack.length > 0 && (
         <div className="gallery-filters">
           <button className="btn btn-sm" onClick={() => goTo(stack.length - 1)}>
-            <span style={{ transform: 'rotate(180deg)', display: 'inline-flex' }}><IconChevron size={13} /></span> 返回上级
+            <span style={{ transform: 'rotate(180deg)', display: 'inline-flex' }}><IconChevron size={13} /></span> Eine Ebene höher
           </button>
           {files.length > 0 && FILTERS.map((f) => (
             <button key={f.key} className={`chip ${filter === f.key ? 'active' : ''}`} onClick={() => setFilter(f.key)}>{f.label}</button>
@@ -285,7 +285,7 @@ export default function OutputsPage({ jumpPath, onJumpHandled }: OutputsPageProp
       {empty && !treeError ? (
         <div className="empty-state" style={{ height: 300 }}>
           <div className="empty-icon"><IconOutputs size={44} /></div>
-          <p>{atTop ? '还没有产物——去对话或技能库生成第一条内容吧' : '这个文件夹是空的'}</p>
+          <p>{atTop ? 'Noch keine Ergebnisse. Erzeuge im Chat oder in der Skill-Bibliothek den ersten Inhalt.' : 'Dieser Ordner ist leer'}</p>
         </div>
       ) : hasSplit ? (
         <>
@@ -293,7 +293,7 @@ export default function OutputsPage({ jumpPath, onJumpHandled }: OutputsPageProp
           {deliverableFiles.length > 0 && (
             <>
               <div className="section-label" style={{ margin: '6px 0 8px', fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)' }}>
-                成品 · {deliverableFiles.length}
+                Ergebnisse · {deliverableFiles.length}
               </div>
               <div className="gallery-grid">{deliverableFiles.map(renderFile)}</div>
             </>
@@ -302,7 +302,7 @@ export default function OutputsPage({ jumpPath, onJumpHandled }: OutputsPageProp
           {(dirs.length > 0 || restFiles.length > 0) && (
             <>
               <div className="section-label" style={{ margin: '18px 0 8px', fontSize: 13, fontWeight: 600, color: 'var(--text-tertiary)' }}>
-                素材 / 过程文件
+                Material / Zwischendateien
               </div>
               <div className="gallery-grid">
                 {dirs.map(renderDir)}
@@ -330,7 +330,7 @@ export default function OutputsPage({ jumpPath, onJumpHandled }: OutputsPageProp
             </div>
             <div className="drawer-body">{preview()}</div>
             <div style={{ padding: '10px 16px', borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'flex-end' }}>
-              <button className="btn btn-sm btn-danger" onClick={(e) => remove(selected, e)}><IconTrash size={13} /> 删除此文件</button>
+              <button className="btn btn-sm btn-danger" onClick={(e) => remove(selected, e)}><IconTrash size={13} /> Diese Datei löschen</button>
             </div>
           </div>
         </div>

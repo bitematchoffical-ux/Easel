@@ -35,12 +35,12 @@ interface SidebarProps {
 
 // 主导航（精简）；热点雷达/选题库/内容日历/发布中心 收进「工作台」，不占侧栏
 const NAV: { page: Page; Icon: ComponentType<{ size?: number }>; label: string }[] = [
-  { page: 'dashboard', Icon: IconDashboard, label: '工作台' },
-  { page: 'chat', Icon: IconChat, label: '对话' },
-  { page: 'skills', Icon: IconSkills, label: '技能库' },
-  { page: 'outputs', Icon: IconOutputs, label: '内容库' },
-  { page: 'accounts', Icon: IconAccounts, label: '账号' },
-  { page: 'profile', Icon: IconProfile, label: '画像' },
+  { page: 'dashboard', Icon: IconDashboard, label: 'Arbeitsbereich' },
+  { page: 'chat', Icon: IconChat, label: 'Chat' },
+  { page: 'skills', Icon: IconSkills, label: 'Skills' },
+  { page: 'outputs', Icon: IconOutputs, label: 'Inhaltsbibliothek' },
+  { page: 'accounts', Icon: IconAccounts, label: 'Konten' },
+  { page: 'profile', Icon: IconProfile, label: 'Profile' },
 ];
 
 export default function Sidebar({
@@ -102,13 +102,13 @@ export default function Sidebar({
       >
         <span className="session-item-title">{s.title}</span>
         <div className="session-actions">
-          <button className="session-act" title="重命名"
+          <button className="session-act" title="Umbenennen"
             onClick={(e) => { e.stopPropagation(); startRename(s); }}><IconEdit size={14} /></button>
-          <button className="session-act" title={isArchived ? '取消归档' : '归档'}
+          <button className="session-act" title={isArchived ? 'Aus Archiv holen' : 'Archivieren'}
             onClick={(e) => { e.stopPropagation(); onSessionArchive(s.id, !isArchived); }}>
             {isArchived ? <IconUnarchive size={14} /> : <IconArchive size={14} />}
           </button>
-          <button className="session-act danger" title="删除"
+          <button className="session-act danger" title="Löschen"
             onClick={(e) => { e.stopPropagation(); onSessionDelete(s.id); }}><IconTrash size={14} /></button>
         </div>
       </div>
@@ -123,12 +123,12 @@ export default function Sidebar({
           <h1>Postloop</h1>
           <ThemeToggle />
         </div>
-        <SettingsSelect className="persona-control" label="选择用户画像"
-          title="选择用户画像（一个对话对应一个画像：切换会新建一个对话）"
+        <SettingsSelect className="persona-control" label="Profil wählen"
+          title="Profil wählen (ein Chat = ein Profil; ein Wechsel startet einen neuen Chat)"
           value={selectedPersona}
-          options={[{ value: '', label: '通用模式' },
+          options={[{ value: '', label: 'Allgemeiner Modus' },
             ...personas.map(p => ({ value: p.name, label: p.name })),
-            { value: '__new__', label: '+ 新建画像…' }]}
+            { value: '__new__', label: '+ Neues Profil …' }]}
           onChange={(value) => {
             if (value === '__new__') { onNewProfile(); return; }
             onPersonaChange(value);
@@ -150,9 +150,9 @@ export default function Sidebar({
 
       <div className="sidebar-section">
         <div className="sidebar-section-header">
-          <span className="sidebar-section-title">对话</span>
-          <button className="new-chat-btn" onClick={onNewChat} title="新建对话">
-            <IconNewChat size={13} /> 新对话
+          <span className="sidebar-section-title">Chat</span>
+          <button className="new-chat-btn" onClick={onNewChat} title="Neuer Chat">
+            <IconNewChat size={13} /> Neuer Chat
           </button>
         </div>
         {active.map((s) => renderItem(s, false))}
@@ -161,7 +161,7 @@ export default function Sidebar({
           <>
             <div className="archived-header" onClick={() => setShowArchived((v) => !v)}>
               <span className={`archived-chevron ${showArchived ? 'open' : ''}`}><IconChevron size={12} /></span>
-              已归档 · {archived.length}
+              Archiviert · {archived.length}
             </div>
             {showArchived && archived.map((s) => renderItem(s, true))}
           </>
@@ -171,12 +171,12 @@ export default function Sidebar({
       <div className="sidebar-status">
         <span className={`status-dot ${gatewayStatus === 'connected' ? '' : 'offline'}`} />
         <span className="sidebar-status-text">{gatewayStatus === 'connected'
-          ? (apiDirect ? '仅聊天模式已配置' : agentRuntime !== 'openclaw' ? `${agentRuntime} CLI 已安装` : '网关已连接')
+          ? (apiDirect ? 'Nur-Chat-Modus eingerichtet' : agentRuntime !== 'openclaw' ? `${agentRuntime} CLI installiert` : 'Gateway verbunden')
           : gatewayStatus === 'disconnected'
-            ? (apiDirect ? 'API 配置不完整' : agentRuntime !== 'openclaw' ? `${agentRuntime} CLI 未配置` : '网关离线')
-            : '连接中…'}</span>
-        <button className="settings-gear" onClick={onOpenSettings} title="设置（模型 · 环境 · 更多）">
-          <IconGear size={13} /> 设置
+            ? (apiDirect ? 'API-Einstellungen unvollständig' : agentRuntime !== 'openclaw' ? `${agentRuntime} CLI nicht eingerichtet` : 'Gateway offline')
+            : 'Verbinde …'}</span>
+        <button className="settings-gear" onClick={onOpenSettings} title="Einstellungen (Modelle · Umgebung · Mehr)">
+          <IconGear size={13} /> Einstellungen
         </button>
       </div>
     </div>

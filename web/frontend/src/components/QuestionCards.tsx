@@ -91,8 +91,8 @@ function QuestionCard({ question, onAnswered, onClosed }: { question: ChatQuesti
       if (!res.ok && (res.expired || (res.status && res.status !== 'pending'))) {
         setClosed(res.status || 'expired');
         onClosed?.(res.status || 'expired');
-        setError('该问题已过期或关闭。若仍需补充，请在聊天输入框发送答复。');
-      } else if (!res.ok) setError(res.error || '提交失败');
+        setError('Diese Frage ist abgelaufen oder geschlossen. Wenn noch etwas fehlt, bitte im Chatfeld antworten.');
+      } else if (!res.ok) setError(res.error || 'Senden fehlgeschlagen');
       else onAnswered();
     } catch (e) {
       setError(String(e));
@@ -105,9 +105,9 @@ function QuestionCard({ question, onAnswered, onClosed }: { question: ChatQuesti
     <div className="message-row assistant">
       <div className="msg-col assistant" style={{ maxWidth: '80%' }}>
         <div className="question-card">
-          {expired ? <div className="question-card__hint">该问题已过期或关闭，无法再提交。请在聊天输入框发送补充答复。</div>
+          {expired ? <div className="question-card__hint">Diese Frage ist abgelaufen oder geschlossen und kann nicht mehr beantwortet werden. Bitte im Chatfeld ergänzen.</div>
             : typeof question.expiresAtMs === 'number' && <div className="question-card__hint">
-              网关截止时间：{new Date(question.expiresAtMs).toLocaleString()} · 剩余约 {Math.max(0, Math.ceil((question.expiresAtMs - now) / 60000))} 分钟（可能提前关闭）
+              Frist des Gateways: {new Date(question.expiresAtMs).toLocaleString()} · noch etwa  {Math.max(0, Math.ceil((question.expiresAtMs - now) / 60000))}  Minuten (kann früher schließen)
             </div>}
           {items.map((it, idx) => {
             const options: { label: string; description?: string }[] = it.options || [];
@@ -119,8 +119,8 @@ function QuestionCard({ question, onAnswered, onClosed }: { question: ChatQuesti
                 {idx > 0 && <div className="question-card__divider" />}
                 {it.header && <div className="question-card__chip">{it.header}</div>}
                 <div className="question-card__title">
-                  {it.question || '请选择'}
-                  {it.multiSelect && <span className="question-card__multi">可多选</span>}
+                  {it.question || 'Bitte wählen'}
+                  {it.multiSelect && <span className="question-card__multi">Mehrfachauswahl</span>}
                 </div>
                 <div className="question-card__options">
                   {options.map((opt) => (
@@ -136,15 +136,15 @@ function QuestionCard({ question, onAnswered, onClosed }: { question: ChatQuesti
                     <button key={`custom-${v}`}
                       className="question-card__option question-card__option--selected"
                       disabled={locked}
-                      title="点击移除"
+                      title="Zum Entfernen klicken"
                       onClick={() => removeCustom(it, v)}>
                       <strong>{v}</strong>
-                      <span>自定义 · 点击移除</span>
+                      <span>Eigene Angabe · zum Entfernen klicken</span>
                     </button>
                   ))}
                   <button className="question-card__other" disabled={locked}
                     onClick={() => setShowCustom((s) => ({ ...s, [it.questionId]: !s[it.questionId] }))}>
-                    {ctl ? '收起自定义输入' : '自行输入…'}
+                    {ctl ? 'Eigene Eingabe einklappen' : 'Selbst eingeben …'}
                   </button>
                 </div>
                 {ctl && (
@@ -153,12 +153,12 @@ function QuestionCard({ question, onAnswered, onClosed }: { question: ChatQuesti
                       type="text"
                       disabled={locked}
                       value={custom[it.questionId] || ''}
-                      placeholder="输入你的答案"
+                      placeholder="Deine Antwort"
                       onChange={(e) => setCustom((c) => ({ ...c, [it.questionId]: e.target.value }))}
                     />
                     <button disabled={locked || !(custom[it.questionId] || '').trim()}
                       onClick={() => fillCustom(it)}>
-                      填入
+                      Übernehmen
                     </button>
                   </div>
                 )}
@@ -171,19 +171,19 @@ function QuestionCard({ question, onAnswered, onClosed }: { question: ChatQuesti
             <div className="question-card__actions">
               <button className="question-card__submit" disabled={locked || !allAnswered}
                 onClick={() => void submit()}>
-                提交
+                Senden
               </button>
             </div>
           ) : (
             allAnswered && !locked && (
               <div className="question-card__actions">
                 <button className="question-card__submit" disabled={locked} onClick={() => void submit()}>
-                  全部已选，提交
+                  Alles ausgewählt, senden
                 </button>
               </div>
             )
           )}
-          {busy && <div className="question-card__hint">已提交，Agent 继续处理中…</div>}
+          {busy && <div className="question-card__hint">Gesendet, der Agent arbeitet weiter …</div>}
           {error && <div className="question-card__hint question-card__error">{error}</div>}
         </div>
       </div>

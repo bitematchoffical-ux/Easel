@@ -6,14 +6,14 @@ import { IconProfile, IconPlus } from './icons';
 
 // 粉丝量级：把粉丝数映射成人话档位（画像里“粉丝量级”一栏要的是量级而非精确值）
 function fanTier(n: number): string {
-  if (n <= 0) return '新号 / 0';
-  if (n < 500) return '冷启动 <500';
-  if (n < 1000) return '数百';
-  if (n < 5000) return '千级';
-  if (n < 10000) return '数千';
-  if (n < 100000) return '万级';
-  if (n < 1000000) return '十万级';
-  return '百万+';
+  if (n <= 0) return 'Neues Konto / 0';
+  if (n < 500) return 'Start <500';
+  if (n < 1000) return 'Einige Hundert';
+  if (n < 5000) return 'Tausend+';
+  if (n < 10000) return 'Mehrere Tausend';
+  if (n < 100000) return '10.000+';
+  if (n < 1000000) return '100.000+';
+  return '1 Mio.+';
 }
 
 // 用注释围栏包住自动抓取段，重复抓取只替换该段、不动用户手写内容（幂等）
@@ -27,15 +27,15 @@ function buildWechatBlock(a: AccountAnalytics): string {
   const tops = [...new Set(a.notes.map((n) => n.title).filter(Boolean))].slice(0, 3);
   const stamp = new Date().toLocaleString('zh-CN', { hour12: false });
   const lines = [
-    `### 微信公众号（自动抓取 · ${stamp}）`,
+    `### WeChat-Konto (automatisch abgerufen · ${stamp})`,
     '',
-    `- **粉丝量级**：${fans}（${fanTier(fans)}）`,
-    `- **内容形式**：图文推文（公众号文章）；已发表 ${posts} 篇${reads ? `，累计阅读 ${reads}` : ''}`,
+    `- **Follower**: ${fans} (${fanTier(fans)})`,
+    `- **Format**: Artikel; veröffentlicht ${posts} Beiträge${reads ? `, Aufrufe gesamt ${reads}` : ''}`,
   ];
   if (a.metrics?.length) {
-    lines.push(`- **后台数据**：${a.metrics.map((m) => `${m.label} ${m.value}`).join(' · ')}`);
+    lines.push(`- **Backend-Daten**: ${a.metrics.map((m) => `${m.label} ${m.value}`).join(' · ')}`);
   }
-  if (tops.length) lines.push(`- **代表内容**：${tops.join('｜')}`);
+  if (tops.length) lines.push(`- **Beispielinhalte**: ${tops.join('｜')}`);
   return lines.join('\n');
 }
 
@@ -58,12 +58,12 @@ interface ProfilePageProps {
 }
 
 const DIM_META: Record<string, { label: string; icon: string }> = {
-  'identity.md': { label: '身份定位', icon: '🪪' },
-  'style.md': { label: '内容风格', icon: '🎨' },
-  'audience.md': { label: '目标受众', icon: '👥' },
-  'platforms.md': { label: '平台运营', icon: '📱' },
-  'preferences.md': { label: '偏好与红线', icon: '⚖️' },
-  'memory.md': { label: '经验沉淀', icon: '🧠' },
+  'identity.md': { label: 'Identität und Positionierung', icon: '🪪' },
+  'style.md': { label: 'Stil', icon: '🎨' },
+  'audience.md': { label: 'Zielgruppe', icon: '👥' },
+  'platforms.md': { label: 'Plattformen', icon: '📱' },
+  'preferences.md': { label: 'Vorlieben und Tabus', icon: '⚖️' },
+  'memory.md': { label: 'Erfahrungen', icon: '🧠' },
 };
 
 export default function ProfilePage(props: ProfilePageProps) {
@@ -81,7 +81,7 @@ export default function ProfilePage(props: ProfilePageProps) {
     fetchPersonas().then((list) => {
       if (!ignore) setPersonas(list);
     }).catch(() => {
-      if (!ignore) setError('加载画像列表失败，请重试。');
+      if (!ignore) setError('Profile konnten nicht geladen werden, bitte erneut versuchen.');
     }).finally(() => { if (!ignore) setLoading(false); });
     return () => { ignore = true; };
   }, [revision]);
@@ -102,35 +102,35 @@ export default function ProfilePage(props: ProfilePageProps) {
     <div className="profile-page">
       <div className="profile-head">
         <div>
-          <h1 className="page-title">用户画像 <span className="profile-title-en">Profile</span></h1>
-          <p className="page-subtitle">管理你的定位、风格与受众，为每一种创作找到合适的身份。</p>
+          <h1 className="page-title">Konto-Profile <span className="profile-title-en">Profile</span></h1>
+          <p className="page-subtitle">Verwalte Positionierung, Stil und Zielgruppe und finde für jedes Projekt die passende Identität.</p>
         </div>
-        <button className="btn btn-primary" onClick={props.onNewProfile}><IconPlus size={15} /> 新建画像</button>
+        <button className="btn btn-primary" onClick={props.onNewProfile}><IconPlus size={15} /> Neues Profil</button>
       </div>
       <div className="profile-mode-note">
         <IconProfile size={18} />
-        <span>{props.persona ? `当前对话使用「${props.persona}」` : '当前对话为通用模式'}<small>查看和编辑画像不会切换对话身份。</small></span>
+        <span>{props.persona ? `Dieser Chat nutzt „${props.persona}“` : 'Dieser Chat läuft im allgemeinen Modus'}<small>Ansehen und Bearbeiten wechselt nicht das Profil des Chats.</small></span>
       </div>
-      {loading ? <div className="loading"><div className="spinner" />加载画像…</div>
-        : error ? <div className="empty-state"><p role="alert">{error}</p><button className="btn" onClick={() => setRevision((n) => n + 1)}>重新加载</button></div>
+      {loading ? <div className="loading"><div className="spinner" />Profile werden geladen …</div>
+        : error ? <div className="empty-state"><p role="alert">{error}</p><button className="btn" onClick={() => setRevision((n) => n + 1)}>Neu laden</button></div>
         : personas.length === 0 ? <div className="empty-state profile-empty">
           <div className="profile-avatar"><IconProfile size={28} /></div>
-          <h3>创建你的第一个画像</h3>
-          <p>记录账号定位、内容风格和偏好，让每次创作都更贴合你。</p>
-          <button className="btn btn-primary" onClick={props.onNewProfile}><IconPlus size={15} /> 新建画像</button>
+          <h3>Erstes Profil anlegen</h3>
+          <p>Halte Positionierung, Stil und Vorlieben fest, damit jeder Inhalt besser zu dir passt.</p>
+          <button className="btn btn-primary" onClick={props.onNewProfile}><IconPlus size={15} /> Neues Profil</button>
         </div> : <>
-          <div className="section-title">我的画像 · {personas.length}</div>
+          <div className="section-title">Meine Profile · {personas.length}</div>
           <div className="profile-grid">
             {personas.map((p) => <article className="card profile-summary" key={p.name}>
               <div className="profile-summary-head">
                 <div className="profile-avatar"><IconProfile size={22} /></div>
-                {p.name === props.persona && <span className="badge badge-accent">当前使用</span>}
+                {p.name === props.persona && <span className="badge badge-accent">Aktiv</span>}
               </div>
               <h2>{p.name}</h2>
-              <p className="profile-summary-description">{p.description || '还没有定位简介，打开画像完善你的创作方向。'}</p>
+              <p className="profile-summary-description">{p.description || 'Noch keine Kurzbeschreibung. Öffne das Profil und ergänze deine Ausrichtung.'}</p>
               <div className="profile-summary-actions">
-                <button className="btn" onClick={() => setViewedPersona(p.name)}>查看 / 编辑</button>
-                <button className="btn btn-primary" onClick={() => props.onUsePersona(p.name)}>切换画像</button>
+                <button className="btn" onClick={() => setViewedPersona(p.name)}>Ansehen / Bearbeiten</button>
+                <button className="btn btn-primary" onClick={() => props.onUsePersona(p.name)}>Profil wechseln</button>
               </div>
             </article>)}
           </div>
@@ -165,7 +165,7 @@ function ProfileDetail({ persona, onDeleted, onBack, onUsePersona, inUse }: Prof
         setFiles(d.files);
         setDrafts(Object.fromEntries(d.files.map((f) => [f.filename, f.content])));
       })
-      .catch(() => { if (!ignore) setError('加载画像失败'); })
+      .catch(() => { if (!ignore) setError('Profil konnte nicht geladen werden'); })
       .finally(() => { if (!ignore) setLoading(false); });
     return () => { ignore = true; };
   }, [persona]);
@@ -177,9 +177,9 @@ function ProfileDetail({ persona, onDeleted, onBack, onUsePersona, inUse }: Prof
     try {
       await savePersonaFile(persona, filename, drafts[filename] ?? '');
       setFiles((prev) => prev.map((f) => f.filename === filename ? { ...f, content: drafts[filename] ?? '' } : f));
-      showToast(`已保存 ${DIM_META[filename]?.label || filename} ✓`);
+      showToast(`Gespeichert ${DIM_META[filename]?.label || filename} ✓`);
     } catch (e) {
-      showToast(e instanceof Error ? e.message : '保存失败');
+      showToast(e instanceof Error ? e.message : 'Speichern fehlgeschlagen');
     } finally {
       setSavingFile('');
     }
@@ -192,7 +192,7 @@ function ProfileDetail({ persona, onDeleted, onBack, onUsePersona, inUse }: Prof
     try {
       const a = await fetchAccountAnalytics('wechat-oa');
       if (!a.loggedIn) {
-        showToast('公众号后台未登录：请先到「账号」页扫码登录后再抓取');
+        showToast('WeChat-Backend nicht angemeldet: bitte zuerst auf der Seite „Konten“ anmelden');
         return;
       }
       const base = files.find((f) => f.filename === filename)?.content ?? '';
@@ -201,23 +201,23 @@ function ProfileDetail({ persona, onDeleted, onBack, onUsePersona, inUse }: Prof
       // 同步更新 files（视图）与 drafts（若正在编辑也一致），无需手动保存
       setFiles((prev) => prev.map((f) => f.filename === filename ? { ...f, content: merged } : f));
       setDrafts((p) => ({ ...p, [filename]: merged }));
-      showToast(`已抓取并更新画像（粉丝 ${a.followers ?? 0}，已发表 ${a.posts ?? 0} 篇）✓`);
+      showToast(`Abgerufen und Profil aktualisiert (Follower ${a.followers ?? 0}, veröffentlicht ${a.posts ?? 0} Beiträge) ✓`);
     } catch (e) {
-      showToast(e instanceof Error ? `抓取失败：${e.message}` : '抓取失败（可能未登录或平台改版）');
+      showToast(e instanceof Error ? `Abruf fehlgeschlagen: ${e.message}` : 'Abruf fehlgeschlagen (evtl. nicht angemeldet oder Plattform geändert)');
     } finally {
       setFetchingWx(false);
     }
   };
 
   const handleDelete = async () => {
-    if (!window.confirm(`确定删除画像「${persona}」吗？\n此操作不可恢复，将删除该画像的全部六维文件。`)) return;
+    if (!window.confirm(`Profil „${persona}“ wirklich löschen?\nDas kann nicht rückgängig gemacht werden; alle sechs Profildateien werden gelöscht.`)) return;
     setDeleting(true);
     try {
       await deletePersona(persona);
       onDeleted(persona);
-      showToast(`已删除画像「${persona}」`);
+      showToast(`Profil gelöscht: „${persona}“`);
     } catch (e) {
-      showToast(e instanceof Error ? e.message : '删除失败');
+      showToast(e instanceof Error ? e.message : 'Löschen fehlgeschlagen');
     } finally {
       setDeleting(false);
     }
@@ -229,24 +229,24 @@ function ProfileDetail({ persona, onDeleted, onBack, onUsePersona, inUse }: Prof
       <div className="profile-detail-nav">
         <button className="btn btn-sm" disabled={!!savingFile || fetchingWx || deleting} onClick={() => {
           if (files.some((f) => (drafts[f.filename] ?? '') !== f.content)
-              && !window.confirm('还有未保存的修改，确定返回画像列表吗？')) return;
+              && !window.confirm('Es gibt ungespeicherte Änderungen. Wirklich zur Profilliste zurück?')) return;
           onBack();
-        }}>← 全部画像</button>
-        {inUse ? <span className="badge badge-accent">当前对话使用中</span>
-          : <button className="btn btn-sm" onClick={() => onUsePersona(persona)}>切换画像</button>}
+        }}>← Alle Profile</button>
+        {inUse ? <span className="badge badge-accent">Wird in diesem Chat genutzt</span>
+          : <button className="btn btn-sm" onClick={() => onUsePersona(persona)}>Profil wechseln</button>}
       </div>
       <div className="profile-head">
         <div>
           <h1 className="page-title">{persona}</h1>
-          <p className="page-subtitle">六个维度构成一个完整人设，可随时编辑保存。</p>
+          <p className="page-subtitle">Sechs Dimensionen ergeben eine vollständige Persona und lassen sich jederzeit bearbeiten.</p>
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
           <button className={`btn ${editing ? 'btn-primary' : ''}`} onClick={() => setEditing((v) => !v)}>
-            {editing ? '完成编辑' : '✏️ 编辑资料'}
+            {editing ? 'Bearbeitung beenden' : '✏️ Bearbeiten'}
           </button>
           <button className="btn" style={{ color: 'var(--red)', borderColor: 'var(--red)' }}
             disabled={deleting} onClick={handleDelete}>
-            {deleting ? '删除中…' : '🗑 删除画像'}
+            {deleting ? 'Wird gelöscht …' : '🗑 Profil löschen'}
           </button>
         </div>
       </div>
@@ -254,7 +254,7 @@ function ProfileDetail({ persona, onDeleted, onBack, onUsePersona, inUse }: Prof
       {error && <div style={{ color: 'var(--red)', fontSize: 14, marginTop: 12 }}>{error}</div>}
 
       {loading ? (
-        <div className="loading"><div className="spinner" />加载中…</div>
+        <div className="loading"><div className="spinner" />Wird geladen …</div>
       ) : (
         files.map((f) => {
           const meta = DIM_META[f.filename] || { label: f.filename, icon: '📄' };
@@ -266,15 +266,15 @@ function ProfileDetail({ persona, onDeleted, onBack, onUsePersona, inUse }: Prof
                 <div style={{ display: 'flex', gap: 8 }}>
                   {f.filename === 'platforms.md' && (
                     <button className="btn btn-sm" disabled={fetchingWx}
-                      title="用已登录的公众号后台会话抓取粉丝/内容数据，写入本栏（与数据中心同源）"
+                      title="Follower- und Inhaltsdaten über die angemeldete WeChat-Sitzung abrufen und hier eintragen"
                       onClick={() => handleFetchWechat(f.filename)}>
-                      {fetchingWx ? '抓取中…' : '📊 抓取公众号数据'}
+                      {fetchingWx ? 'Wird abgerufen …' : '📊 WeChat-Daten abrufen'}
                     </button>
                   )}
                   {editing && (
                     <button className="btn btn-sm btn-primary" disabled={!dirty || savingFile === f.filename}
                       onClick={() => handleSave(f.filename)}>
-                      {savingFile === f.filename ? '保存中…' : dirty ? '保存' : '已保存'}
+                      {savingFile === f.filename ? 'Wird gespeichert …' : dirty ? 'Speichern' : 'Gespeichert'}
                     </button>
                   )}
                 </div>
@@ -289,7 +289,7 @@ function ProfileDetail({ persona, onDeleted, onBack, onUsePersona, inUse }: Prof
               ) : (
                 <div className="card" style={{ padding: '14px 18px' }}>
                   <div className="profile-content"
-                    dangerouslySetInnerHTML={{ __html: renderMarkdown(f.content || '_（空）_') }} />
+                    dangerouslySetInnerHTML={{ __html: renderMarkdown(f.content || '_(leer)_') }} />
                 </div>
               )}
             </div>

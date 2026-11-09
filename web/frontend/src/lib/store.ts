@@ -163,17 +163,17 @@ function titleIntent(text: string): TitleIntent {
 }
 
 function semanticTopic(text: string, fallback: string): string {
-  if (/(?:历史)?会话.*(?:命名|标题|主题|名字)|(?:命名|标题|主题|名字).*(?:历史)?会话/.test(text)) return '历史会话标题';
-  if (/(?:模型)?回答(?:完成|完).*?(?:运行|断开)|(?:运行|断开).*?(?:模型)?回答(?:完成|完)/.test(text)) return '对话完成状态';
-  if (/(?:paper-explainer|paper explainer).*(?:skill|逻辑|流程)|(?:skill|逻辑|流程).*(?:paper-explainer|paper explainer)/i.test(text)) return 'paper-explainer 逻辑';
-  if (/(?:论文|paper).*(?:ppt|slide).*(?:拉伸|移动|缩放|画面)|(?:拉伸|移动|缩放).*(?:ppt|slide)/i.test(text)) return '论文 PPT 画面';
-  if (/(?:论文|paper).*(?:ppt|slide|幻灯|讲解)|(?:ppt|slide|幻灯).*(?:论文|paper)/i.test(text)) return '论文讲解 PPT';
-  if (/(?:附件|素材).*(?:上传|重名|多个|显示|隐藏)|(?:上传|重名).*(?:附件|素材)/.test(text)) return '附件上传';
-  if (/(?:小红书|xhs).*种草.*文案/i.test(text)) return '小红书种草文案';
-  if (/(?:小红书|xhs).*(?:文案|笔记|卡片)/i.test(text)) return '小红书内容';
-  if (/交接文档.*项目|项目.*交接文档/.test(text)) return '项目交接';
-  if (/视频.*(?:横版|竖版|画幅)|(?:横版|竖版|画幅).*视频/.test(text)) return '视频画幅';
-  if (/配置.*模型|模型.*配置/.test(text)) return '模型配置';
+  if (/(?:历史)?会话.*(?:命名|标题|主题|名字)|(?:命名|标题|主题|名字).*(?:历史)?会话/.test(text)) return 'Chat-Titel';
+  if (/(?:模型)?回答(?:完成|完).*?(?:运行|断开)|(?:运行|断开).*?(?:模型)?回答(?:完成|完)/.test(text)) return 'Chat-Status';
+  if (/(?:paper-explainer|paper explainer).*(?:skill|逻辑|流程)|(?:skill|逻辑|流程).*(?:paper-explainer|paper explainer)/i.test(text)) return 'Logik von paper-explainer';
+  if (/(?:论文|paper).*(?:ppt|slide).*(?:拉伸|移动|缩放|画面)|(?:拉伸|移动|缩放).*(?:ppt|slide)/i.test(text)) return 'Folien zu Fachartikeln';
+  if (/(?:论文|paper).*(?:ppt|slide|幻灯|讲解)|(?:ppt|slide|幻灯).*(?:论文|paper)/i.test(text)) return 'Präsentation zu Fachartikeln';
+  if (/(?:附件|素材).*(?:上传|重名|多个|显示|隐藏)|(?:上传|重名).*(?:附件|素材)/.test(text)) return 'Anhang hochladen';
+  if (/(?:小红书|xhs).*种草.*文案/i.test(text)) return 'Instagram-Caption';
+  if (/(?:小红书|xhs).*(?:文案|笔记|卡片)/i.test(text)) return 'Social-Media-Inhalt';
+  if (/交接文档.*项目|项目.*交接文档/.test(text)) return 'Projektübergabe';
+  if (/视频.*(?:横版|竖版|画幅)|(?:横版|竖版|画幅).*视频/.test(text)) return 'Videoformat';
+  if (/配置.*模型|模型.*配置/.test(text)) return 'Modelle';
 
   const quoted = text.match(/[「『“"]([^」』”"]{2,24})[」』”"]/u)?.[1];
   if (quoted && /(?:围绕|关于|选题|主题|热点)/.test(text)) return quoted.trim();
@@ -224,8 +224,8 @@ export function generateSessionTitle(message: string, _seed = message): string {
 
   if (!text && attachmentBlock) {
     const path = attachmentBlock.match(/outputs\/([^\s]+)/)?.[1] || '';
-    const filename = path.split('/').pop() || '上传素材';
-    text = `处理附件 ${filename}`;
+    const filename = path.split('/').pop() || 'Material hochladen';
+    text = `Anhang verarbeiten ${filename}`;
   }
 
   text = cleanTitleClause(text);
@@ -241,17 +241,17 @@ export function generateSessionTitle(message: string, _seed = message): string {
     .replace(/[，,、：:\s]+$/g, '')
     .trim();
 
-  const core = Array.from(semanticTopic(text, baseTitle || '新对话'))
+  const core = Array.from(semanticTopic(text, baseTitle || 'Neuer Chat'))
     .slice(0, 18).join('')
     .replace(/(?:问题排查|故障分析|异常|问题|优化|改进|分析|检查|制作|生成|发布)$/g, '')
-    .trim() || '新对话';
+    .trim() || 'Neuer Chat';
   const intent = titleIntent(text);
   const titles: Record<TitleIntent, string> = {
-    issue: `${core}问题排查`,
-    create: /(?:文案|脚本|方案)$/.test(core) ? core : `${core}制作`,
-    optimize: `${core}优化`,
-    publish: `${core}发布`,
-    inspect: `${core}分析`,
+    issue: `${core}Fehlersuche`,
+    create: /(?:文案|脚本|方案)$/.test(core) ? core : `${core}Produzieren`,
+    optimize: `${core}Optimierung`,
+    publish: `${core}Veröffentlichen`,
+    inspect: `${core}Analyse`,
     general: core,
   };
   const title = titles[intent] || core;

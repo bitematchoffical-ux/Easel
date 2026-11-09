@@ -30,11 +30,11 @@ function ActionBar({ actions }: { actions: BubbleActions }) {
   };
   return (
     <div className="msg-actions">
-      <button className="msg-action" onClick={copy} title="复制">
-        {copied ? <IconCheck size={14} /> : <IconCopy size={14} />}<span>{copied ? '已复制' : '复制'}</span>
+      <button className="msg-action" onClick={copy} title="Kopieren">
+        {copied ? <IconCheck size={14} /> : <IconCopy size={14} />}<span>{copied ? 'Kopiert' : 'Kopieren'}</span>
       </button>
       {actions.onRetry && actions.canModify && (
-        <button className="msg-action" onClick={actions.onRetry} title="重新生成"><IconRetry size={14} /><span>重试</span></button>
+        <button className="msg-action" onClick={actions.onRetry} title="Neu erzeugen"><IconRetry size={14} /><span>Erneut versuchen</span></button>
       )}
     </div>
   );
@@ -86,13 +86,13 @@ export default function MessageBubble({ message, isStreaming, thinking, activity
       ) : null}
       {doneSteps && (
         <details className="thinking-block">
-          <summary>🧠 执行过程（{doneSteps.split('\n').length} 步）</summary>
+          <summary>🧠 Ablauf ({doneSteps.split('\n').length}  Schritte)</summary>
           <div className="thinking-text">{doneSteps}</div>
         </details>
       )}
       {effThinking && (
         <details className="thinking-block" open={isStreaming && !message.content}>
-          <summary>💭 思考过程</summary>
+          <summary>💭 Gedankengang</summary>
           <div className="thinking-text">{effThinking}</div>
         </details>
       )}

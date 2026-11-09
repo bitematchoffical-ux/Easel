@@ -10,7 +10,7 @@ const PLATFORMS = [
   { key: 'instagram', label: 'Instagram', titleLimit: 0, bodyLimit: 2200, url: 'https://www.instagram.com/', hint: 'Kein Titelfeld: Titel und Text werden zur Caption. Mehrere Bilder = Karussell, Video = Reel.' },
   { key: 'tiktok', label: 'TikTok', titleLimit: 0, bodyLimit: 4000, url: 'https://www.tiktok.com/tiktokstudio/upload', hint: 'Video oder Fotos im Hochformat; der Anfang der Beschreibung muss sofort fesseln.' },
   { key: 'youtube-shorts', label: 'YouTube Shorts', titleLimit: 100, bodyLimit: 5000, url: 'https://studio.youtube.com/', hint: 'Braucht ein Hochformat-Video. Titel max. 100 Zeichen.' },
-  { key: 'twitter-x', label: 'X', titleLimit: 0, bodyLimit: 280, url: 'https://x.com/compose/post', hint: '将标题与正文合并到官方发帖框，按平台计数检查长度后亲自发布。' },
+  { key: 'twitter-x', label: 'X', titleLimit: 0, bodyLimit: 280, url: 'https://x.com/compose/post', hint: 'Titel und Text im offiziellen Post-Fenster einfügen, Länge nach der Zählung der Plattform prüfen und selbst posten.' },
 ];
 
 function sections(text: string): Record<string, string> {
@@ -59,7 +59,7 @@ export default function ManualPublishPage({ persona }: { persona: string }) {
       };
       roots.forEach(walk);
       setMediaFiles(files.sort((a, b) => (b.mtime || 0) - (a.mtime || 0)));
-    }).catch(() => setToast('内容库暂时无法读取，仍可编辑和复制文案'));
+    }).catch(() => setToast('Inhaltsbibliothek gerade nicht lesbar; Texte lassen sich trotzdem bearbeiten und kopieren'));
   }, []);
 
   const effective = (key: string) => overrides[key] ?? body;
@@ -78,11 +78,11 @@ export default function ManualPublishPage({ persona }: { persona: string }) {
   const adapt = () => {
     if (empty || !platforms.length || adapting) return;
     const selected = PLATFORMS.filter((p) => platforms.includes(p.key));
-    const prompt = `仅改写和排版以下稿件，不执行工具、发布脚本或平台接口。按当前画像适配：${selected.map((p) => p.label).join('、')}。\n`
-      + '保持事实，不新增未经核实的数据。各段只返回正文，不重复标题。公众号用清晰的 Markdown 小标题、短段落和列表；其他平台输出可直接粘贴的纯文本与自然换行。不要输出 HTML。\n'
-      + '严格按以下格式返回，每个平台一段，不加额外说明：\n'
-      + selected.map((p) => `===${p.label}===\n<排版后的正文>`).join('\n')
-      + `\n\n标题：${title}\n正文：${body}`;
+    const prompt = `Nur den folgenden Entwurf umschreiben und formatieren; keine Tools, Veröffentlichungsskripte oder Plattform-Schnittstellen ausführen. An das aktuelle Profil anpassen für: ${selected.map((p) => p.label).join('、')}。\n`
+      + 'Fakten beibehalten, keine ungeprüften Zahlen ergänzen. Pro Abschnitt nur den Text liefern, den Titel nicht wiederholen. Für jede Plattform einfügbaren Klartext mit natürlichen Zeilenumbrüchen ausgeben. Kein HTML.\n'
+      + 'Streng in folgendem Format antworten, ein Abschnitt pro Plattform, ohne zusätzliche Erklärungen:\n'
+      + selected.map((p) => `===${p.label}===\n<formatierter Text>`).join('\n')
+      + `\n\nTitel: ${title}\nText: ${body}`;
     let acc = '';
     const base = { ...overrides };
     setAdapting(true);
@@ -92,21 +92,21 @@ export default function ManualPublishPage({ persona }: { persona: string }) {
       const next = { ...base };
       selected.forEach((p) => { if (parsed[p.label] != null) next[p.key] = parsed[p.label]; });
       setOverrides(next);
-    }, () => { setAdapting(false); showToast(Object.keys(sections(acc)).length ? 'AI 排版完成，请逐个平台人工审核' : '未解析到平台正文，请重试'); },
-    (error) => { setAdapting(false); showToast(error.message || '排版失败，请重试'); });
+    }, () => { setAdapting(false); showToast(Object.keys(sections(acc)).length ? 'KI-Formatierung fertig, bitte jede Plattform selbst prüfen' : 'Keine Plattformtexte erkannt, bitte erneut versuchen'); },
+    (error) => { setAdapting(false); showToast(error.message || 'Formatierung fehlgeschlagen, bitte erneut versuchen'); });
   };
 
   const check = async () => {
     if (empty || checking || adapting) return;
     setChecking(true);
-    const content = `标题：${title}\n${PLATFORMS.filter((p) => platforms.includes(p.key)).map((p) => `${p.label}：${effective(p.key)}`).join('\n\n')}\n话题：${tags}`;
+    const content = `Titel: ${title}\n${PLATFORMS.filter((p) => platforms.includes(p.key)).map((p) => `${p.label}: ${effective(p.key)}`).join('\n\n')}\nHashtags: ${tags}`;
     try {
       const [general, consistency] = await Promise.all([
-        runAgent(`仅给审核建议，不发布、不调用发布脚本。检查内容中的事实依据、夸大表述、版权和标题正文一致性，给出修改建议；不能确认的事项明确列出，不能保证平台审核结果。\n${content}`),
+        runAgent(`Nur Prüfhinweise geben, nicht posten und keine Veröffentlichungsskripte aufrufen. Faktenbasis, Übertreibungen, Urheberrecht und Stimmigkeit von Titel und Text prüfen und Verbesserungen vorschlagen; Unklares ausdrücklich nennen. Das Prüfergebnis der Plattform kann nicht garantiert werden.\n${content}`),
         persona ? executeSkill('persona-check', content, persona) : Promise.resolve(null),
       ]);
-      setCheckResult(general.response + (consistency ? `\n\n## 人设一致性\n${consistency.response}` : ''));
-    } catch (error) { setCheckResult(`检查未完成：${error instanceof Error ? error.message : '请稍后重试'}`); }
+      setCheckResult(general.response + (consistency ? `\n\n## Profil-Passung\n${consistency.response}` : ''));
+    } catch (error) { setCheckResult(`Prüfung nicht abgeschlossen: ${error instanceof Error ? error.message : 'Bitte später erneut versuchen'}`); }
     finally { setChecking(false); }
   };
 
@@ -116,7 +116,7 @@ export default function ManualPublishPage({ persona }: { persona: string }) {
       await navigator.clipboard.writeText(part === 'title' ? title : part === 'body' ? bodyWithTags(key) : `${title}\n\n${bodyWithTags(key)}`.trim());
       setCopied(`${key}:${part}`);
       window.setTimeout(() => setCopied(''), 1600);
-    } catch { showToast('复制未成功，请手动选择文字，或导出稿件包'); }
+    } catch { showToast('Kopieren hat nicht geklappt; Text bitte manuell markieren oder das Paket exportieren'); }
   };
 
   const exportFor = async (key: string) => {
@@ -128,8 +128,8 @@ export default function ManualPublishPage({ persona }: { persona: string }) {
       const a = document.createElement('a');
       a.href = mediaUrl(result.path); a.download = result.filename;
       document.body.appendChild(a); a.click(); a.remove();
-      showToast('已生成稿件包并发起下载；尚未上传或发布');
-    } catch (error) { showToast(error instanceof Error ? error.message : '导出失败'); }
+      showToast('Paket erstellt und Download gestartet; noch nicht hochgeladen oder gepostet');
+    } catch (error) { showToast(error instanceof Error ? error.message : 'Export fehlgeschlagen'); }
     finally { setExporting(''); }
   };
 
@@ -141,43 +141,43 @@ export default function ManualPublishPage({ persona }: { persona: string }) {
         const url = new URL(links[key] || '');
         if (url.protocol !== 'https:') throw new Error();
         link = url.href;
-      } catch { showToast('请粘贴官方平台上已发布作品的 HTTPS 链接'); return; }
+      } catch { showToast('Bitte den HTTPS-Link zum veröffentlichten Beitrag auf der Plattform einfügen'); return; }
     }
     setSaving(true);
     const version = snapshot(key);
     try {
       await createSchedule({ title: title.trim() || effective(key).slice(0, 20), date: today(), time: '',
         platform: PLATFORMS.find((p) => p.key === key)?.label || '', status: published ? 'published' : 'draft',
-        note: published ? `【人工确认已发布，未自动验证平台状态】\n${link}\n\n${effective(key)}` : effective(key) });
+        note: published ? `[Vom Nutzer als gepostet bestätigt, Plattformstatus nicht automatisch geprüft]\n${link}\n\n${effective(key)}` : effective(key) });
       if (published) setRecorded((prev) => ({ ...prev, [key]: version + (links[key] || '') }));
-      showToast(published ? '已按你的确认记录到日历，未自动校验平台结果' : '已保存为日历草稿，不会自动发布');
-    } catch (error) { showToast(error instanceof Error ? error.message : '保存失败'); }
+      showToast(published ? 'Gemäß deiner Bestätigung im Kalender eingetragen; das Ergebnis auf der Plattform wurde nicht automatisch geprüft' : 'Als Entwurf im Kalender gespeichert, wird nicht automatisch gepostet');
+    } catch (error) { showToast(error instanceof Error ? error.message : 'Speichern fehlgeschlagen'); }
     finally { setSaving(false); }
   };
 
   return <div className="publish-page">
     <div className="publish-editor">
-      <h1 className="page-title"><IconPublish size={21} /> 发布中心 · 人工发布</h1>
-      <p className="page-subtitle">AI 排版 → 人工审核 → 复制 / 导出 → 在官方发布页亲自提交。</p>
+      <h1 className="page-title"><IconPublish size={21} /> Veröffentlichen · Export</h1>
+      <p className="page-subtitle">KI-Formatierung → selbst prüfen → kopieren / exportieren → auf der offiziellen Seite selbst posten.</p>
       <div className="panel" style={{ marginBottom: 16, fontSize: 13 }}>
-        <strong>最终提交由你完成。</strong> 本页不自动登录、上传或点击发布。官方页面的登录与 Postloop 账号页相互独立。
+        <strong>Das Posten erledigst du.</strong> Diese Seite meldet sich nicht an, lädt nichts hoch und klickt nicht auf Posten. Die Anmeldung auf den Plattformen ist unabhängig von der Kontoseite in Postloop.
       </div>
-      <label className="field-label" htmlFor="manual-title">标题</label>
-      <input id="manual-title" className="field" value={title} placeholder="请输入标题" onChange={(e) => setTitle(e.target.value)} />
-      <label className="field-label" htmlFor="manual-body">正文（母版）</label>
-      <textarea id="manual-body" className="field" style={{ minHeight: 180 }} value={body} placeholder="输入文案，选择平台后让 AI 排版，也可以自行编辑。" onChange={(e) => setBody(e.target.value)} />
-      <label className="field-label" htmlFor="manual-tags">话题标签（逗号分隔）</label>
-      <input id="manual-tags" className="field" value={tags} placeholder="AI,职场,干货" onChange={(e) => setTags(e.target.value)} />
-      <label className="field-label">目标平台</label>
+      <label className="field-label" htmlFor="manual-title">Titel</label>
+      <input id="manual-title" className="field" value={title} placeholder="Titel eingeben" onChange={(e) => setTitle(e.target.value)} />
+      <label className="field-label" htmlFor="manual-body">Text (Vorlage)</label>
+      <textarea id="manual-body" className="field" style={{ minHeight: 180 }} value={body} placeholder="Text eingeben, Plattformen wählen und von der KI formatieren lassen oder selbst bearbeiten." onChange={(e) => setBody(e.target.value)} />
+      <label className="field-label" htmlFor="manual-tags">Hashtags (durch Komma getrennt)</label>
+      <input id="manual-tags" className="field" value={tags} placeholder="KI,Karriere,Tipps" onChange={(e) => setTags(e.target.value)} />
+      <label className="field-label">Zielplattformen</label>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>{PLATFORMS.map((p) => <button key={p.key} className={`chip ${platforms.includes(p.key) ? 'active' : ''}`} onClick={() => toggle(p.key)}>{p.label}</button>)}</div>
-      <label className="field-label" style={{ marginTop: 16 }}>媒体素材 · 已选 {selectedMedia.length} 个</label>
-      <p className="pv-hint">从内容库选择图片 / 视频打包导出，也可稍后在官方页面手动选择电脑上的文件。</p>
-      <button className="btn btn-sm" onClick={() => setShowPicker((v) => !v)}>{showPicker ? '收起素材' : '选择媒体'}</button>
-      {selectedMedia.length > 0 && <ul style={{ fontSize: 12 }}>{selectedMedia.map((path) => <li key={path}><button className="pv-copy" onClick={() => toggleMedia(path)} title="移除素材">×</button> {path.split('/').pop()}</li>)}</ul>}
+      <label className="field-label" style={{ marginTop: 16 }}>Medien · ausgewählt  {selectedMedia.length} </label>
+      <p className="pv-hint">Bilder/Videos aus der Inhaltsbibliothek mitexportieren oder später auf der Plattform Dateien vom Rechner wählen.</p>
+      <button className="btn btn-sm" onClick={() => setShowPicker((v) => !v)}>{showPicker ? 'Medien einklappen' : 'Medien wählen'}</button>
+      {selectedMedia.length > 0 && <ul style={{ fontSize: 12 }}>{selectedMedia.map((path) => <li key={path}><button className="pv-copy" onClick={() => toggleMedia(path)} title="Medium entfernen">×</button> {path.split('/').pop()}</li>)}</ul>}
       {showPicker && <div className="media-grid">
-        {!mediaFiles.length && <p className="dash-empty">内容库暂无图片或视频，可先导出文案。</p>}
+        {!mediaFiles.length && <p className="dash-empty">Noch keine Bilder oder Videos in der Inhaltsbibliothek; Text kann schon exportiert werden.</p>}
         {mediaFiles.slice(0, 80).map((f) => <button type="button" key={f.path} className={`media-cell ${selectedMedia.includes(f.path) ? 'sel' : ''}`} onClick={() => toggleMedia(f.path)} title={f.path}>
-          {f.kind === 'image' ? <img src={mediaUrl(f.path)} alt={f.name} loading="lazy" /> : <span className="media-vid">视频 · {f.name}</span>}
+          {f.kind === 'image' ? <img src={mediaUrl(f.path)} alt={f.name} loading="lazy" /> : <span className="media-vid">Video · {f.name}</span>}
           {selectedMedia.includes(f.path) && <span className="media-check">✓</span>}
         </button>)}
       </div>}
@@ -188,44 +188,44 @@ export default function ManualPublishPage({ persona }: { persona: string }) {
         <label><input type="radio" name="ai-generated" value="no" aria-label="Nein, keine KI-generierten Inhalte" checked={aiGenerated === false} onChange={() => setAiGenerated(false)} /> Nein</label>
       </fieldset>
       <div className="publish-actions">
-        {adapting ? <button className="btn btn-sm" onClick={() => { ctl.current?.abort(); setAdapting(false); }}><IconStop size={13} /> 停止排版</button>
-          : <button className="btn btn-sm btn-primary" disabled={empty || !platforms.length} onClick={adapt}><IconSkills size={14} /> AI 排版 / 适配</button>}
-        <button className="btn btn-sm" disabled={empty || checking || adapting} onClick={check}><IconCheck size={14} />{checking ? '检查中…' : 'AI 辅助检查'}</button>
-        <button className="btn btn-sm" disabled={empty || saving || adapting} onClick={() => addToCalendar(platforms[0] || 'instagram')}><IconCalendar size={14} /> 存草稿并排期</button>
-        <button className="btn btn-sm btn-ghost" disabled={empty || adapting} onClick={() => { setTitle(''); setBody(''); setTags(''); setOverrides({}); setReviewed({}); setCheckResult(''); }}><IconTrash size={13} /> 清空文案</button>
+        {adapting ? <button className="btn btn-sm" onClick={() => { ctl.current?.abort(); setAdapting(false); }}><IconStop size={13} /> Formatierung stoppen</button>
+          : <button className="btn btn-sm btn-primary" disabled={empty || !platforms.length} onClick={adapt}><IconSkills size={14} /> KI formatieren / anpassen</button>}
+        <button className="btn btn-sm" disabled={empty || checking || adapting} onClick={check}><IconCheck size={14} />{checking ? 'Wird geprüft …' : 'KI-Prüfung'}</button>
+        <button className="btn btn-sm" disabled={empty || saving || adapting} onClick={() => addToCalendar(platforms[0] || 'instagram')}><IconCalendar size={14} /> Als Entwurf speichern und einplanen</button>
+        <button className="btn btn-sm btn-ghost" disabled={empty || adapting} onClick={() => { setTitle(''); setBody(''); setTags(''); setOverrides({}); setReviewed({}); setCheckResult(''); }}><IconTrash size={13} /> Text leeren</button>
       </div>
-      <p className="publish-saved-note">文案自动保存到当前浏览器。审核只针对当前版本；修改标题、正文、标签或素材后，需重新审核。AI 检查仅作参考。</p>
-      {checkResult && <div className="panel"><div className="panel-title">AI 辅助检查</div><div className="skill-body-md" dangerouslySetInnerHTML={{ __html: renderMarkdown(checkResult) }} /></div>}
+      <p className="publish-saved-note">Texte werden automatisch im Browser gespeichert. Die Prüfung gilt nur für die aktuelle Version; nach Änderungen an Titel, Text, Hashtags oder Medien erneut prüfen. Die KI-Prüfung ist nur ein Hinweis.</p>
+      {checkResult && <div className="panel"><div className="panel-title">KI-Prüfung</div><div className="skill-body-md" dangerouslySetInnerHTML={{ __html: renderMarkdown(checkResult) }} /></div>}
     </div>
     <div className="publish-previews">
-      {!platforms.length && <div className="dash-empty">选择目标平台，在这里预览和审核。</div>}
+      {!platforms.length && <div className="dash-empty">Zielplattform wählen, um hier Vorschau und Prüfung zu sehen.</div>}
       {PLATFORMS.filter((p) => platforms.includes(p.key)).map((p) => {
         const text = effective(p.key);
         const ready = approved(p.key) && !!(title.trim() || text.trim());
         const isEdit = editing === p.key;
         const hasRecorded = recorded[p.key] === snapshot(p.key) + (links[p.key] || '');
         return <div key={p.key} className={`card pv-card pv-${p.key}`}>
-          <div className="pv-head"><span className="pv-plat">{p.label}<span className={`pv-badge ${ready ? 'pv-badge-ok' : ''}`}>{ready ? '已人工审核' : '待人工审核'}</span></span><span className={`pv-count ${text.length > p.bodyLimit ? 'over' : ''}`}>{text.length} 字</span></div>
+          <div className="pv-head"><span className="pv-plat">{p.label}<span className={`pv-badge ${ready ? 'pv-badge-ok' : ''}`}>{ready ? 'Geprüft' : 'Noch nicht geprüft'}</span></span><span className={`pv-count ${text.length > p.bodyLimit ? 'over' : ''}`}>{text.length} Zeichen</span></div>
           <div className="pv-body">
-            <div className={`pv-title ${p.titleLimit && title.length > p.titleLimit ? 'over' : ''}`}>{title || <span className="pv-ph">标题预览</span>}</div>
-            {isEdit ? <textarea className="field" aria-label={`${p.label}正文`} style={{ minHeight: 140 }} value={text} onChange={(e) => setOverrides((old) => ({ ...old, [p.key]: e.target.value }))} />
-              : <div className="pv-text">{text || '正文预览'}</div>}
-            <p className="pv-hint" style={{ marginTop: 12 }}>{p.hint} 字数和格式以官方页面为准。</p>
-            <button className="pv-copy" onClick={() => setEditing(isEdit ? null : p.key)}><IconEdit size={13} />{isEdit ? '完成编辑' : '编辑此平台版本'}</button>
+            <div className={`pv-title ${p.titleLimit && title.length > p.titleLimit ? 'over' : ''}`}>{title || <span className="pv-ph">Titelvorschau</span>}</div>
+            {isEdit ? <textarea className="field" aria-label={`${p.label}Text`} style={{ minHeight: 140 }} value={text} onChange={(e) => setOverrides((old) => ({ ...old, [p.key]: e.target.value }))} />
+              : <div className="pv-text">{text || 'Textvorschau'}</div>}
+            <p className="pv-hint" style={{ marginTop: 12 }}>{p.hint} Zeichenzahl und Format gelten wie auf der Plattform angezeigt.</p>
+            <button className="pv-copy" onClick={() => setEditing(isEdit ? null : p.key)}><IconEdit size={13} />{isEdit ? 'Bearbeitung beenden' : 'Version für diese Plattform bearbeiten'}</button>
             <label style={{ display: 'flex', alignItems: 'flex-start', gap: 8, margin: '16px 0', fontSize: 13 }}>
-              <input type="checkbox" aria-label={`${p.label}人工审核`} disabled={adapting || isEdit || !(title.trim() || text.trim())} checked={ready} onChange={(e) => setReviewed((old) => ({ ...old, [p.key]: e.target.checked ? snapshot(p.key) : '' }))} />
-              我已核对当前版本的事实、标题正文、话题、素材及使用授权，准备到官方页面发布。
+              <input type="checkbox" aria-label={`${p.label}Selbst geprüft`} disabled={adapting || isEdit || !(title.trim() || text.trim())} checked={ready} onChange={(e) => setReviewed((old) => ({ ...old, [p.key]: e.target.checked ? snapshot(p.key) : '' }))} />
+              Ich habe Fakten, Titel, Text, Hashtags, Medien und Nutzungsrechte dieser Version geprüft und poste sie auf der offiziellen Seite.
             </label>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-              {(['title', 'body', 'all'] as const).map((part) => <button key={part} className="btn btn-sm" disabled={!ready} onClick={() => copyFor(p.key, part)}><IconCopy size={13} />{copied === `${p.key}:${part}` ? '已复制' : part === 'title' ? '复制标题' : part === 'body' ? '复制正文' : '复制全文'}</button>)}
-              <button className="btn btn-sm" disabled={!ready || !!exporting || aiGenerated === null} title={aiGenerated === null ? 'Erst die KI-Frage beantworten' : undefined} onClick={() => exportFor(p.key)}>{exporting === p.key ? '打包中…' : '导出稿件和素材 ZIP'}</button>
-              {ready ? <a className="btn btn-sm btn-primary" href={p.url} target="_blank" rel="noopener noreferrer">打开官方发布页 ↗</a> : <button className="btn btn-sm" disabled>审核后打开官方发布页</button>}
+              {(['title', 'body', 'all'] as const).map((part) => <button key={part} className="btn btn-sm" disabled={!ready} onClick={() => copyFor(p.key, part)}><IconCopy size={13} />{copied === `${p.key}:${part}` ? 'Kopiert' : part === 'title' ? 'Titel kopieren' : part === 'body' ? 'Text kopieren' : 'Alles kopieren'}</button>)}
+              <button className="btn btn-sm" disabled={!ready || !!exporting || aiGenerated === null} title={aiGenerated === null ? 'Erst die KI-Frage beantworten' : undefined} onClick={() => exportFor(p.key)}>{exporting === p.key ? 'Wird gepackt …' : 'Text und Medien als ZIP exportieren'}</button>
+              {ready ? <a className="btn btn-sm btn-primary" href={p.url} target="_blank" rel="noopener noreferrer">Offizielle Seite öffnen ↗</a> : <button className="btn btn-sm" disabled>Nach Prüfung offizielle Seite öffnen</button>}
             </div>
-            <p className="pv-hint" style={{ margin: '14px 0' }}>导出不代表已发布。请解压 ZIP，在官方页面粘贴稿件、上传素材、检查预览，并按平台要求标注 AI 辅助创作，最后由你点击发布。</p>
-            <details><summary style={{ cursor: 'pointer', fontSize: 13 }}>发布后，回填作品链接</summary>
-              <input className="field" aria-label={`${p.label}作品链接`} placeholder="粘贴已发布作品的 https:// 链接" value={links[p.key] || ''} onChange={(e) => setLinks((old) => ({ ...old, [p.key]: e.target.value }))} style={{ margin: '10px 0' }} />
-              <button className="btn btn-sm" disabled={!ready || saving || !links[p.key]?.trim() || hasRecorded} onClick={() => addToCalendar(p.key, true)}>{hasRecorded ? '已记录人工确认' : '我已在官方平台发布，记录到日历'}</button>
-              <p className="pv-hint">按你的确认记录，不自动检查平台状态。</p>
+            <p className="pv-hint" style={{ margin: '14px 0' }}>Exportiert heißt nicht gepostet. ZIP entpacken, auf der offiziellen Seite Text einfügen, Medien hochladen, Vorschau prüfen, KI-Inhalte kennzeichnen und selbst auf Posten klicken.</p>
+            <details><summary style={{ cursor: 'pointer', fontSize: 13 }}>Nach dem Posten: Link eintragen</summary>
+              <input className="field" aria-label={`${p.label}Link zum Beitrag`} placeholder="https://-Link zum veröffentlichten Beitrag einfügen" value={links[p.key] || ''} onChange={(e) => setLinks((old) => ({ ...old, [p.key]: e.target.value }))} style={{ margin: '10px 0' }} />
+              <button className="btn btn-sm" disabled={!ready || saving || !links[p.key]?.trim() || hasRecorded} onClick={() => addToCalendar(p.key, true)}>{hasRecorded ? 'Bestätigung gespeichert' : 'Ich habe auf der Plattform gepostet, im Kalender eintragen'}</button>
+              <p className="pv-hint">Wird gemäß deiner Bestätigung gespeichert; der Plattformstatus wird nicht automatisch geprüft.</p>
             </details>
           </div>
         </div>;

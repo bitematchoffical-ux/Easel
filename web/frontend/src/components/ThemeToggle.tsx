@@ -50,8 +50,8 @@ export default function ThemeToggle() {
     <button
       type="button"
       className="theme-toggle"
-      aria-label={dark ? '切换到日间模式' : '切换到夜间模式'}
-      title={dark ? '切换到日间模式' : '切换到夜间模式'}
+      aria-label={dark ? 'Zum hellen Modus wechseln' : 'Zum dunklen Modus wechseln'}
+      title={dark ? 'Zum hellen Modus wechseln' : 'Zum dunklen Modus wechseln'}
       onClick={toggle}
     >
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

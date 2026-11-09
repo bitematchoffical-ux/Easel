@@ -18,7 +18,7 @@ import {
 function fmtNum(n: number | null): string {
   if (n == null) return '—';
   const a = Math.abs(n);
-  if (a >= 10000) return (n / 10000).toFixed(a >= 100000 ? 0 : 1) + '万';
+  if (a >= 10000) return (n / 10000).toFixed(a >= 100000 ? 0 : 1) + 'Tsd.';
   return String(n);
 }
 /** 增长量渲染信息：正=绿↑，负=红↓，0/缺失=不显示。 */
@@ -38,7 +38,7 @@ interface DashboardProps {
   onUseTopic: (title: string) => void;
 }
 
-const STATUS_LABEL: Record<string, string> = { idea: '选题', draft: '草稿', scheduled: '待发', published: '已发' };
+const STATUS_LABEL: Record<string, string> = { idea: 'Idee', draft: 'Entwurf', scheduled: 'Geplant', published: 'Gepostet' };
 
 export default function DashboardPage({ persona, gatewayStatus, apiDirect, agentRuntime, onNavigate, onUseTopic }: DashboardProps) {
   const [trends, setTrends] = useState<TrendGroup[]>([]);
@@ -110,14 +110,14 @@ export default function DashboardPage({ persona, gatewayStatus, apiDirect, agent
       }))
       .catch((error: unknown) => {
         setAnaErrors((errors) => ({ ...errors, [platform]: error instanceof Error
-          ? error.message : '抓取失败，请稍后重试' }));
+          ? error.message : 'Abruf fehlgeschlagen, bitte später erneut versuchen' }));
         setAnaData((d) => ({ ...d, [platform]: 'error' as const }));
       })
       .finally(() => anaPending.current.delete(platform));
   };
 
   const hour = new Date().getHours();
-  const greet = hour < 6 ? '夜深了' : hour < 12 ? '上午好' : hour < 14 ? '中午好' : hour < 18 ? '下午好' : '晚上好';
+  const greet = hour < 6 ? 'Noch wach?' : hour < 12 ? 'Guten Morgen' : hour < 14 ? 'Mahlzeit' : hour < 18 ? 'Guten Tag' : 'Guten Abend';
   // 本地日期（与日历页 ymd 一致）：toISOString 是 UTC，会把「今天」错判成昨天/明天
   const today = new Date();
   const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
@@ -129,19 +129,19 @@ export default function DashboardPage({ persona, gatewayStatus, apiDirect, agent
   const loggedIn = accounts.filter((a) => a.loggedIn).length;
 
   const quick: { label: string; page: Page; Icon: typeof IconChat }[] = [
-    { label: '开始对话', page: 'chat', Icon: IconChat },
-    { label: '看热点', page: 'trends', Icon: IconFire },
-    { label: '拆爆款', page: 'breakdown', Icon: IconSkills },
-    { label: '记选题', page: 'ideas', Icon: IconIdea },
-    { label: '排日历', page: 'calendar', Icon: IconCalendar },
-    { label: '去发布', page: 'publish', Icon: IconPublish },
+    { label: 'Chat starten', page: 'chat', Icon: IconChat },
+    { label: 'Trends ansehen', page: 'trends', Icon: IconFire },
+    { label: 'Viral-Analyse', page: 'breakdown', Icon: IconSkills },
+    { label: 'Idee merken', page: 'ideas', Icon: IconIdea },
+    { label: 'Kalender planen', page: 'calendar', Icon: IconCalendar },
+    { label: 'Veröffentlichen', page: 'publish', Icon: IconPublish },
   ];
 
   const stats: { label: string; value: string; page: Page; Icon: typeof IconChat }[] = [
-    { label: '待做选题', value: String(pendingIdeas.length), page: 'ideas', Icon: IconIdea },
-    { label: '待发排期', value: String(upcoming.length), page: 'calendar', Icon: IconCalendar },
-    { label: '内容项目', value: String(outputs.length), page: 'outputs', Icon: IconOutputs },
-    { label: '已登录账号', value: `${loggedIn}/${accounts.length}`, page: 'accounts', Icon: IconAccounts },
+    { label: 'Offene Ideen', value: String(pendingIdeas.length), page: 'ideas', Icon: IconIdea },
+    { label: 'Geplante Posts', value: String(upcoming.length), page: 'calendar', Icon: IconCalendar },
+    { label: 'Projekte', value: String(outputs.length), page: 'outputs', Icon: IconOutputs },
+    { label: 'Angemeldete Konten', value: `${loggedIn}/${accounts.length}`, page: 'accounts', Icon: IconAccounts },
   ];
 
   return (
@@ -149,13 +149,13 @@ export default function DashboardPage({ persona, gatewayStatus, apiDirect, agent
       <div className="dash-hero">
         <h1 className="page-title" style={{ fontSize: 26 }}>{greet} 👋</h1>
         <p className="page-subtitle">
-          {apiDirect ? (gatewayStatus === 'connected' ? '仅聊天模式已配置，可开始对话。' : '请先配置仅聊天模式的模型 API。')
+          {apiDirect ? (gatewayStatus === 'connected' ? 'Nur-Chat-Modus eingerichtet, du kannst loslegen.' : 'Bitte zuerst die Modell-API für den Nur-Chat-Modus einrichten.')
             : agentRuntime !== 'openclaw' ? (gatewayStatus === 'connected'
-            ? `${agentRuntime} CLI 已安装；原生登录及模型可用性请发送消息验证。`
-            : `请先在服务器安装并配置 ${agentRuntime} CLI。`)
-            : gatewayStatus === 'connected' ? '一切就绪。' : '⚠ 网关未连接。'}
-          {persona ? ` 当前画像「${persona}」。` : ' 通用模式——指定画像效果更好。'}
-          从热点到发布，一站式搞定今天的内容。
+            ? `${agentRuntime} CLI installiert; Anmeldung und Modell bitte mit einer Nachricht prüfen.`
+            : `Bitte zuerst auf dem Server installieren und einrichten: ${agentRuntime} CLI.`)
+            : gatewayStatus === 'connected' ? 'Alles bereit.' : '⚠ Gateway nicht verbunden.'}
+          {persona ? ` Aktuelles Profil „${persona}“.` : ' Allgemeiner Modus; mit einem Profil wird es besser.'}
+          {' '}Von Trend bis Post: der Content für heute an einem Ort.
         </p>
         <div className="dash-quick">
           {quick.map((q) => (
@@ -181,17 +181,17 @@ export default function DashboardPage({ persona, gatewayStatus, apiDirect, agent
         {/* 今日热点 */}
         <div className="card dash-card">
           <div className="dash-card-head">
-            <span><IconFire size={16} /> 今日热点</span>
-            <button className="dash-more" onClick={() => onNavigate('trends')}>热点雷达 →</button>
+            <span><IconFire size={16} /> Trends heute</span>
+            <button className="dash-more" onClick={() => onNavigate('trends')}>Trend-Radar →</button>
           </div>
-          {trends.length === 0 && <div className="dash-empty">暂无热点，请到热点雷达查看数据源状态。</div>}
+          {trends.length === 0 && <div className="dash-empty">Keine Trends; Status der Datenquellen im Trend-Radar prüfen.</div>}
           {trends.map((g) => (
             <div key={g.platform} className="dash-trend-group">
-              <div className="dash-trend-plat">{g.label}{g.stale ? ' · 过期缓存' : ''}</div>
+              <div className="dash-trend-plat">{g.label}{g.stale ? ' · veralteter Cache' : ''}</div>
               {g.error && <div className="dash-empty">{g.error.message}</div>}
-              {g.ok && g.items.length === 0 && <div className="dash-empty">采集成功，暂无热点</div>}
+              {g.ok && g.items.length === 0 && <div className="dash-empty">Abruf erfolgreich, aber keine Trends</div>}
               {g.items.slice(0, 3).map((it, i) => (
-                <div key={i} className="dash-trend-item" title={`${it.title}（点击做成内容）`}>
+                <div key={i} className="dash-trend-item" title={`${it.title}(klicken, um daraus Inhalt zu machen)`}>
                   <span className="dash-trend-title" onClick={() => onUseTopic(it.title)}>{it.title}</span>
                 </div>
               ))}
@@ -202,12 +202,12 @@ export default function DashboardPage({ persona, gatewayStatus, apiDirect, agent
         {/* 选题库 */}
         <div className="card dash-card">
           <div className="dash-card-head">
-            <span><IconIdea size={16} /> 选题库 · 待做</span>
-            <button className="dash-more" onClick={() => onNavigate('ideas')}>全部 →</button>
+            <span><IconIdea size={16} /> Ideenpool · offen</span>
+            <button className="dash-more" onClick={() => onNavigate('ideas')}>Alle →</button>
           </div>
-          {pendingIdeas.length === 0 && <div className="dash-empty">还没攒选题，去热点雷达收藏几个吧</div>}
+          {pendingIdeas.length === 0 && <div className="dash-empty">Noch keine Ideen gesammelt; merk dir ein paar im Trend-Radar</div>}
           {pendingIdeas.slice(0, 5).map((it) => (
-            <div key={it.id} className="dash-idea" onClick={() => onUseTopic(it.title)} title="点击做成内容">
+            <div key={it.id} className="dash-idea" onClick={() => onUseTopic(it.title)} title="Klicken, um daraus Inhalt zu machen">
               <span className="dash-idea-title">{it.title}</span>
               {it.source && <span className="badge">{it.source}</span>}
             </div>
@@ -217,10 +217,10 @@ export default function DashboardPage({ persona, gatewayStatus, apiDirect, agent
         {/* 近期排期 */}
         <div className="card dash-card">
           <div className="dash-card-head">
-            <span><IconCalendar size={16} /> 近期排期</span>
-            <button className="dash-more" onClick={() => onNavigate('calendar')}>日历 →</button>
+            <span><IconCalendar size={16} /> Demnächst geplant</span>
+            <button className="dash-more" onClick={() => onNavigate('calendar')}>Kalender →</button>
           </div>
-          {upcoming.length === 0 && <div className="dash-empty">暂无排期，去日历安排一条吧</div>}
+          {upcoming.length === 0 && <div className="dash-empty">Noch nichts geplant; leg im Kalender einen Post an</div>}
           {upcoming.map((s) => (
             <div key={s.id} className="dash-sched" onClick={() => onNavigate('calendar')}>
               <span className="dash-sched-date">{s.date.slice(5)}</span>
@@ -233,14 +233,14 @@ export default function DashboardPage({ persona, gatewayStatus, apiDirect, agent
         {/* 最近产物 */}
         <div className="card dash-card dash-card-top">
           <div className="dash-card-head">
-            <span><IconOutputs size={16} /> 最近产物</span>
-            <button className="dash-more" onClick={() => onNavigate('outputs')}>内容库 →</button>
+            <span><IconOutputs size={16} /> Neueste Ergebnisse</span>
+            <button className="dash-more" onClick={() => onNavigate('outputs')}>Inhaltsbibliothek →</button>
           </div>
-          {recent.length === 0 && <div className="dash-empty">还没有产物，去对话生成第一条吧</div>}
+          {recent.length === 0 && <div className="dash-empty">Noch keine Ergebnisse; erzeug im Chat das erste</div>}
           {recent.map((g) => (
             <div key={g.name} className="dash-output" onClick={() => onNavigate('outputs')}>
               <span className="dash-output-name">{g.meta?.title || g.name}</span>
-              <span className="badge">{g.meta?.platform || (g.type === 'dir' ? `${g.fileCount ?? 0} 文件` : '单文件')}</span>
+              <span className="badge">{g.meta?.platform || (g.type === 'dir' ? `${g.fileCount ?? 0} Dateien` : 'Einzeldatei')}</span>
             </div>
           ))}
         </div>
@@ -248,24 +248,24 @@ export default function DashboardPage({ persona, gatewayStatus, apiDirect, agent
         {/* 创作数据（归因层）：选平台自动拉取登录账号的粉丝/获赞/关注 + 多窗口增长 + 近7日环比 + 最新笔记 */}
         <div className="card dash-card dash-card-wide">
           <div className="dash-card-head">
-            <span><IconAccounts size={16} /> 创作数据</span>
+            <span><IconAccounts size={16} /> Kennzahlen</span>
             {anaSel && anaData[anaSel] && anaData[anaSel] !== 'loading' && (
-              <button className="dash-more" onClick={() => runAna(anaSel)}>刷新 →</button>
+              <button className="dash-more" onClick={() => runAna(anaSel)}>Aktualisieren →</button>
             )}
           </div>
           {(() => {
             const logged = anaPlats.filter((p) => p.loggedIn || whoamiMap[p.platform]?.loggedIn);
-            if (anaPlats.length === 0) return <div className="dash-empty">加载中 / 需配置代理</div>;
+            if (anaPlats.length === 0) return <div className="dash-empty">Lädt / Proxy nötig</div>;
             if (logged.length === 0) {
               return (
                 <div className="dash-empty" onClick={() => onNavigate('accounts')} style={{ cursor: 'pointer' }}>
-                  去账号页登录后，这里看各平台粉丝 / 获赞 / 关注、增长趋势与最新笔记 →
+                  Nach der Anmeldung auf der Kontoseite siehst du hier Follower, Likes, Abos, Wachstum und neueste Posts →
                 </div>
               );
             }
             const d = anaSel ? anaData[anaSel] : undefined;
             const WIN: [typeof anaWin, string][] = [
-              ['last', '较上次'], ['day', '较昨日'], ['week', '较上周'], ['month', '较上月'], ['year', '较去年'],
+              ['last', 'seit letztem Mal'], ['day', 'seit gestern'], ['week', 'seit letzter Woche'], ['month', 'seit letztem Monat'], ['year', 'seit letztem Jahr'],
             ];
             return (
               <>
@@ -275,16 +275,16 @@ export default function DashboardPage({ persona, gatewayStatus, apiDirect, agent
                       onClick={() => runAna(p.platform)}>{p.name}</button>
                   ))}
                 </div>
-                {!d && <div className="dash-empty">点上方平台查看该账号数据</div>}
+                {!d && <div className="dash-empty">Oben eine Plattform wählen, um ihre Daten zu sehen</div>}
                 {d === 'loading' && (
-                  <div className="loading" style={{ padding: '28px 0' }}><div className="spinner" />抓取中…正在校验登录态并读取平台数据</div>
+                  <div className="loading" style={{ padding: '28px 0' }}><div className="spinner" />Wird abgerufen … Anmeldestatus wird geprüft und Daten werden gelesen</div>
                 )}
                 {d === 'error' && (
-                  <div className="dash-empty" style={{ color: 'var(--red)' }}>{anaErrors[anaSel] || '抓取失败，请稍后重试'}；点平台重试</div>
+                  <div className="dash-empty" style={{ color: 'var(--red)' }}>{anaErrors[anaSel] || 'Abruf fehlgeschlagen, bitte später erneut versuchen'}; Plattform anklicken zum Wiederholen</div>
                 )}
                 {d && d !== 'loading' && d !== 'error' && (!d.loggedIn ? (
                   <div className="dash-empty" onClick={() => onNavigate('accounts')} style={{ cursor: 'pointer' }}>
-                    该平台登录态已失效，去账号页重登 →
+                    Anmeldung bei dieser Plattform abgelaufen, auf der Kontoseite neu anmelden →
                   </div>
                 ) : (
                   <div className="ana-body">
@@ -293,7 +293,7 @@ export default function DashboardPage({ persona, gatewayStatus, apiDirect, agent
                     <div className="ana-col ana-col-main">
                       <div className="ana-id">{d.nickname ? `@${d.nickname}` : d.name}</div>
                       <div className="ana-overview">
-                        {([['粉丝', 'followers'], ['获赞', 'likes'], ['关注', 'following']] as const).map(([label, key]) => {
+                        {([['Follower', 'followers'], ['Likes', 'likes'], ['Folgt', 'following']] as const).map(([label, key]) => {
                           const w = d.growth?.[anaWin] ?? null;
                           const g = w ? growthInfo(w[key as 'followers' | 'likes']) : null;
                           return (
@@ -314,16 +314,16 @@ export default function DashboardPage({ persona, gatewayStatus, apiDirect, agent
                       </div>
                       <div className="ana-wins-note">
                         {d.growth?.[anaWin]?.since_days != null
-                          ? `对比 ${d.growth[anaWin]!.since_days} 天前的快照`
-                          : '暂无该时段历史快照，多刷新几次即可积累对比'}
+                          ? `Vergleich mit Stand vor ${d.growth[anaWin]!.since_days} Tagen`
+                          : 'Für diesen Zeitraum gibt es noch keinen Verlauf; nach mehreren Aktualisierungen entstehen Vergleiche'}
                       </div>
                     </div>
 
                     {/* 近7日平台指标 + 环比 */}
                     <div className="ana-col ana-col-metrics">
-                      <div className="ana-sub">近 7 日 · 环比</div>
+                      <div className="ana-sub">Letzte 7 Tage · im Vergleich</div>
                       {(d.metrics ?? []).length === 0 ? (
-                        <div className="dash-empty">该平台未提供近 7 日指标</div>
+                        <div className="dash-empty">Diese Plattform liefert keine 7-Tage-Werte</div>
                       ) : (
                         <div className="ana-metrics">
                           {(d.metrics ?? []).map((m) => {
@@ -334,7 +334,7 @@ export default function DashboardPage({ persona, gatewayStatus, apiDirect, agent
                               <div key={m.label} className="ana-metric">
                                 <div className="ana-metric-val">{m.value}</div>
                                 <div className="ana-metric-label">{m.label}</div>
-                                {has && <div className="ana-metric-vs" style={{ color: up ? 'var(--trend-up)' : 'var(--trend-down)' }}>环比{vs}</div>}
+                                {has && <div className="ana-metric-vs" style={{ color: up ? 'var(--trend-up)' : 'var(--trend-down)' }}>im Vergleich{vs}</div>}
                               </div>
                             );
                           })}
@@ -344,9 +344,9 @@ export default function DashboardPage({ persona, gatewayStatus, apiDirect, agent
 
                     {/* 最新笔记（可点进原文） */}
                     <div className="ana-col ana-col-notes">
-                      <div className="ana-sub">最新笔记</div>
+                      <div className="ana-sub">Neueste Posts</div>
                       {(d.notes ?? []).length === 0 ? (
-                        <div className="dash-empty">该账号暂无可读取的已发布笔记</div>
+                        <div className="dash-empty">Für dieses Konto gibt es keine lesbaren veröffentlichten Posts</div>
                       ) : (
                         <div className="ana-notes">
                           {(d.notes ?? []).slice(0, 6).map((n, i) => (
@@ -355,7 +355,7 @@ export default function DashboardPage({ persona, gatewayStatus, apiDirect, agent
                                 ? <img className="ana-note-cover" src={n.cover} alt="" referrerPolicy="no-referrer" />
                                 : <span className="ana-note-cover ana-note-cover-ph">📝</span>}
                               <span className="ana-note-main">
-                                <span className="ana-note-title">{n.title || '(无标题)'}</span>
+                                <span className="ana-note-title">{n.title || '(ohne Titel)'}</span>
                                 {n.stat && <span className="ana-note-stat">{n.stat}</span>}
                               </span>
                               <span className="ana-note-go">↗</span>

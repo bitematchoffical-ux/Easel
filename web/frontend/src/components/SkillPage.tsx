@@ -17,15 +17,15 @@ type IconC = ComponentType<{ size?: number }>;
 type LayerMeta = { key: string; label: string; Icon: IconC; color: string };
 
 const LAYERS: LayerMeta[] = [
-  { key: 'discover', label: '发现', Icon: IconSearch, color: 'var(--layer-discover)' },
-  { key: 'plan', label: '策划', Icon: IconCompass, color: 'var(--layer-plan)' },
-  { key: 'produce', label: '制作', Icon: IconSkills, color: 'var(--layer-produce)' },
-  { key: 'publish', label: '发布', Icon: IconSend, color: 'var(--layer-publish)' },
-  { key: 'attribute', label: '归因', Icon: IconChart, color: 'var(--layer-attribute)' },
-  { key: 'general', label: '通用', Icon: IconLayers, color: 'var(--layer-general)' },
+  { key: 'discover', label: 'Entdecken', Icon: IconSearch, color: 'var(--layer-discover)' },
+  { key: 'plan', label: 'Planen', Icon: IconCompass, color: 'var(--layer-plan)' },
+  { key: 'produce', label: 'Produzieren', Icon: IconSkills, color: 'var(--layer-produce)' },
+  { key: 'publish', label: 'Veröffentlichen', Icon: IconSend, color: 'var(--layer-publish)' },
+  { key: 'attribute', label: 'Auswerten', Icon: IconChart, color: 'var(--layer-attribute)' },
+  { key: 'general', label: 'Allgemein', Icon: IconLayers, color: 'var(--layer-general)' },
 ];
 const LAYER_META: Record<string, LayerMeta> = Object.fromEntries(LAYERS.map((l) => [l.key, l]));
-const OTHER: LayerMeta = { key: 'other', label: '其他', Icon: IconLayers, color: 'var(--layer-general)' };
+const OTHER: LayerMeta = { key: 'other', label: 'Sonstiges', Icon: IconLayers, color: 'var(--layer-general)' };
 
 // 按 skill 名关键词映射线性图标（无匹配退回层图标）
 function iconFor(name: string, LayerIcon: IconC): IconC {
@@ -49,8 +49,8 @@ function iconFor(name: string, LayerIcon: IconC): IconC {
 }
 
 const LAYER_DESC: Record<string, string> = {
-  discover: '发现层技能', plan: '策划层技能', produce: '制作层技能',
-  publish: '发布层技能', attribute: '归因层技能', general: '通用技能', other: '技能',
+  discover: 'Skills: Entdecken', plan: 'Skills: Planen', produce: 'Skills: Produzieren',
+  publish: 'Skills: Veröffentlichen', attribute: 'Skills: Auswerten', general: 'Allgemeine Skills', other: 'Skills',
 };
 
 export default function SkillPage({ persona }: SkillPageProps) {
@@ -60,7 +60,7 @@ export default function SkillPage({ persona }: SkillPageProps) {
   const [selected, setSelected] = useState<string | null>(null);
 
   const load = () => {
-    fetchSkills().then(setSkills).catch(() => setError('加载 SKILL 列表失败'));
+    fetchSkills().then(setSkills).catch(() => setError('Skill-Liste konnte nicht geladen werden'));
   };
   useEffect(load, []);
 
@@ -86,21 +86,21 @@ export default function SkillPage({ persona }: SkillPageProps) {
   return (
     <div className="skills-page">
       <div className="skills-page-head">
-        <h1 className="page-title">技能库</h1>
+        <h1 className="page-title">Skills</h1>
         <p className="page-subtitle">
-          共 {skills.length} 个技能，按流水线层分区浏览。点卡片查看说明、就地运行；
-          标 <span className="badge badge-warn" style={{ padding: '1px 7px' }}>需 API</span> 的需先配置密钥
-          {needApiCount > 0 && `（当前 ${needApiCount} 个待配置）`}。
+          Insgesamt {skills.length}  Skills, sortiert nach Ebenen der Pipeline. Karte anklicken für Beschreibung und direktes Ausführen;
+          mit <span className="badge badge-warn" style={{ padding: '1px 7px' }}>API nötig</span> markierte brauchen zuerst einen Schlüssel
+          {needApiCount > 0 && ` (aktuell ${needApiCount} einzurichten)`}.
         </p>
         <div className="skill-search">
           <span className="skill-search-ic"><IconSearch size={16} /></span>
           <input
             className="field"
-            placeholder="搜索技能名或描述…"
+            placeholder="Skill-Name oder Beschreibung suchen …"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
-          {query && <button className="btn btn-ghost btn-sm" onClick={() => setQuery('')}>清除</button>}
+          {query && <button className="btn btn-ghost btn-sm" onClick={() => setQuery('')}>Löschen</button>}
         </div>
       </div>
 
@@ -110,7 +110,7 @@ export default function SkillPage({ persona }: SkillPageProps) {
         {orderedLayers.length === 0 && !error && (
           <div className="empty-state" style={{ height: 240 }}>
             <div className="empty-icon"><IconSearch size={40} /></div>
-            <p>没有匹配「{query}」的技能</p>
+            <p>Keine Skills passend zu „{query}“</p>
           </div>
         )}
 
@@ -133,15 +133,15 @@ export default function SkillPage({ persona }: SkillPageProps) {
                     style={{ ['--layer-color' as string]: meta.color }}
                     onClick={() => setSelected(s.name)}
                   >
-                    {alert && <div className="skill-card-alert" title="需要配置 API key">!</div>}
+                    {alert && <div className="skill-card-alert" title="API-Schlüssel nötig">!</div>}
                     <div className="skill-card-icon" style={{ color: meta.color }}><Icon size={19} /></div>
                     <div className="skill-card-name">{displayName(s.name)}</div>
                     <div className="skill-card-rawname">{s.name}</div>
                     <div className="skill-card-desc">{s.description?.trim() || LAYER_DESC[layer.key]}</div>
                     <div className="skill-card-foot">
                       {s.needsApi && (s.apiConfigured
-                        ? <span className="badge badge-ok">已配置</span>
-                        : <span className="badge badge-warn">需 API</span>)}
+                        ? <span className="badge badge-ok">Eingerichtet</span>
+                        : <span className="badge badge-warn">API nötig</span>)}
                     </div>
                   </div>
                 );

@@ -89,7 +89,7 @@ test('streamChat: POST 5xx 后 jobs 404 终结并报错（不再无限重试）'
   assert.equal(calls.post, 1, '首发 POST 只发一次');
   assert.equal(calls.jobs, 1, 'jobs 404 后必须终结，不得继续重试');
   assert.equal(events.error.length, 1, 'onError 必须触发一次');
-  assert.match(events.error[0], /任务记录不存在|失效/);
+  assert.match(events.error[0], /任务记录不存在|失效|nicht gefunden|abgelaufen/);
   assert.equal(events.done, 0);
   assert.equal(events.interrupted, 1, '首次 5xx 后应提示中断（续接状态）');
 });

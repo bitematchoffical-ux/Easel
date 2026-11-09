@@ -4,18 +4,18 @@ import type { ScheduleItem, ScheduleInput, ScheduleContext } from '../lib/api';
 import { IconCalendar, IconTrash, IconChevron } from './icons';
 
 const STATUS_META: Record<string, { label: string; color: string }> = {
-  idea: { label: '选题', color: 'var(--text-tertiary)' },
-  draft: { label: '草稿', color: 'var(--layer-plan)' },
-  scheduled: { label: '待发', color: 'var(--layer-attribute)' },
-  published: { label: '已发', color: 'var(--layer-publish)' },
+  idea: { label: 'Idee', color: 'var(--text-tertiary)' },
+  draft: { label: 'Entwurf', color: 'var(--layer-plan)' },
+  scheduled: { label: 'Geplant', color: 'var(--layer-attribute)' },
+  published: { label: 'Gepostet', color: 'var(--layer-publish)' },
 };
 const EVENT_COLOR = 'var(--layer-discover)';
-const EVENT_TYPES = ['节日', '电商', '平台活动', '行业'];
+const EVENT_TYPES = ['Feiertag', 'Shopping', 'Plattform-Event', 'Branche'];
 const SOURCE_LABEL: Record<string, string> = {
-  chat: '对话页', 'publish-page': '发布页', manual: '手动', scheduler: '排期',
+  chat: 'Chat', 'publish-page': 'Veröffentlichen', manual: 'Manuell', scheduler: 'Planung',
 };
-const PLATFORMS = ['小红书', '抖音', 'B站', '微信视频号', '快手', '公众号', '微博', '知乎', '今日头条'];
-const WEEKDAYS = ['一', '二', '三', '四', '五', '六', '日'];
+const PLATFORMS = ['Xiaohongshu', 'Douyin', 'Bilibili', 'WeChat-Kanäle', 'Kuaishou', 'WeChat-Konto', 'Weibo', 'Zhihu', 'Toutiao'];
+const WEEKDAYS = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
 type Filter = 'all' | 'content' | 'event';
 
 function ymd(d: Date): string {
@@ -118,7 +118,7 @@ export default function CalendarPage() {
     try { await deleteSchedule(editing.id); close(); load(); } finally { setSaving(false); }
   };
 
-  const monthLabel = `${cursor.getFullYear()} 年 ${cursor.getMonth() + 1} 月`;
+  const monthLabel = `${cursor.getFullYear()} / ${cursor.getMonth() + 1}`;
   const shift = (n: number) => setCursor((c) => new Date(c.getFullYear(), c.getMonth() + n, 1));
   const todayStr = ymd(today);
   const isEvent = form?.kind === 'event';
@@ -128,12 +128,12 @@ export default function CalendarPage() {
     <div className="page-scroll calendar-page">
       <div className="page-head">
         <div>
-          <h1 className="page-title"><IconCalendar size={21} /> 内容日历</h1>
-          <p className="page-subtitle">每天各平台发什么一目了然——发布自动落库，可记录排期与平台活动。</p>
+          <h1 className="page-title"><IconCalendar size={21} /> Content-Kalender</h1>
+          <p className="page-subtitle">Was wann auf welcher Plattform kommt, auf einen Blick. Veröffentlichtes wird automatisch eingetragen; Planung und Plattform-Events lassen sich festhalten.</p>
         </div>
         <div className="cal-nav">
           <button className="btn btn-sm" onClick={() => shift(-1)}><span style={{ transform: 'rotate(180deg)', display: 'inline-flex' }}><IconChevron size={14} /></span></button>
-          <button className="btn btn-sm" onClick={() => setCursor(new Date(today.getFullYear(), today.getMonth(), 1))}>本月</button>
+          <button className="btn btn-sm" onClick={() => setCursor(new Date(today.getFullYear(), today.getMonth(), 1))}>Dieser Monat</button>
           <span className="cal-month">{monthLabel}</span>
           <button className="btn btn-sm" onClick={() => shift(1)}><IconChevron size={14} /></button>
         </div>
@@ -142,7 +142,7 @@ export default function CalendarPage() {
       {showSuggest && suggestions.length > 0 && (
         <div className="cal-suggest">
           <div className="cal-suggest-head">
-            <span>📅 日历建议（近 {ctx?.window_days ?? 14} 天）</span>
+            <span>📅 Kalendervorschläge (nächste  {ctx?.window_days ?? 14}  Tage)</span>
             <button className="icon-btn" onClick={() => setShowSuggest(false)}>×</button>
           </div>
           <ul>{suggestions.map((s, i) => <li key={i}>{s}</li>)}</ul>
@@ -156,19 +156,19 @@ export default function CalendarPage() {
           </span>
         ))}
         <span className="cal-legend-item">
-          <span className="cal-legend-swatch sq" style={{ ['--sw' as string]: EVENT_COLOR }} />平台活动
+          <span className="cal-legend-swatch sq" style={{ ['--sw' as string]: EVENT_COLOR }} />Plattform-Event
         </span>
         <span className="cal-legend-filter">
           {(['all', 'content', 'event'] as Filter[]).map((f) => (
             <button key={f} className={`chip ${filter === f ? 'active' : ''}`} onClick={() => setFilter(f)}>
-              {f === 'all' ? '全部' : f === 'content' ? '内容' : '活动'}
+              {f === 'all' ? 'Alle' : f === 'content' ? 'Inhalt' : 'Event'}
             </button>
           ))}
         </span>
       </div>
 
       <div className="cal-grid-head">
-        {WEEKDAYS.map((w) => <div key={w} className="cal-wd">周{w}</div>)}
+        {WEEKDAYS.map((w) => <div key={w} className="cal-wd">Woche{w}</div>)}
       </div>
       <div className="cal-grid">
         {cells.map((d, i) => {
@@ -186,7 +186,7 @@ export default function CalendarPage() {
                 {shown.map(renderChip)}
                 {hidden > 0 && (
                   <button className="cal-more" onClick={(e) => { e.stopPropagation(); setDayView(ds); }}>
-                    +{hidden} 更多
+                    +{hidden} Mehr
                   </button>
                 )}
               </div>
@@ -202,14 +202,14 @@ export default function CalendarPage() {
           <div className="overlay" onClick={() => setDayView(null)}>
             <div className="modal" style={{ width: 420, maxWidth: '100%' }} onClick={(e) => e.stopPropagation()}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                <h3 style={{ margin: 0 }}>{dayView}（{list.length} 项）</h3>
+                <h3 style={{ margin: 0 }}>{dayView} ({list.length} Einträge)</h3>
                 <button className="icon-btn" onClick={() => setDayView(null)}>×</button>
               </div>
               <div className="cal-dayview-list">
                 {list.map(renderChip)}
               </div>
               <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 16 }}>
-                <button className="btn btn-sm btn-primary" onClick={() => openNew(dayView)}>+ 新增</button>
+                <button className="btn btn-sm btn-primary" onClick={() => openNew(dayView)}>+ Neu</button>
               </div>
             </div>
           </div>
@@ -220,34 +220,34 @@ export default function CalendarPage() {
         <div className="overlay" onClick={close}>
           <div className="modal" style={{ width: 440, maxWidth: '100%' }} onClick={(e) => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-              <h3 style={{ margin: 0 }}>{editing ? '编辑' : '新增'}{isEvent ? '平台活动' : '排期'}</h3>
+              <h3 style={{ margin: 0 }}>{editing ? 'Bearbeiten' : 'Neu'}{isEvent ? 'Plattform-Event' : 'Planung'}</h3>
               <button className="icon-btn" onClick={close}>×</button>
             </div>
-            <label className="field-label">类型</label>
+            <label className="field-label">Typ</label>
             <div style={{ display: 'flex', gap: 7 }}>
               <button className={`chip ${!isEvent ? 'active' : ''}`}
-                onClick={() => setForm({ ...form, kind: 'content' })}>内容 / 发布</button>
+                onClick={() => setForm({ ...form, kind: 'content' })}>Inhalt / Veröffentlichung</button>
               <button className={`chip ${isEvent ? 'active' : ''}`}
-                onClick={() => setForm({ ...form, kind: 'event', status: 'idea' })}>平台活动</button>
+                onClick={() => setForm({ ...form, kind: 'event', status: 'idea' })}>Plattform-Event</button>
             </div>
-            <label className="field-label">标题 *</label>
-            <input className="field" value={form.title} autoFocus placeholder={isEvent ? '活动/节点名称' : '要发什么内容'}
+            <label className="field-label">Titel *</label>
+            <input className="field" value={form.title} autoFocus placeholder={isEvent ? 'Name des Events/Termins' : 'Was soll gepostet werden?'}
               onChange={(e) => setForm({ ...form, title: e.target.value })} />
             <div style={{ display: 'flex', gap: 10 }}>
               <div style={{ flex: 1 }}>
-                <label className="field-label">{isEvent ? '开始日期 *' : '日期 *'}</label>
+                <label className="field-label">{isEvent ? 'Startdatum *' : 'Datum *'}</label>
                 <input className="field" type="date" value={form.date}
                   onChange={(e) => setForm({ ...form, date: e.target.value })} />
               </div>
               {isEvent ? (
                 <div style={{ flex: 1 }}>
-                  <label className="field-label">结束日期</label>
+                  <label className="field-label">Enddatum</label>
                   <input className="field" type="date" value={form.end_date || ''}
                     onChange={(e) => setForm({ ...form, end_date: e.target.value })} />
                 </div>
               ) : (
                 <div style={{ width: 120 }}>
-                  <label className="field-label">时间</label>
+                  <label className="field-label">Uhrzeit</label>
                   <input className="field" type="time" value={form.time}
                     onChange={(e) => setForm({ ...form, time: e.target.value })} />
                 </div>
@@ -255,14 +255,14 @@ export default function CalendarPage() {
             </div>
             {isEvent ? (
               <>
-                <label className="field-label">活动类型</label>
+                <label className="field-label">Event-Typ</label>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
                   {EVENT_TYPES.map((t) => (
                     <button key={t} className={`chip ${form.event_type === t ? 'active' : ''}`}
                       onClick={() => setForm({ ...form, event_type: form.event_type === t ? '' : t })}>{t}</button>
                   ))}
                 </div>
-                <label className="field-label">关联平台（可选）</label>
+                <label className="field-label">Zugehörige Plattform (optional)</label>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
                   {PLATFORMS.map((p) => (
                     <button key={p} className={`chip ${form.platform === p ? 'active' : ''}`}
@@ -272,14 +272,14 @@ export default function CalendarPage() {
               </>
             ) : (
               <>
-                <label className="field-label">平台</label>
+                <label className="field-label">Plattform</label>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
                   {PLATFORMS.map((p) => (
                     <button key={p} className={`chip ${form.platform === p ? 'active' : ''}`}
                       onClick={() => setForm({ ...form, platform: form.platform === p ? '' : p })}>{p}</button>
                   ))}
                 </div>
-                <label className="field-label">状态</label>
+                <label className="field-label">Status</label>
                 <div style={{ display: 'flex', gap: 7 }}>
                   {Object.entries(STATUS_META).map(([k, m]) => (
                     <button key={k} className={`chip ${form.status === k ? 'active' : ''}`}
@@ -288,17 +288,17 @@ export default function CalendarPage() {
                 </div>
               </>
             )}
-            <label className="field-label">备注</label>
+            <label className="field-label">Notiz</label>
             <textarea className="field" style={{ minHeight: 60 }} value={form.note}
               onChange={(e) => setForm({ ...form, note: e.target.value })} />
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 18 }}>
               {editing
-                ? <button className="btn btn-sm btn-danger" onClick={remove} disabled={saving}><IconTrash size={13} /> 删除</button>
+                ? <button className="btn btn-sm btn-danger" onClick={remove} disabled={saving}><IconTrash size={13} /> Löschen</button>
                 : <span />}
               <div style={{ display: 'flex', gap: 8 }}>
-                <button className="btn btn-sm" onClick={close}>取消</button>
+                <button className="btn btn-sm" onClick={close}>Abbrechen</button>
                 <button className="btn btn-sm btn-primary" onClick={save} disabled={saving || !form.title.trim() || !form.date}>
-                  {saving ? '保存中…' : '保存'}
+                  {saving ? 'Wird gespeichert …' : 'Speichern'}
                 </button>
               </div>
             </div>

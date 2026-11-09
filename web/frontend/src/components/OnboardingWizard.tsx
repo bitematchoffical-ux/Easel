@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { buildProfile, profileBuildStatus } from '../lib/api';
 
-const PLATFORMS = ['小红书', '抖音', 'B站', '视频号', '公众号', '微博', '知乎', '今日头条'];
-const TONES = ['专业严谨', '轻松幽默', '亲切日常', '犀利吐槽', '治愈温暖', '干货实用'];
+const PLATFORMS = ['Xiaohongshu', 'Douyin', 'Bilibili', 'WeChat-Kanäle', 'WeChat-Konto', 'Weibo', 'Zhihu', 'Toutiao'];
+const TONES = ['Sachlich-kompetent', 'Locker und witzig', 'Nahbar und alltäglich', 'Frech und pointiert', 'Warm und tröstend', 'Praktisch und nützlich'];
 
 interface OnboardingWizardProps {
   onClose: () => void;
@@ -24,11 +24,11 @@ interface FormState {
 }
 
 const EMPTY: FormState = {
-  name: '', platforms: [], accountStage: '全新起号', links: {},
+  name: '', platforms: [], accountStage: 'Neues Konto', links: {},
   direction: '', reason: '', goal: '', formats: '', likes: '', tone: '', avoid: '',
 };
 
-const STEPS = ['基础信息', '社媒链接', '运营意图', '偏好与红线'];
+const STEPS = ['Basisdaten', 'Social-Media-Links', 'Ziele', 'Vorlieben und Tabus'];
 
 export default function OnboardingWizard({ onClose, onCreated }: OnboardingWizardProps) {
   const [step, setStep] = useState(0);
@@ -63,11 +63,11 @@ export default function OnboardingWizard({ onClose, onCreated }: OnboardingWizar
         setSubmitting(false);
         setPhase('enhancing'); // 进入后台增强等待（可跳过）
       } else {
-        setError('画像创建失败，请重试');
+        setError('Profil konnte nicht angelegt werden, bitte erneut versuchen');
         setSubmitting(false);
       }
     } catch (e) {
-      setError(e instanceof Error ? e.message : '创建失败');
+      setError(e instanceof Error ? e.message : 'Anlegen fehlgeschlagen');
       setSubmitting(false);
     }
   };
@@ -113,7 +113,7 @@ export default function OnboardingWizard({ onClose, onCreated }: OnboardingWizar
       <div className="modal" style={{ width: 560, maxWidth: '100%', maxHeight: '90vh', overflowY: 'auto' }}>
         {/* 头部 + 进度 */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h2 style={{ margin: 0, fontSize: 20 }}>配置账号画像</h2>
+          <h2 style={{ margin: 0, fontSize: 20 }}>Konto-Profil einrichten</h2>
           <button onClick={onClose} disabled={submitting}
             style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', fontSize: 22, cursor: 'pointer' }}>×</button>
         </div>
@@ -129,36 +129,36 @@ export default function OnboardingWizard({ onClose, onCreated }: OnboardingWizar
         {submitting ? (
           <div style={{ padding: '48px 0', textAlign: 'center', color: 'var(--text-secondary)' }}>
             <div className="spinner" style={{ margin: '0 auto 16px' }} />
-            正在创建画像基线…
+            Profil wird angelegt …
           </div>
         ) : phase === 'enhancing' ? (
           <div style={{ padding: '40px 0', textAlign: 'center', color: 'var(--text-secondary)' }}>
             <div className="spinner" style={{ margin: '0 auto 16px' }} />
-            <div style={{ color: 'var(--text)', fontSize: 15, marginBottom: 6 }}>画像已创建 ✓　AI 正在后台增强…</div>
+            <div style={{ color: 'var(--text)', fontSize: 15, marginBottom: 6 }}>Profil angelegt ✓  Die KI ergänzt es im Hintergrund …</div>
             <span style={{ fontSize: 12 }}>
-              正在尝试抓取社媒链接并完善各维度，可能需要 1-2 分钟。<br />
-              也可以现在就进去用，增强会在后台继续。
+              Die Social-Media-Links werden abgerufen und die Dimensionen ergänzt; das kann 1–2 Minuten dauern.<br />
+              Du kannst schon loslegen, die Ergänzung läuft im Hintergrund weiter.
             </span>
             <div style={{ marginTop: 20 }}>
-              <button className="btn btn-primary" onClick={() => onCreated(form.name.trim())}>先进去用</button>
+              <button className="btn btn-primary" onClick={() => onCreated(form.name.trim())}>Loslegen</button>
             </div>
           </div>
         ) : (
           <div style={{ minHeight: 240 }}>
             {step === 0 && (
               <>
-                <label style={label}>画像名 *（一个人设 = 一个画像，可跨多平台）</label>
-                <input style={box} value={form.name} placeholder="如：科技数码达人"
+                <label style={label}>Profilname * (eine Persona = ein Profil, auch über mehrere Plattformen)</label>
+                <input style={box} value={form.name} placeholder="z. B. Match2Eat"
                   onChange={(e) => set('name', e.target.value)} />
-                <label style={label}>运营平台（可多选）</label>
+                <label style={label}>Plattformen (Mehrfachauswahl)</label>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 6 }}>
                   {PLATFORMS.map((p) => (
                     <button key={p} onClick={() => togglePlatform(p)} style={chip(form.platforms.includes(p))}>{p}</button>
                   ))}
                 </div>
-                <label style={label}>起号状态</label>
+                <label style={label}>Kontostatus</label>
                 <div style={{ display: 'flex', gap: 8, marginTop: 6 }}>
-                  {['全新起号', '已有账号'].map((s) => (
+                  {['Neues Konto', 'Bestehendes Konto'].map((s) => (
                     <button key={s} onClick={() => set('accountStage', s)} style={chip(form.accountStage === s)}>{s}</button>
                   ))}
                 </div>
@@ -168,14 +168,14 @@ export default function OnboardingWizard({ onClose, onCreated }: OnboardingWizar
             {step === 1 && (
               <>
                 <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginTop: 12 }}>
-                  贴上各平台主页链接，AI 会尽力分析你已发的内容和风格（抓不到会跳过，可留空）。
+                  Profil-Links einfügen; die KI analysiert bisherige Posts und Stil, so gut es geht (Nicht-Abrufbares wird übersprungen, Feld darf leer bleiben).
                 </p>
                 {form.platforms.length === 0 && (
-                  <p style={{ fontSize: 13, color: 'var(--text-secondary)' }}>（未选平台，可直接下一步）</p>
+                  <p style={{ fontSize: 13, color: 'var(--text-secondary)' }}>(keine Plattform gewählt, einfach weiter)</p>
                 )}
                 {form.platforms.map((p) => (
                   <div key={p}>
-                    <label style={label}>{p} 主页链接</label>
+                    <label style={label}>{p} Profil-Link</label>
                     <input style={box} value={form.links[p] || ''} placeholder={`https://…`}
                       onChange={(e) => set('links', { ...form.links, [p]: e.target.value })} />
                   </div>
@@ -185,35 +185,35 @@ export default function OnboardingWizard({ onClose, onCreated }: OnboardingWizar
 
             {step === 2 && (
               <>
-                <label style={label}>想做什么方向的内容 *（越具体越好）</label>
-                <input style={box} value={form.direction} placeholder="如：平价护肤测评"
+                <label style={label}>Welche Inhalte willst du machen? * (je konkreter, desto besser)</label>
+                <input style={box} value={form.direction} placeholder="z. B. witzige Food-Reels für Freundesgruppen"
                   onChange={(e) => set('direction', e.target.value)} />
-                <label style={label}>为什么做这个 / 你的优势·独特经历</label>
+                <label style={label}>Warum das? / Deine Stärken und Erfahrungen</label>
                 <textarea style={{ ...box, minHeight: 60, resize: 'vertical' }} value={form.reason}
                   onChange={(e) => set('reason', e.target.value)} />
-                <label style={label}>运营目标</label>
-                <input style={box} value={form.goal} placeholder="涨粉 / 变现 / 个人品牌 / 引流私域"
+                <label style={label}>Ziel</label>
+                <input style={box} value={form.goal} placeholder="Follower / Umsatz / Personenmarke / Downloads"
                   onChange={(e) => set('goal', e.target.value)} />
-                <label style={label}>想产出的形式</label>
-                <input style={box} value={form.formats} placeholder="图文 / 短视频 / 中长视频 / 长文"
+                <label style={label}>Gewünschte Formate</label>
+                <input style={box} value={form.formats} placeholder="Karussell / Kurzvideo / längeres Video / Text"
                   onChange={(e) => set('formats', e.target.value)} />
               </>
             )}
 
             {step === 3 && (
               <>
-                <label style={label}>喜欢看的内容 / 对标账号</label>
+                <label style={label}>Was du gern schaust / Vorbild-Konten</label>
                 <textarea style={{ ...box, minHeight: 60, resize: 'vertical' }} value={form.likes}
                   onChange={(e) => set('likes', e.target.value)} />
-                <label style={label}>期望调性</label>
+                <label style={label}>Gewünschter Ton</label>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 6 }}>
                   {TONES.map((t) => (
                     <button key={t} onClick={() => set('tone', form.tone === t ? '' : t)} style={chip(form.tone === t)}>{t}</button>
                   ))}
                 </div>
-                <label style={label}>不做的内容 / 合规红线</label>
+                <label style={label}>Was nicht gemacht wird / rechtliche Grenzen</label>
                 <textarea style={{ ...box, minHeight: 60, resize: 'vertical' }} value={form.avoid}
-                  placeholder="如：不接医疗功效、不做虚假宣传"
+                  placeholder="z. B. keine Heilversprechen, keine Werbung ohne Kennzeichnung, KI-Inhalte immer kennzeichnen"
                   onChange={(e) => set('avoid', e.target.value)} />
               </>
             )}
@@ -226,15 +226,15 @@ export default function OnboardingWizard({ onClose, onCreated }: OnboardingWizar
         {phase === 'form' && !submitting && (
           <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 20 }}>
             <button className="btn" onClick={() => (step === 0 ? onClose() : setStep(step - 1))}>
-              {step === 0 ? '取消' : '上一步'}
+              {step === 0 ? 'Abbrechen' : 'Zurück'}
             </button>
             {step < STEPS.length - 1 ? (
               <button className="btn btn-primary" onClick={() => canNext && setStep(step + 1)} disabled={!canNext}>
-                下一步
+                Weiter
               </button>
             ) : (
               <button className="btn btn-primary" onClick={submit} disabled={!form.name.trim() || !form.direction.trim()}>
-                生成画像
+                Profil erstellen
               </button>
             )}
           </div>

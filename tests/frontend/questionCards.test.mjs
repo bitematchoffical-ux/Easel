@@ -39,7 +39,7 @@ test('approval cards preserve long multiline commands and both permission choice
   assert.ok(rendered.includes('\n第二行 &lt;script&gt;alert(1)&lt;/script&gt;'));
   assert.match(rendered, /<strong>允许本次<\/strong>/);
   assert.match(rendered, /<strong>拒绝<\/strong>/);
-  assert.match(rendered, /disabled="">提交<\/button>/);
+  assert.match(rendered, /disabled="">Senden<\/button>/);
 });
 
 test('approval card grids can shrink and wrap commands without clipping their content', () => {
@@ -67,8 +67,8 @@ for (const status of ['expired', 'cancelled', 'not_found', 'closed']) {
         questions: [{ questionId: 'choice', question: '原来的问题', options: [{ label: '原选项' }] }] }],
     }));
     assert.match(rendered, /原来的问题/);
-    assert.match(rendered, /已过期或关闭/);
-    assert.match(rendered, /disabled="">提交<\/button>/);
+    assert.match(rendered, /abgelaufen oder geschlossen/);
+    assert.match(rendered, /disabled="">Senden<\/button>/);
     assert.match(rendered, /disabled=""><strong>原选项/);
   });
 }
@@ -78,8 +78,8 @@ test('expired timestamp prevents submission without inventing a hook deadline', 
     questions: [{ id: 'old-question', expiresAtMs: 1,
       questions: [{ questionId: 'choice', question: '过期问题', options: [{ label: '原选项' }] }] }],
   }));
-  assert.match(rendered, /已过期或关闭/);
-  assert.match(rendered, /disabled="">提交<\/button>/);
+  assert.match(rendered, /abgelaufen oder geschlossen/);
+  assert.match(rendered, /disabled="">Senden<\/button>/);
 });
 
 test('answered historical questions do not reappear', () => {

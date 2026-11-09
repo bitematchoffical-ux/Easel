@@ -15,7 +15,7 @@ interface PublishPageProps {
 // 平台列表须与后端 LOGIN_RUNNERS 对齐（有登录/发布链路的才列）
 // draft: true = 该平台支持「存草稿」（落后台草稿箱，不公开发布）
 const PLATFORMS: { key: string; label: string; titleLimit?: number; bodyLimit: number; hint: string; draft?: boolean }[] = [
-  { key: 'twitter-x', label: 'X', bodyLimit: 280, hint: '标题与正文合并，最终长度以 X 校验为准；可附 1 图或 1 视频；窗口登录需要运行 Postloop 的电脑有图形桌面及外网连接' },
+  { key: 'twitter-x', label: 'X', bodyLimit: 280, hint: 'Titel und Text werden zusammengeführt, maßgeblich ist die Prüfung von X; 1 Bild oder 1 Video möglich; die Fensteranmeldung braucht auf dem Postloop-Rechner einen grafischen Desktop und Internet' },
 ];
 const LABEL2KEY = Object.fromEntries(PLATFORMS.map((p) => [p.label, p.key]));
 
@@ -114,10 +114,10 @@ export default function PublishPage({ persona }: PublishPageProps) {
       if (prev.includes(path)) return prev.filter((x) => x !== path);
       // 通用规则：图片和视频不能同时；视频一次只发一个
       if (isVideoPath(path)) {
-        if (prev.length && !prev.every(isVideoPath)) { showToast('图片和视频不能同时发布，请先取消已选图片'); return prev; }
+        if (prev.length && !prev.every(isVideoPath)) { showToast('Bilder und Videos können nicht zusammen gepostet werden; bitte zuerst die ausgewählten Bilder entfernen'); return prev; }
         return [path]; // 视频单选
       }
-      if (prev.some(isVideoPath)) { showToast('图片和视频不能同时发布，请先取消已选视频'); return prev; }
+      if (prev.some(isVideoPath)) { showToast('Bilder und Videos können nicht zusammen gepostet werden; bitte zuerst das ausgewählte Video entfernen'); return prev; }
       return [...prev, path]; // 图片可多选（图文）
     });
 
@@ -126,13 +126,13 @@ export default function PublishPage({ persona }: PublishPageProps) {
     if (empty || platforms.length === 0 || adapting) return;
     const sel = PLATFORMS.filter((p) => platforms.includes(p.key));
     const prompt =
-      `请执行 /skill-content-repurposing：把下面这条内容改编到这些平台：${sel.map((p) => p.label).join('、')}。` +
-      `务必参考该 SKILL 的 platform-specs 与改写配方，贴合各平台原生格式、语气与字数。\n` +
-      `【硬性要求】输出各平台“可直接复制发布的纯文本正文”，禁止任何 Markdown 语法：不要 **加粗**、# 标题、---、表格、代码块、编号列表符号；` +
-      `小红书可用 emoji 和 #话题标签，按平台习惯自然分行即可。\n` +
-      `严格只按下面格式输出、每个平台之间用分隔线，不要任何额外说明：\n` +
-      sel.map((p) => `===${p.label}===\n<该平台纯文本正文>`).join('\n') +
-      `\n\n原始内容：\n标题：${title}\n正文：${body}`;
+      `Bitte /skill-content-repurposing ausführen: Diesen Inhalt für folgende Plattformen umschreiben: ${sel.map((p) => p.label).join(', ')}.` +
+      `Unbedingt platform-specs und Umschreib-Rezepte dieses SKILLs beachten und Format, Ton und Länge jeder Plattform treffen.\n` +
+      `[Pflicht] Für jede Plattform einen „direkt kopierbaren Klartext“ ausgeben, ohne Markdown: kein **fett**, keine # Überschriften, kein ---, keine Tabellen, keine Codeblöcke, keine Aufzählungszeichen; ` +
+      `Emojis und #Hashtags sind erlaubt, Zeilenumbrüche wie auf der Plattform üblich.\n` +
+      `Streng nur im folgenden Format antworten, Plattformen durch Trennlinien getrennt, ohne zusätzliche Erklärungen:\n` +
+      sel.map((p) => `===${p.label}===\n<Klartext für diese Plattform>`).join('\n') +
+      `\n\nOriginalinhalt:\nTitel: ${title}\nText: ${body}`;
 
     setAdapting(true);
     let acc = '';
@@ -152,25 +152,25 @@ export default function PublishPage({ persona }: PublishPageProps) {
       () => {                            // 完成
         const hit = Object.keys(parseSections(acc)).length;
         setAdapting(false);
-        showToast(hit ? `已生成 ${hit} 个平台版本` : '未能解析，可重试');
+        showToast(hit ? `Erstellt: ${hit} Plattformversionen` : 'Konnte nicht ausgewertet werden, bitte erneut versuchen');
       },
-      () => { setAdapting(false); showToast('改写失败，请重试'); },
+      () => { setAdapting(false); showToast('Umschreiben fehlgeschlagen, bitte erneut versuchen'); },
     );
   };
   const stopAdapt = () => { adaptCtl.current?.abort(); setAdapting(false); };
 
   const performPrecheck = async () => {
     const prompt =
-      `你是社媒发布审核助手。针对下面这条待发内容做两项检查，用简洁中文分点输出：\n` +
-      `1. **合规风险**：是否含极限词/医疗功效/敏感或违规表述，列出问题词+替换建议；无则写"未见明显风险"。\n` +
-      `2. **标题/钩子**：给标题打 1-10 分，并给 1-2 个更好的备选。\n` +
-      `最后一行给「✅可发 / ⚠️建议修改」结论。\n\n待检内容：\n标题：${title}\n正文：${body}`;
-    const content = `待发布内容：\n标题：${title}\n正文：${body}`;
+      `Du bist Prüfassistent für Social-Media-Posts. Prüfe den folgenden Post in zwei Punkten und antworte knapp auf Deutsch in Stichpunkten:\n` +
+      `1. **Rechtliche Risiken**: Superlative ohne Beleg, Heilversprechen, sensible oder unzulässige Aussagen, fehlende Werbe- oder KI-Kennzeichnung; Problemwort + Ersatzvorschlag nennen; sonst "keine offensichtlichen Risiken".\n` +
+      `2. **Titel/Hook**: Titel mit 1–10 bewerten und 1–2 bessere Alternativen nennen.\n` +
+      `In der letzten Zeile ein Fazit: „✅ Kann raus / ⚠️ Bitte überarbeiten“.\n\nZu prüfender Inhalt:\nTitel: ${title}\nText: ${body}`;
+    const content = `Zu veröffentlichender Inhalt:\nTitel: ${title}\nText: ${body}`;
     const [general, personaResult] = await Promise.all([
       runAgent(prompt),
       persona ? executeSkill('persona-check', content, persona) : Promise.resolve(null),
     ]);
-    return `${general.response}\n\n---\n\n## 人设一致性\n\n${personaResult?.response || '未选择画像，已跳过人设一致性检查。'}`;
+    return `${general.response}\n\n---\n\n## Profil-Passung\n\n${personaResult?.response || 'Kein Profil gewählt, Profilprüfung übersprungen.'}`;
   };
 
   // C. 发布前一键预检
@@ -180,7 +180,7 @@ export default function PublishPage({ persona }: PublishPageProps) {
     try {
       setCheckResult(await performPrecheck());
     } catch (e) {
-      setCheckResult(e instanceof Error ? e.message : '预检失败');
+      setCheckResult(e instanceof Error ? e.message : 'Vorabcheck fehlgeschlagen');
     } finally { setChecking(false); }
   };
 
@@ -189,14 +189,14 @@ export default function PublishPage({ persona }: PublishPageProps) {
     if (empty || publishing || checking) return;
     const targets = PLATFORMS.filter((p) => platforms.includes(p.key) && PUBLISHABLE.has(p.key));
     if (targets.length === 0) {
-      showToast('所选平台暂不支持一键发布（B站请用「复制」或终端 biliup）');
+      showToast('Die gewählten Plattformen unterstützen kein automatisches Posten (bitte „Kopieren“ oder den Export nutzen)');
       return;
     }
     setChecking(true);
     try {
       setCheckResult(await performPrecheck());
     } catch (e) {
-      setCheckResult(`预检失败：${e instanceof Error ? e.message : '未知错误'}\n\n预检仅用于提醒，不会阻止你继续发布。`);
+      setCheckResult(`Vorabcheck fehlgeschlagen: ${e instanceof Error ? e.message : 'Unbekannter Fehler'}\n\nDer Vorabcheck ist nur ein Hinweis und hält dich nicht vom Posten ab.`);
     } finally {
       setChecking(false);
     }
@@ -204,14 +204,14 @@ export default function PublishPage({ persona }: PublishPageProps) {
     const draftTargets = asDraft ? targets.filter((t) => t.draft) : [];
     const liveTargets = asDraft ? targets.filter((t) => !t.draft) : targets;
     const okToSend = window.confirm(
-      `发布前预检已执行，结果已显示在页面中。人设评分只做提醒，不会阻止发布。\n\n` +
+      `Der Vorabcheck wurde ausgeführt, das Ergebnis steht auf der Seite. Die Profilbewertung ist nur ein Hinweis und blockiert nicht.\n\n` +
       (draftTargets.length
-        ? `将【存入草稿箱】：${draftTargets.map((t) => t.label).join('、')}（不公开发布）。\n`
+        ? `Wird [als Entwurf gespeichert]: ${draftTargets.map((t) => t.label).join(', ')} (nicht öffentlich).\n`
         : '') +
       (liveTargets.length
-        ? `即将【真实发布】到：${liveTargets.map((t) => t.label).join('、')}。\n` +
-          `这会公开发布到你的账号，确定继续？`
-        : '确认继续？'));
+        ? `Wird [wirklich veröffentlicht] auf: ${liveTargets.map((t) => t.label).join(', ')}.\n` +
+          `Das wird öffentlich auf deinem Konto gepostet. Fortfahren?`
+        : 'Fortfahren?'));
     if (!okToSend) return;
 
     setPublishing(true);
@@ -219,18 +219,18 @@ export default function PublishPage({ persona }: PublishPageProps) {
       // 存草稿只对声明 draft 能力的平台生效（今日头条）；其余平台一律真发布
       const asDraftThis = asDraft && !!t.draft;
       if (!loginOf(t.key)) {
-        setPub((r) => ({ ...r, [t.key]: { status: 'fail', msg: '未登录 · 去账号页登录' } }));
+        setPub((r) => ({ ...r, [t.key]: { status: 'fail', msg: 'Nicht angemeldet · zur Kontoseite' } }));
         continue;
       }
       if (MEDIA_REQUIRED.has(t.key) && selectedMedia.length === 0) {
-        setPub((r) => ({ ...r, [t.key]: { status: 'fail', msg: '需附带图片/视频' } }));
+        setPub((r) => ({ ...r, [t.key]: { status: 'fail', msg: 'Bild/Video nötig' } }));
         continue;
       }
       if (VIDEO_ONLY.has(t.key) && !selectedMedia.some((p) => VIDEO_RE.test(p))) {
-        setPub((r) => ({ ...r, [t.key]: { status: 'fail', msg: `${t.label}只能发视频，请从内容库选一个视频` } }));
+        setPub((r) => ({ ...r, [t.key]: { status: 'fail', msg: `${t.label}Nur Videos möglich, bitte ein Video aus der Inhaltsbibliothek wählen` } }));
         continue;
       }
-      setPub((r) => ({ ...r, [t.key]: { status: 'publishing', msg: asDraftThis ? '存草稿中…可能需 1-2 分钟' : '发布中…可能需 1-2 分钟' } }));
+      setPub((r) => ({ ...r, [t.key]: { status: 'publishing', msg: asDraftThis ? 'Wird als Entwurf gespeichert … kann 1–2 Minuten dauern' : 'Wird gepostet … kann 1–2 Minuten dauern' } }));
       try {
         const res = await publishNow(t.key, { title, body: effective(t.key), media: selectedMedia, tags, persona, draft: asDraftThis });
         if (res.async) {
@@ -240,16 +240,16 @@ export default function PublishPage({ persona }: PublishPageProps) {
           setPub((r) => ({
             ...r,
             [t.key]: res.ok
-              ? { status: 'ok', msg: asDraftThis ? '已存草稿 ✅' : '已发布 ✅' }
-              : { status: 'fail', msg: res.detail || res.message || '发布失败' },
+              ? { status: 'ok', msg: asDraftThis ? 'Entwurf gespeichert ✅' : 'Gepostet ✅' }
+              : { status: 'fail', msg: res.detail || res.message || 'Posten fehlgeschlagen' },
           }));
         }
       } catch (e) {
-        setPub((r) => ({ ...r, [t.key]: { status: 'fail', msg: e instanceof Error ? e.message : '发布失败' } }));
+        setPub((r) => ({ ...r, [t.key]: { status: 'fail', msg: e instanceof Error ? e.message : 'Posten fehlgeschlagen' } }));
       }
     }
     setPublishing(false);
-    showToast('发布流程结束，见各平台卡片状态');
+    showToast('Ablauf beendet, Status siehe Plattformkarten');
   };
 
   // 异步发布轮询（抖音）：直到 success/error；遇 sms_required/verifying 弹短信窗口
@@ -259,24 +259,24 @@ export default function PublishPage({ persona }: PublishPageProps) {
       if (!aliveRef.current) { clearInterval(iv); pollTimers.current.delete(iv); resolve(); return; }
       if (Date.now() - started > 15 * 60 * 1000) {   // 15min 兜底
         clearInterval(iv); pollTimers.current.delete(iv); setPubSms(null);
-        setPub((r) => ({ ...r, [key]: { status: 'fail', msg: '发布超时' } }));
+        setPub((r) => ({ ...r, [key]: { status: 'fail', msg: 'Zeitüberschreitung beim Posten' } }));
         resolve(); return;
       }
       let s;
       try { s = await publishStatus(key); } catch { return; }  // 单次失败忽略
       if (s.state === 'sms_required' || s.state === 'verifying') {
         setPubSms({ platform: key, name: label, state: s.state, message: s.message });
-        setPub((r) => ({ ...r, [key]: { status: 'publishing', msg: s.message || '需短信验证' } }));
+        setPub((r) => ({ ...r, [key]: { status: 'publishing', msg: s.message || 'SMS-Bestätigung nötig' } }));
       } else if (s.state === 'success') {
         clearInterval(iv); pollTimers.current.delete(iv); setPubSms(null);
-        setPub((r) => ({ ...r, [key]: { status: 'ok', msg: '已发布 ✅' } }));
+        setPub((r) => ({ ...r, [key]: { status: 'ok', msg: 'Gepostet ✅' } }));
         resolve();
       } else if (s.state === 'error') {
         clearInterval(iv); pollTimers.current.delete(iv); setPubSms(null);
-        setPub((r) => ({ ...r, [key]: { status: 'fail', msg: s.message || '发布失败' } }));
+        setPub((r) => ({ ...r, [key]: { status: 'fail', msg: s.message || 'Posten fehlgeschlagen' } }));
         resolve();
       } else {
-        setPub((r) => ({ ...r, [key]: { status: 'publishing', msg: s.message || '发布中…' } }));
+        setPub((r) => ({ ...r, [key]: { status: 'publishing', msg: s.message || 'Wird gepostet …' } }));
       }
     }, 2500);
     pollTimers.current.add(iv);
@@ -285,14 +285,14 @@ export default function PublishPage({ persona }: PublishPageProps) {
   const submitPubSms = async () => {
     if (!pubSms) return;
     const code = pubSmsCode.replace(/\D/g, '');
-    if (code.length < 4) { showToast('验证码应为 4-6 位数字'); return; }
+    if (code.length < 4) { showToast('Der Code muss 4–6 Ziffern haben'); return; }
     setPubSmsBusy(true);
     try {
       await submitPublishSms(pubSms.platform, code);
       setPubSmsCode('');
-      setPubSms((p) => p && ({ ...p, state: 'verifying', message: '正在验证验证码…' }));
+      setPubSms((p) => p && ({ ...p, state: 'verifying', message: 'Code wird geprüft …' }));
     } catch (e) {
-      showToast(e instanceof Error ? e.message : '提交失败');
+      showToast(e instanceof Error ? e.message : 'Senden fehlgeschlagen');
     } finally {
       setPubSmsBusy(false);
     }
@@ -312,7 +312,7 @@ export default function PublishPage({ persona }: PublishPageProps) {
       title: title.trim() || effective(key).slice(0, 20), date,
       platform: PLATFORMS.find((p) => p.key === key)?.label || '', time: '', status: 'draft', note: effective(key),
     });
-    showToast('已存为草稿并加入今天的日历');
+    showToast('Als Entwurf gespeichert und im heutigen Kalender eingetragen');
   };
 
   const canPublish = platforms.some((k) => PUBLISHABLE.has(k));
@@ -322,22 +322,22 @@ export default function PublishPage({ persona }: PublishPageProps) {
   return (
     <div className="publish-page">
       <div className="publish-editor">
-        <h1 className="page-title"><IconPublish size={21} /> 发布中心</h1>
-        <p className="page-subtitle">一次编辑 → AI 一键改写成各平台版本 → 预检 → 附媒体 → 一键真发布。</p>
+        <h1 className="page-title"><IconPublish size={21} /> Veröffentlichen</h1>
+        <p className="page-subtitle">Einmal schreiben → KI passt für jede Plattform an → Vorabcheck → Medien anhängen → mit einem Klick posten.</p>
 
-        <label className="field-label">标题</label>
-        <input className="field" value={title} placeholder="标题（部分平台需要）"
+        <label className="field-label">Titel</label>
+        <input className="field" value={title} placeholder="Titel (für manche Plattformen nötig)"
           onChange={(e) => setTitle(e.target.value)} />
-        <label className="field-label">正文（母版）</label>
+        <label className="field-label">Text (Vorlage)</label>
         <textarea className="field" style={{ minHeight: 180 }} value={body}
-          placeholder="写下你的内容，右侧按各平台规则实时预览；点「一键适配」让 AI 分平台改写…"
+          placeholder="Schreib deinen Inhalt; rechts siehst du die Vorschau je Plattform. „Für alle anpassen“ lässt die KI pro Plattform umschreiben …"
           onChange={(e) => setBody(e.target.value)} />
 
-        <label className="field-label">话题标签 <span style={{ color: 'var(--text-secondary)', fontWeight: 400, fontSize: 12 }}>（逗号分隔，如「AI,职场,干货」；小红书会用 # 联想真正绑定话题）</span></label>
-        <input className="field" value={tags} placeholder="AI,职场,干货"
+        <label className="field-label">Hashtags <span style={{ color: 'var(--text-secondary)', fontWeight: 400, fontSize: 12 }}>(durch Komma getrennt, z. B. „KI,Karriere,Tipps“)</span></label>
+        <input className="field" value={tags} placeholder="KI,Karriere,Tipps"
           onChange={(e) => setTags(e.target.value)} />
 
-        <label className="field-label">发布平台</label>
+        <label className="field-label">Plattformen</label>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
           {PLATFORMS.map((p) => (
             <button key={p.key} className={`chip ${platforms.includes(p.key) ? 'active' : ''}`}
@@ -347,20 +347,20 @@ export default function PublishPage({ persona }: PublishPageProps) {
         {draftCapable.length > 0 && (
           <label className="draft-toggle">
             <input type="checkbox" checked={asDraft} onChange={(e) => setAsDraft(e.target.checked)} />
-            <span>存草稿（{draftCapable.map((p) => p.label).join('、')} 进平台草稿箱，不公开发布；同批次的其它平台仍会真发布）</span>
+            <span>Als Entwurf ({draftCapable.map((p) => p.label).join(', ')} landet im Entwurfsordner der Plattform, nicht öffentlich; andere Plattformen im selben Durchgang werden wirklich gepostet)</span>
           </label>
         )}
 
         <label className="field-label" style={{ marginTop: 14 }}>
-          媒体附件 {selectedMedia.length > 0 && <span className="pv-badge">{selectedMedia.length} 个</span>}
-          <span style={{ color: 'var(--text-secondary)', fontWeight: 400, fontSize: 12 }}>（小红书/抖音/快手/微信视频号/B站必需，从内容库选；抖音、视频号、B站须为视频；今日头条选中的图会插进正文）</span>
+          Medien {selectedMedia.length > 0 && <span className="pv-badge">{selectedMedia.length} </span>}
+          <span style={{ color: 'var(--text-secondary)', fontWeight: 400, fontSize: 12 }}>(aus der Inhaltsbibliothek wählen; manche Plattformen brauchen Bild oder Video)</span>
         </label>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
           <button className="btn btn-sm" onClick={() => setShowPicker((v) => !v)}>
-            <IconSkills size={13} /> {showPicker ? '收起' : '选择媒体'}
+            <IconSkills size={13} /> {showPicker ? 'Einklappen' : 'Medien wählen'}
           </button>
           {selectedMedia.map((path) => (
-            <div key={path} className="media-chip" onClick={() => toggleMedia(path)} title="点击移除">
+            <div key={path} className="media-chip" onClick={() => toggleMedia(path)} title="Zum Entfernen klicken">
               {mediaFiles.find((f) => f.path === path)?.kind === 'image'
                 ? <img src={mediaUrl(path)} alt="" /> : <span className="media-vid">🎬</span>}
               <span className="media-x">×</span>
@@ -369,7 +369,7 @@ export default function PublishPage({ persona }: PublishPageProps) {
         </div>
         {showPicker && (
           <div className="media-grid">
-            {mediaFiles.length === 0 && <div className="dash-empty">内容库暂无图片/视频</div>}
+            {mediaFiles.length === 0 && <div className="dash-empty">Noch keine Bilder/Videos in der Inhaltsbibliothek</div>}
             {mediaFiles.slice(0, 40).map((f) => (
               <div key={f.path}
                 className={`media-cell ${selectedMedia.includes(f.path) ? 'sel' : ''}`}
@@ -385,40 +385,40 @@ export default function PublishPage({ persona }: PublishPageProps) {
 
         <div className="publish-actions">
           {adapting ? (
-            <button className="btn btn-sm" onClick={stopAdapt}><IconStop size={13} /> 停止生成</button>
+            <button className="btn btn-sm" onClick={stopAdapt}><IconStop size={13} /> Stopp</button>
           ) : (
             <button className="btn btn-sm btn-primary" disabled={empty || platforms.length === 0} onClick={adapt}>
-              <IconSkills size={14} /> 一键适配各平台
+              <IconSkills size={14} /> Für alle Plattformen anpassen
             </button>
           )}
           <button className="btn btn-sm" disabled={empty || checking || adapting} onClick={check}>
-            <IconCheck size={14} /> {checking ? '预检中…' : '发布前预检'}
+            <IconCheck size={14} /> {checking ? 'Wird geprüft …' : 'Vorabcheck'}
           </button>
           <button className="btn btn-sm" disabled={empty} onClick={() => addToCalendar(platforms[0] || 'twitter-x')}>
-            <IconCalendar size={14} /> 存草稿并排期
+            <IconCalendar size={14} /> Als Entwurf speichern und einplanen
           </button>
           <button className="btn btn-sm btn-primary" disabled={empty || publishing || checking || !canPublish}
-            title={canPublish ? '真实发布到已登录平台' : '所选平台无一键发布（B站走终端 biliup）'}
+            title={canPublish ? 'Auf angemeldeten Plattformen wirklich posten' : 'Für die gewählten Plattformen gibt es kein automatisches Posten (Export nutzen)'}
             onClick={publishAll}>
-            <IconPublish size={14} /> {publishing ? '发布中…' : '一键发布'}
+            <IconPublish size={14} /> {publishing ? 'Wird gepostet …' : 'Mit einem Klick posten'}
           </button>
           <button className="btn btn-sm btn-ghost" disabled={empty || adapting}
-            onClick={() => { setTitle(''); setBody(''); setTags(''); setOverrides({}); setCheckResult(''); setPub({}); showToast('已清空'); }}>
-            <IconTrash size={13} /> 清空
+            onClick={() => { setTitle(''); setBody(''); setTags(''); setOverrides({}); setCheckResult(''); setPub({}); showToast('Geleert'); }}>
+            <IconTrash size={13} /> Leeren
           </button>
         </div>
-        {adapting && <div className="adapt-hint"><span className="live-pulse" />AI 正在逐字改写各平台版本…可随时停止。</div>}
-        <p className="publish-saved-note">草稿已自动保存，切换页面/刷新回来内容都在。一键发布仅对「已登录 + 媒体齐全」的平台生效。</p>
+        {adapting && <div className="adapt-hint"><span className="live-pulse" />Die KI schreibt die Plattformversionen um … jederzeit stoppbar.</div>}
+        <p className="publish-saved-note">Entwurf wird automatisch gespeichert und bleibt beim Seitenwechsel oder Neuladen erhalten. Gepostet wird nur auf Plattformen, die angemeldet sind und alle Medien haben.</p>
         {checkResult && (
           <div className="panel" style={{ marginTop: 14 }}>
-            <div className="panel-title"><IconCheck size={14} /> 发布前预检</div>
+            <div className="panel-title"><IconCheck size={14} /> Vorabcheck</div>
             <div className="skill-body-md" dangerouslySetInnerHTML={{ __html: renderMarkdown(checkResult) }} />
           </div>
         )}
       </div>
 
       <div className="publish-previews">
-        {platforms.length === 0 && <div className="dash-empty">选择至少一个平台查看预览</div>}
+        {platforms.length === 0 && <div className="dash-empty">Mindestens eine Plattform wählen, um die Vorschau zu sehen</div>}
         {PLATFORMS.filter((p) => platforms.includes(p.key)).map((p) => {
           const text = effective(p.key);
           const over = text.length > p.bodyLimit;
@@ -432,21 +432,21 @@ export default function PublishPage({ persona }: PublishPageProps) {
               <div className="pv-head">
                 <span className="pv-plat">
                   {p.label}
-                  {overrides[p.key] != null && <span className="pv-badge">AI 版</span>}
+                  {overrides[p.key] != null && <span className="pv-badge">KI-Version</span>}
                   {publishable && (logged
-                    ? <span className="pv-badge pv-badge-ok">已登录</span>
-                    : <span className="pv-badge">未登录</span>)}
+                    ? <span className="pv-badge pv-badge-ok">Angemeldet</span>
+                    : <span className="pv-badge">Nicht angemeldet</span>)}
                 </span>
                 <span className={`pv-count ${over ? 'over' : ''}`}>{text.length}/{p.bodyLimit}</span>
               </div>
               <div className="pv-body">
                 {p.titleLimit != null && (
-                  <div className={`pv-title ${titleOver ? 'over' : ''}`}>{title || <span className="pv-ph">标题…</span>}</div>
+                  <div className={`pv-title ${titleOver ? 'over' : ''}`}>{title || <span className="pv-ph">Titel …</span>}</div>
                 )}
                 {isEdit
                   ? <textarea className="field" style={{ minHeight: 120 }} value={text} autoFocus
                       onChange={(e) => setOverrides((o) => ({ ...o, [p.key]: e.target.value }))} />
-                  : <div className="pv-text">{text || <span className="pv-ph">正文预览…</span>}{adapting && overrides[p.key] != null && <span className="streaming-cursor" />}</div>}
+                  : <div className="pv-text">{text || <span className="pv-ph">Textvorschau …</span>}{adapting && overrides[p.key] != null && <span className="streaming-cursor" />}</div>}
               </div>
               {ps && (
                 <div className={`pv-pubstate ${ps.status}`}>
@@ -455,13 +455,13 @@ export default function PublishPage({ persona }: PublishPageProps) {
                 </div>
               )}
               <div className="pv-foot">
-                <span className="pv-hint">{p.hint}{over ? ' · 已超字数' : ''}</span>
+                <span className="pv-hint">{p.hint}{over ? ' · zu lang' : ''}</span>
                 <div style={{ display: 'flex', gap: 6 }}>
                   <button className="pv-copy" onClick={() => setEditing(isEdit ? null : p.key)}>
-                    <IconEdit size={13} />{isEdit ? '完成' : '编辑'}
+                    <IconEdit size={13} />{isEdit ? 'Fertig' : 'Bearbeiten'}
                   </button>
                   <button className="pv-copy" onClick={() => copyFor(p.key)}>
-                    {copied === p.key ? <IconCheck size={13} /> : <IconCopy size={13} />}{copied === p.key ? '已复制' : '复制'}
+                    {copied === p.key ? <IconCheck size={13} /> : <IconCopy size={13} />}{copied === p.key ? 'Kopiert' : 'Kopieren'}
                   </button>
                 </div>
               </div>
@@ -475,25 +475,25 @@ export default function PublishPage({ persona }: PublishPageProps) {
       {pubSms && (
         <div className="overlay" onClick={(e) => { if (e.target === e.currentTarget) setPubSms(null); }}>
           <div className="modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 380 }}>
-            <h3 style={{ margin: '0 0 4px' }}>发布验证 · {pubSms.name}</h3>
+            <h3 style={{ margin: '0 0 4px' }}>Prüfung · {pubSms.name}</h3>
             <p style={{ fontSize: 13, color: /错误|过期|失败|重新|未完成|不正确|失效/.test(pubSms.message || '') ? 'var(--red)' : 'var(--text-secondary)' }}>
-              {pubSms.message || '平台风控要求短信验证，验证码已发到你手机，请输入：'}
+              {pubSms.message || 'Die Plattform verlangt eine SMS-Bestätigung; der Code wurde an dein Handy gesendet, bitte eingeben:'}
             </p>
             {pubSms.state === 'verifying' ? (
-              <div className="dash-empty" style={{ padding: 16 }}>正在验证验证码…</div>
+              <div className="dash-empty" style={{ padding: 16 }}>Code wird geprüft …</div>
             ) : (
               <>
                 <input inputMode="numeric" autoFocus
-                  placeholder="请输入手机收到的验证码" value={pubSmsCode}
+                  placeholder="Bitte den Code aus der SMS eingeben" value={pubSmsCode}
                   onChange={(e) => setPubSmsCode(e.target.value.replace(/\D/g, '').slice(0, 8))}
                   onKeyDown={(e) => { if (e.key === 'Enter') submitPubSms(); }}
                   style={{ width: '100%', boxSizing: 'border-box', textAlign: 'center',
                     letterSpacing: 6, fontSize: 20, padding: '10px 12px', margin: '4px 0 10px',
                     border: '1px solid var(--border)', borderRadius: 8 }} />
                 <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
-                  <button className="btn btn-sm btn-ghost" onClick={() => setPubSms(null)}>关闭</button>
+                  <button className="btn btn-sm btn-ghost" onClick={() => setPubSms(null)}>Schließen</button>
                   <button className="btn btn-sm btn-primary" disabled={pubSmsBusy} onClick={submitPubSms}>
-                    {pubSmsBusy ? '提交中…' : '提交验证码'}
+                    {pubSmsBusy ? 'Wird gesendet …' : 'Code senden'}
                   </button>
                 </div>
               </>

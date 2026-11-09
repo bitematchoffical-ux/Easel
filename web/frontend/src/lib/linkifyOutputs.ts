@@ -60,7 +60,7 @@ function renderPath(token: string): string {
     if (isDir) {
       const rel = t.replace(/^outputs\//, '').replace(/\/+$/, '');
       if (!rel) return token;
-      return `[内容库 › ${rel}](${toJumpUrl(t)})`;
+      return `[Inhaltsbibliothek › ${rel}](${toJumpUrl(t)})`;
     }
     const name = t.slice(t.lastIndexOf('/') + 1);
     if (IMG_RE.test(t)) return `![${name}](${toMediaUrl(t)})`;

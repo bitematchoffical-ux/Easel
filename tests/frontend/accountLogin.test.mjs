@@ -136,7 +136,7 @@ function setup() {
 for (const handler of ['handleLogin', 'handleMpLogin']) {
   test(`${handler} serializes polling and never overwrites terminal success`, async () => {
     const view = setup();
-    const operation = view.handlers[handler]({ platform: 'weixin-channels', name: '视频号', supported: true });
+    const operation = view.handlers[handler]({ platform: 'weixin-channels', name: 'WeChat-Kanäle', supported: true });
     view.pending[0].resolve({ mode: 'qr', state: 'starting' });
     await operation;
     let resolve;
@@ -159,19 +159,19 @@ for (const handler of ['handleLogin', 'handleMpLogin']) {
 
   test(`${handler} surfaces persistent polling failures instead of spinning forever`, async () => {
     const view = setup();
-    const operation = view.handlers[handler]({ platform: 'weixin-channels', name: '视频号', supported: true });
+    const operation = view.handlers[handler]({ platform: 'weixin-channels', name: 'WeChat-Kanäle', supported: true });
     view.pending[0].resolve({ mode: 'qr', state: 'starting' });
     await operation;
     view.setStatusRequest(async () => { throw new Error('network'); });
     for (let attempt = 0; attempt < 5; attempt += 1) await view.state.intervals[0].callback();
     assert.equal(view.state.qr.state, 'error');
-    assert.match(view.state.qr.message, /连接中断/);
+    assert.match(view.state.qr.message, /Verbindung zum Anmeldestatus unterbrochen/);
     assert.equal(view.state.qr.qr, '');
   });
 
   test(`${handler} opens the login modal before its start request resolves`, async () => {
     const view = setup();
-    const operation = view.handlers[handler]({ platform: 'xiaohongshu', name: '小红书', supported: true });
+    const operation = view.handlers[handler]({ platform: 'xiaohongshu', name: 'Xiaohongshu', supported: true });
     assert.equal(view.state.qr.state, 'starting');
     assert.equal(view.state.qr.qr, '');
     assert.equal(view.pending.length, 1);
@@ -185,7 +185,7 @@ for (const handler of ['handleLogin', 'handleMpLogin']) {
 
   test(`${handler} keeps a closed modal closed when its start response arrives`, async () => {
     const view = setup();
-    const operation = view.handlers[handler]({ platform: 'xiaohongshu', name: '小红书', supported: true });
+    const operation = view.handlers[handler]({ platform: 'xiaohongshu', name: 'Xiaohongshu', supported: true });
     view.handlers.closeQr();
     view.pending[0].resolve({ mode: 'qr', state: 'qr_ready', qr: 'old.png' });
     await operation;
@@ -196,22 +196,22 @@ for (const handler of ['handleLogin', 'handleMpLogin']) {
 
   test(`${handler} shows startup failures inside the open modal`, async () => {
     const view = setup();
-    const operation = view.handlers[handler]({ platform: 'xiaohongshu', name: '小红书', supported: true });
-    view.pending[0].reject(new Error('启动失败'));
+    const operation = view.handlers[handler]({ platform: 'xiaohongshu', name: 'Xiaohongshu', supported: true });
+    view.pending[0].reject(new Error('Start fehlgeschlagen'));
     await operation;
     assert.equal(view.state.qr.state, 'error');
-    assert.equal(view.state.qr.message, '启动失败');
+    assert.equal(view.state.qr.message, 'Start fehlgeschlagen');
     assert.equal(view.state.busy, '');
   });
 
   test(`${handler} discards polling responses from a previous login`, async () => {
     const view = setup();
-    const account = { platform: 'xiaohongshu', name: '小红书', supported: true };
+    const account = { platform: 'xiaohongshu', name: 'Xiaohongshu', supported: true };
     const first = view.handlers[handler](account);
     view.pending[0].resolve({ mode: 'qr', state: 'starting' });
     await first;
     const oldPoll = view.state.intervals[0].callback;
-    const second = view.handlers[handler]({ ...account, platform: 'zhihu', name: '知乎' });
+    const second = view.handlers[handler]({ ...account, platform: 'zhihu', name: 'Zhihu' });
     view.setStatus({ state: 'success', message: '', qr: '' });
     await oldPoll();
     assert.equal(view.state.qr.platform, 'zhihu');

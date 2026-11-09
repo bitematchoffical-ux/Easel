@@ -32,14 +32,14 @@ export default function BrushEntry({ onPick }: { onPick: (text: string) => void 
   const hit = (it: CapabilityItem) => !ql || `${it.label}${it.desc || ''}${it.skill || ''}`.toLowerCase().includes(ql);
 
   const pick = (it: CapabilityItem, pipe?: boolean) => {
-    onPick(pipe ? '用「视频产线」做一支整片：' : `帮我做「${it.label}」`);
+    onPick(pipe ? 'Ganzes Video mit der „Video-Pipeline“: ' : `Mach mir „${it.label}“`);
     setOpen(false);
   };
 
   return (
     <div className={`brush-entry${open ? ' open' : ''}`} ref={wrapRef}>
       <button type="button" className="brush-btn" onClick={() => setOpen((v) => !v)}
-        aria-label="看看能做什么" title="看看能做什么">
+        aria-label="Was geht hier?" title="Was geht hier?">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <defs>
             <linearGradient id="brushHandleGrad" x1="12" y1="1.6" x2="12" y2="11.6" gradientUnits="userSpaceOnUse">
@@ -57,19 +57,19 @@ export default function BrushEntry({ onPick }: { onPick: (text: string) => void 
           </g>
         </svg>
         <span className="brush-mark" aria-hidden="true" />
-        <span className="brush-tip">看看能做什么</span>
+        <span className="brush-tip">Was geht hier?</span>
       </button>
 
       {open && (
-        <div className="brush-panel" role="dialog" aria-label="能做的都在这">
+        <div className="brush-panel" role="dialog" aria-label="Alles, was geht">
           <div className="brush-panel-head">
             <div className="brush-panel-headline">
-              <div className="brush-panel-title">能做的都在这</div>
-              <div className="brush-panel-sub">选一个 → 自动填进输入框；「管线」件走整片产线</div>
+              <div className="brush-panel-title">Alles, was geht</div>
+              <div className="brush-panel-sub">Auswählen → wird ins Eingabefeld übernommen; „Pipeline“-Einträge nutzen die komplette Video-Pipeline</div>
             </div>
-            <input ref={searchRef} className="brush-search" placeholder="搜索…" value={q}
+            <input ref={searchRef} className="brush-search" placeholder="Suchen …" value={q}
               onChange={(e) => setQ(e.target.value)} />
-            <button type="button" className="brush-close" onClick={() => setOpen(false)} aria-label="关闭">×</button>
+            <button type="button" className="brush-close" onClick={() => setOpen(false)} aria-label="Schließen">×</button>
           </div>
           <div className="brush-tabs">
             {CAPABILITY_MENU.tabs.map((t, i) => (
@@ -80,11 +80,11 @@ export default function BrushEntry({ onPick }: { onPick: (text: string) => void 
           <div className="brush-body">
             {pipeline && hit(pipeline) && (
               <div className="brush-grp">
-                <div className="brush-grp-name">整片级 · 走独立管线</div>
+                <div className="brush-grp-name">Ganzes Video · eigene Pipeline</div>
                 <button type="button" className="brush-item brush-item-pipe" onClick={() => pick(pipeline, true)}>
                   <span className={`brush-dot ${DOT[pipeline.status || 'ready'] || 's-ready'}`} />
                   <span className="brush-il">{pipeline.label}</span>
-                  <span className="brush-chip-pipe">管线</span>
+                  <span className="brush-chip-pipe">Pipeline</span>
                   <span className="brush-idesc">{pipeline.desc}</span>
                   <span className="brush-iadd">＋</span>
                 </button>

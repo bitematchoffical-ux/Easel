@@ -8,18 +8,18 @@ interface SubNavProps {
 }
 
 const TOOLS: { page: Page; Icon: ComponentType<{ size?: number }>; label: string }[] = [
-  { page: 'trends', Icon: IconFire, label: '热点雷达' },
-  { page: 'ideas', Icon: IconIdea, label: '选题库' },
-  { page: 'calendar', Icon: IconCalendar, label: '内容日历' },
-  { page: 'publish', Icon: IconPublish, label: '发布中心' },
-  { page: 'breakdown', Icon: IconSkills, label: '爆款拆解' },
+  { page: 'trends', Icon: IconFire, label: 'Trend-Radar' },
+  { page: 'ideas', Icon: IconIdea, label: 'Ideenpool' },
+  { page: 'calendar', Icon: IconCalendar, label: 'Content-Kalender' },
+  { page: 'publish', Icon: IconPublish, label: 'Veröffentlichen' },
+  { page: 'breakdown', Icon: IconSkills, label: 'Viral-Analyse' },
 ];
 
 export default function SubNav({ current, onNavigate }: SubNavProps) {
   return (
     <div className="subnav">
-      <button className="subnav-back" onClick={() => onNavigate('dashboard')} title="返回工作台">
-        <IconDashboard size={15} /> 工作台
+      <button className="subnav-back" onClick={() => onNavigate('dashboard')} title="Zurück zum Arbeitsbereich">
+        <IconDashboard size={15} /> Arbeitsbereich
       </button>
       <span className="subnav-div" />
       <div className="subnav-tabs">

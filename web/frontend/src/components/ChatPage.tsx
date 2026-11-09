@@ -25,16 +25,16 @@ interface ChatPageProps {
 
 // 空态推荐（贴合 Postloop 社媒创作场景）
 const SUGGESTIONS = [
-  { icon: '🔥', title: '蹭个热点', prompt: '看看现在微博和抖音有什么热搜，挑几个适合我做二创的选题' },
-  { icon: '✍️', title: '写小红书文案', prompt: '帮我写一条小红书种草文案，主题先问我' },
-  { icon: '🎴', title: '做金句卡片', prompt: '把一句走心的话做成一张适合发朋友圈的金句卡片' },
-  { icon: '🎬', title: '口播脚本', prompt: '帮我写一条 60 秒的口播短视频脚本，主题先问我' },
+  { icon: '🔥', title: 'Trend aufgreifen', prompt: 'Was ist gerade auf TikTok und Instagram angesagt? Such ein paar Themen aus, die ich remixen kann' },
+  { icon: '✍️', title: 'Instagram-Caption', prompt: 'Schreib mir eine Instagram-Caption; frag mich zuerst nach dem Thema' },
+  { icon: '🎴', title: 'Zitatkarte', prompt: 'Mach aus einem starken Satz eine Zitatkarte zum Teilen' },
+  { icon: '🎬', title: 'Reel-Skript', prompt: 'Schreib mir ein 60-Sekunden-Skript für ein Reel/TikTok; frag mich zuerst nach dem Thema' },
 ];
 
 function greeting(): string {
   const h = new Date().getHours();
-  const g = h < 6 ? '夜深了' : h < 12 ? '上午好' : h < 14 ? '中午好' : h < 18 ? '下午好' : '晚上好';
-  return `${g}，想创作点什么？`;
+  const g = h < 6 ? 'Noch wach?' : h < 12 ? 'Guten Morgen' : h < 14 ? 'Mahlzeit' : h < 18 ? 'Guten Tag' : 'Guten Abend';
+  return `${g}, was möchtest du erstellen?`;
 }
 
 export default function ChatPage({ apiDirect, session, stream, onSend, onStop, onResend, onQuestionAnswered, onQuestionClosed }: ChatPageProps) {
@@ -70,7 +70,7 @@ export default function ChatPage({ apiDirect, session, stream, onSend, onStop, o
         const saved = await adoptOversize(big, session.id);
         setAttachments((a) => [...a, ...saved]);
       } catch (err) {
-        alert((err as Error).message || '超限文件处理失败');
+        alert((err as Error).message || 'Große Datei konnte nicht verarbeitet werden');
       } finally {
         setUploading(false);
       }
@@ -81,7 +81,7 @@ export default function ChatPage({ apiDirect, session, stream, onSend, onStop, o
       const saved = await uploadFiles(small, session.id);
       setAttachments((a) => [...a, ...saved]);
     } catch (err) {
-      alert((err as Error).message || '上传失败');
+      alert((err as Error).message || 'Hochladen fehlgeschlagen');
     } finally {
       setUploading(false);
     }
@@ -136,18 +136,18 @@ export default function ChatPage({ apiDirect, session, stream, onSend, onStop, o
           {attachments.map((a) => (
             <span key={a.path} className="attach-chip" title={a.path}>
               <IconFile size={12} /> <span className="attach-name">{a.name}</span>
-              <button className="attach-x" onClick={() => removeAttachment(a.path)} title="移除">×</button>
+              <button className="attach-x" onClick={() => removeAttachment(a.path)} title="Entfernen">×</button>
             </span>
           ))}
         </div>
       )}
       <div className="composer-top">
-        {apiDirect ? <span className="composer-hint">API 直连 · 文字与附件分析</span>
+        {apiDirect ? <span className="composer-hint">Direkte API · Text- und Anhang-Analyse</span>
           : <BrushEntry onPick={(t) => { setInput(t); requestAnimationFrame(() => textareaRef.current?.focus()); }} />}
         <textarea
           ref={textareaRef}
           className="chat-input"
-          placeholder={dragOver ? '松手上传素材…' : hero ? '把你的想法告诉我，选题 / 文案 / 卡片 / 视频 / 发布都行…（可拖入图片/文档当素材）' : '发消息…（Enter 发送，Shift+Enter 换行，可拖入/粘贴素材）'}
+          placeholder={dragOver ? 'Loslassen, um Material hochzuladen …' : hero ? 'Erzähl mir deine Idee: Thema, Text, Karussell, Video oder Posten, alles geht … (Bilder/Dokumente als Material reinziehen)' : 'Nachricht … (Enter senden, Shift+Enter neue Zeile, Material reinziehen/einfügen)'}
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onCompositionStart={() => { isComposingRef.current = true; }}
@@ -163,14 +163,14 @@ export default function ChatPage({ apiDirect, session, stream, onSend, onStop, o
         onChange={(e) => { if (e.target.files) doUpload(e.target.files); e.target.value = ''; }} />
       <div className="composer-bar">
         <button className="composer-attach-btn" onClick={() => fileInputRef.current?.click()}
-          disabled={isStreaming || uploading} title={`添加素材（图片/文档）；超过 ${maxMb}MB 的大文件将自动存为本地素材（不走上传）`}>
-          <IconPlus size={15} /> {uploading ? '上传中…' : '素材'}
+          disabled={isStreaming || uploading} title={`Material hinzufügen (Bilder/Dokumente); Dateien über ${maxMb} MB werden automatisch lokal gespeichert (kein Upload)`}>
+          <IconPlus size={15} /> {uploading ? 'Wird hochgeladen …' : 'Material'}
         </button>
-        <span className="composer-hint">{isStreaming ? '生成中…' : 'Enter 发送 · Shift+Enter 换行'}</span>
+        <span className="composer-hint">{isStreaming ? 'Wird erzeugt …' : 'Enter senden · Shift+Enter neue Zeile'}</span>
         {isStreaming ? (
-          <button className="send-btn" onClick={onStop} title="停止生成"><IconStop size={15} /></button>
+          <button className="send-btn" onClick={onStop} title="Stopp"><IconStop size={15} /></button>
         ) : (
-          <button className="send-btn" onClick={handleSend} disabled={(!input.trim() && !attachments.length) || uploading} title="发送"><IconArrowUp size={17} /></button>
+          <button className="send-btn" onClick={handleSend} disabled={(!input.trim() && !attachments.length) || uploading} title="Senden"><IconArrowUp size={17} /></button>
         )}
       </div>
     </div>
@@ -186,11 +186,11 @@ export default function ChatPage({ apiDirect, session, stream, onSend, onStop, o
             <span>Postloop</span>
           </div>
           <h1 className="chat-hero-title">{greeting()}</h1>
-          <p className="chat-hero-sub">{apiDirect ? 'API 直连：写文案、策划选题、分析附件。本机工具和自动发布未启用。'
-            : '从选题到发布，一站式帮你把想法做成能发的内容。'}</p>
+          <p className="chat-hero-sub">{apiDirect ? 'Direkte API: Texte schreiben, Themen planen, Anhänge analysieren. Lokale Werkzeuge und automatisches Posten sind aus.'
+            : 'Von der Idee bis zum Post: alles an einem Ort.'}</p>
           {inputBox(true)}
           <div className="suggestions">
-            {SUGGESTIONS.filter((s) => !apiDirect || ['写小红书文案', '口播脚本'].includes(s.title)).map((s) => (
+            {SUGGESTIONS.filter((s) => !apiDirect || ['Instagram-Caption', 'Reel-Skript'].includes(s.title)).map((s) => (
               <button key={s.title} className="card card-hover suggestion-card"
                 onClick={() => { if (!isStreaming) onSend(s.prompt); }}>
                 <span className="suggestion-icon">{s.icon}</span>

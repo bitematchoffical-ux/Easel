@@ -86,12 +86,12 @@ function button(tree, label) {
 // der automatische Tab bleibt aber auswählbar.
 test('default policy opens the export page and keeps the automatic path available', async () => {
   const app = setup();
-  assert.equal(app.render().props.children, '正在读取发布方式…');
+  assert.equal(app.render().props.children, 'Veröffentlichungsmodus wird geladen …');
   await settle();
   const tree = app.render();
-  assert.equal(button(tree, '人工审核发布').props['aria-pressed'], true);
-  assert.equal(button(tree, '自动发布').props['aria-pressed'], false);
-  assert.equal(button(tree, '自动发布').props.disabled, false);
+  assert.equal(button(tree, 'Export (selbst posten)').props['aria-pressed'], true);
+  assert.equal(button(tree, 'Automatisch').props['aria-pressed'], false);
+  assert.equal(button(tree, 'Automatisch').props.disabled, false);
   assert.equal(nodes(tree).find(node => node.type === 'manual-page').props.persona, 'travel-brand');
   assert.equal(nodes(tree).some(node => node.type === 'automated-page'), false);
 });
@@ -101,12 +101,12 @@ test('switching to manual and back only changes the visible workflow', async () 
   app.render();
   await settle();
   let tree = app.render();
-  button(tree, '人工审核发布').props.onClick();
+  button(tree, 'Export (selbst posten)').props.onClick();
   tree = app.render();
-  assert.equal(button(tree, '人工审核发布').props['aria-pressed'], true);
+  assert.equal(button(tree, 'Export (selbst posten)').props['aria-pressed'], true);
   assert.equal(nodes(tree).find(node => node.type === 'manual-page').props.persona, 'travel-brand');
   assert.equal(nodes(tree).some(node => node.type === 'automated-page'), false);
-  button(tree, '自动发布').props.onClick();
+  button(tree, 'Automatisch').props.onClick();
   tree = app.render();
   assert.equal(nodes(tree).some(node => node.type === 'automated-page'), true);
   assert.equal(app.requests(), 1);
@@ -117,9 +117,9 @@ test('administrator manual-only policy disables automatic publishing', async () 
   app.render();
   await settle();
   let tree = app.render();
-  assert.equal(button(tree, '自动发布').props.disabled, true);
-  assert.equal(button(tree, '人工审核发布').props['aria-pressed'], true);
-  button(tree, '自动发布').props.onClick();
+  assert.equal(button(tree, 'Automatisch').props.disabled, true);
+  assert.equal(button(tree, 'Export (selbst posten)').props['aria-pressed'], true);
+  button(tree, 'Automatisch').props.onClick();
   tree = app.render();
   assert.equal(nodes(tree).some(node => node.type === 'manual-page'), true);
   assert.equal(nodes(tree).some(node => node.type === 'automated-page'), false);
@@ -134,7 +134,7 @@ test('inconsistent policies never expose the automatic page', async () => {
     app.render();
     await settle();
     const tree = app.render();
-    assert.equal(button(tree, '自动发布').props.disabled, true);
+    assert.equal(button(tree, 'Automatisch').props.disabled, true);
     assert.equal(nodes(tree).some(node => node.type === 'manual-page'), true);
     assert.equal(nodes(tree).some(node => node.type === 'automated-page'), false);
   }
@@ -147,12 +147,12 @@ test('policy lookup failures show retry instead of silently permitting submissio
   let tree = app.render();
   assert.equal(tree.props.role, 'alert');
   assert.equal(nodes(tree).some(node => node.type === 'automated-page'), false);
-  button(tree, '重新读取').props.onClick();
+  button(tree, 'Erneut laden').props.onClick();
   app.render();
   await settle();
   tree = app.render();
   assert.equal(nodes(tree).some(node => node.type === 'manual-page'), true);
-  assert.equal(button(tree, '自动发布').props.disabled, false);
+  assert.equal(button(tree, 'Automatisch').props.disabled, false);
   assert.equal(app.requests(), 2);
 });
 
@@ -164,5 +164,5 @@ test('policy lookup completing after unmount does not update the page', async ()
   app.unmount();
   resolve(automaticPolicy);
   await settle();
-  assert.equal(app.render().props.children, '正在读取发布方式…');
+  assert.equal(app.render().props.children, 'Veröffentlichungsmodus wird geladen …');
 });

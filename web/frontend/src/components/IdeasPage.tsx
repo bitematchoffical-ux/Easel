@@ -8,9 +8,9 @@ interface IdeasPageProps {
 }
 
 const COLUMNS: { key: string; label: string; color: string }[] = [
-  { key: 'pending', label: '待做', color: 'var(--text-tertiary)' },
-  { key: 'doing', label: '进行中', color: 'var(--layer-attribute)' },
-  { key: 'done', label: '已完成', color: 'var(--layer-publish)' },
+  { key: 'pending', label: 'Offen', color: 'var(--text-tertiary)' },
+  { key: 'doing', label: 'In Arbeit', color: 'var(--layer-attribute)' },
+  { key: 'done', label: 'Erledigt', color: 'var(--layer-publish)' },
 ];
 const NEXT: Record<string, string> = { pending: 'doing', doing: 'done', done: 'pending' };
 const EMPTY: IdeaInput = { title: '', note: '', source: '', status: 'pending' };
@@ -45,17 +45,17 @@ export default function IdeasPage({ onUseTopic }: IdeasPageProps) {
     const d = new Date();
     const date = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
     await createSchedule({ title: it.title, date, platform: '', time: '', status: 'idea', note: it.note });
-    showToast('已加入日历（今天）');
+    showToast('In den Kalender eingetragen (heute)');
   };
 
   return (
     <div className="page-scroll ideas-page">
       <div className="page-head">
         <div>
-          <h1 className="page-title"><IconIdea size={21} /> 选题库</h1>
-          <p className="page-subtitle">攒住每一个灵感——从热点收藏或手动新增，推进到「做内容」再进日历。</p>
+          <h1 className="page-title"><IconIdea size={21} /> Ideenpool</h1>
+          <p className="page-subtitle">Jede Idee festhalten: aus Trends merken oder selbst anlegen, bis „Inhalt machen“ bringen und dann einplanen.</p>
         </div>
-        <button className="btn btn-sm btn-primary" onClick={openNew}>+ 新建选题</button>
+        <button className="btn btn-sm btn-primary" onClick={openNew}>+ Neue Idee</button>
       </div>
 
       <div className="kanban">
@@ -66,20 +66,20 @@ export default function IdeasPage({ onUseTopic }: IdeasPageProps) {
               {col.label}<span className="kanban-count">{byStatus[col.key].length}</span>
             </div>
             <div className="kanban-list">
-              {byStatus[col.key].length === 0 && <div className="kanban-empty">拖点选题进来吧</div>}
+              {byStatus[col.key].length === 0 && <div className="kanban-empty">Zieh ein paar Ideen hier rein</div>}
               {byStatus[col.key].map((it) => (
                 <div key={it.id} className="card idea-card">
                   <div className="idea-card-actions">
-                    <button className="session-act" title="编辑" onClick={() => openEdit(it)}><IconEdit size={13} /></button>
-                    <button className="session-act danger" title="删除" onClick={() => remove(it)}><IconTrash size={13} /></button>
+                    <button className="session-act" title="Bearbeiten" onClick={() => openEdit(it)}><IconEdit size={13} /></button>
+                    <button className="session-act danger" title="Löschen" onClick={() => remove(it)}><IconTrash size={13} /></button>
                   </div>
                   <div className="idea-title">{it.title}</div>
                   {it.source && <span className="badge" style={{ marginTop: 6 }}>{it.source}</span>}
                   {it.note && <div className="idea-note">{it.note}</div>}
                   <div className="idea-foot">
-                    <button className="idea-act" onClick={() => onUseTopic(it.title)}><IconChat size={13} /> 做内容</button>
-                    <button className="idea-act" onClick={() => schedule(it)}><IconCalendar size={13} /> 排期</button>
-                    <button className="idea-act next" onClick={() => advance(it)} title="推进状态">
+                    <button className="idea-act" onClick={() => onUseTopic(it.title)}><IconChat size={13} /> Inhalt machen</button>
+                    <button className="idea-act" onClick={() => schedule(it)}><IconCalendar size={13} /> Planung</button>
+                    <button className="idea-act next" onClick={() => advance(it)} title="Status weiterschalten">
                       {COLUMNS.find((c) => c.key === NEXT[it.status])?.label} <IconChevron size={12} />
                     </button>
                   </div>
@@ -94,19 +94,19 @@ export default function IdeasPage({ onUseTopic }: IdeasPageProps) {
         <div className="overlay" onClick={() => setForm(null)}>
           <div className="modal" style={{ width: 440, maxWidth: '100%' }} onClick={(e) => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-              <h3 style={{ margin: 0 }}>{editId ? '编辑选题' : '新建选题'}</h3>
+              <h3 style={{ margin: 0 }}>{editId ? 'Idee bearbeiten' : 'Neue Idee'}</h3>
               <button className="icon-btn" onClick={() => setForm(null)}>×</button>
             </div>
-            <label className="field-label">选题 *</label>
-            <input className="field" value={form.title} autoFocus placeholder="想做的内容 / 角度"
+            <label className="field-label">Idee *</label>
+            <input className="field" value={form.title} autoFocus placeholder="Inhalt / Blickwinkel"
               onChange={(e) => setForm({ ...form, title: e.target.value })} />
-            <label className="field-label">备注 / 角度</label>
+            <label className="field-label">Notiz / Blickwinkel</label>
             <textarea className="field" style={{ minHeight: 70 }} value={form.note}
               onChange={(e) => setForm({ ...form, note: e.target.value })} />
-            <label className="field-label">来源</label>
-            <input className="field" value={form.source} placeholder="如：微博热搜 / 灵感"
+            <label className="field-label">Quelle</label>
+            <input className="field" value={form.source} placeholder="z. B. TikTok-Trend / eigene Idee"
               onChange={(e) => setForm({ ...form, source: e.target.value })} />
-            <label className="field-label">状态</label>
+            <label className="field-label">Status</label>
             <div style={{ display: 'flex', gap: 7 }}>
               {COLUMNS.map((c) => (
                 <button key={c.key} className={`chip ${form.status === c.key ? 'active' : ''}`}
@@ -114,8 +114,8 @@ export default function IdeasPage({ onUseTopic }: IdeasPageProps) {
               ))}
             </div>
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 18 }}>
-              <button className="btn btn-sm" onClick={() => setForm(null)}>取消</button>
-              <button className="btn btn-sm btn-primary" onClick={save} disabled={!form.title.trim()}>保存</button>
+              <button className="btn btn-sm" onClick={() => setForm(null)}>Abbrechen</button>
+              <button className="btn btn-sm btn-primary" onClick={save} disabled={!form.title.trim()}>Speichern</button>
             </div>
           </div>
         </div>

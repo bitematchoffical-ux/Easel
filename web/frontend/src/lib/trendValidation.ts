@@ -7,19 +7,19 @@ const obj = (v: unknown): Obj | null => v !== null && typeof v === 'object' && !
 const text = (v: unknown, max: number) => typeof v === 'string' ? v.slice(0, max).replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g, '') : '';
 const id = (v: unknown) => typeof v === 'string' && /^[a-z0-9][a-z0-9_-]{0,63}$/.test(v) ? v : '';
 const date = (v: unknown) => typeof v === 'string' && v.length <= 64 && Number.isFinite(Date.parse(v)) ? v : null;
-export const trendLabel = (v: unknown) => text(v, 80).replace(/(?:\s*[·•|]\s*(?:python|http|rss|atom))+$/i, '').trim() || '未命名来源';
+export const trendLabel = (v: unknown) => text(v, 80).replace(/(?:\s*[·•|]\s*(?:python|http|rss|atom))+$/i, '').trim() || 'Unbenannte Quelle';
 const warnings = (v: unknown) => Array.isArray(v) ? v.filter((s): s is string => typeof s === 'string').slice(0, 20).map(s => text(s, 240)) : [];
 const rows = (v: unknown) => Array.isArray(v) ? v.slice(0, 70) : [];
 
 function version(value: unknown): Obj {
   const data = obj(value);
-  if (!data || data.version !== 1) throw new Error('热点接口响应格式异常，请稍后重试。');
+  if (!data || data.version !== 1) throw new Error('Ungültiges Antwortformat der Trend-Schnittstelle, bitte später erneut versuchen.');
   return data;
 }
 
 export function parseTrendSources(value: unknown) {
   const data = version(value);
-  if (!Array.isArray(data.sources)) throw new Error('数据源列表格式异常。');
+  if (!Array.isArray(data.sources)) throw new Error('Ungültiges Format der Datenquellenliste.');
   const seen = new Set<string>();
   const sources: TrendSource[] = [];
   for (const row of rows(data.sources)) {
@@ -51,7 +51,7 @@ function item(value: unknown): TrendItem | null {
 
 export function parseTrends(value: unknown) {
   const data = version(value);
-  if (!Array.isArray(data.trends)) throw new Error('热点列表格式异常。');
+  if (!Array.isArray(data.trends)) throw new Error('Ungültiges Format der Trendliste.');
   const seen = new Set<string>();
   const trends: TrendGroup[] = [];
   for (const value of rows(data.trends)) {
@@ -69,8 +69,8 @@ export function parseTrends(value: unknown) {
     trends.push({ platform: String(row.platform), label: trendLabel(row.label), items,
       ok: valid && row.ok === true, status: valid && ['fresh', 'stale', 'error'].includes(String(row.status)) ? row.status as TrendGroup['status'] : 'error',
       stale: row.stale === true, fetched_at: date(row.fetched_at), last_attempt_at: typeof row.last_attempt_at === 'number' && Number.isFinite(row.last_attempt_at) ? row.last_attempt_at : 0,
-      error: !valid ? { code: 'invalid_response', message: '该来源返回了异常数据，已忽略。' } : error ?
-        { code: text(error.code, 64) || 'collector_failed', message: text(error.message, 240) || '采集失败' } : null });
+      error: !valid ? { code: 'invalid_response', message: 'Diese Quelle hat ungültige Daten geliefert und wurde übersprungen.' } : error ?
+        { code: text(error.code, 64) || 'collector_failed', message: text(error.message, 240) || 'Abruf fehlgeschlagen' } : null });
   }
   return { version: 1, trends, updated: typeof data.updated === 'number' && Number.isFinite(data.updated) && data.updated >= 0 && data.updated < 253402300800 ? data.updated : 0,
     warnings: warnings(data.warnings) };
@@ -78,7 +78,7 @@ export function parseTrends(value: unknown) {
 
 export function parseTrendManagement(value: unknown) {
   const data = obj(value);
-  if (!data || !Array.isArray(data.sources) || !Array.isArray(data.scripts)) throw new Error('数据源管理响应异常。');
+  if (!data || !Array.isArray(data.sources) || !Array.isArray(data.scripts)) throw new Error('Ungültige Antwort der Datenquellenverwaltung.');
   const sources: TrendManagedSource[] = [];
   const seen = new Set<string>();
   for (const raw of rows(data.sources)) {

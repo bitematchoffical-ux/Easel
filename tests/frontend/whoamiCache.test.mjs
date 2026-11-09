@@ -44,7 +44,7 @@ test('a verification started before login cannot overwrite the new login cache',
   const view = setup();
   const updates = [];
   view.exports.verifyStale(['xiaohongshu'], { onUpdate: (...args) => updates.push(args) });
-  view.exports.setWhoamiCache('xiaohongshu', { loggedIn: true, name: '已登录', avatar: '' });
+  view.exports.setWhoamiCache('xiaohongshu', { loggedIn: true, name: 'Angemeldet', avatar: '' });
   view.pending[0].resolve({ loggedIn: false, name: '', avatar: '' });
   await settle();
   assert.equal(view.exports.getWhoamiCache().xiaohongshu.loggedIn, true);
@@ -66,7 +66,7 @@ test('fresh verification still updates and caches the actual account result', as
   const view = setup();
   const updates = [];
   view.exports.verifyStale(['xiaohongshu'], { onUpdate: (...args) => updates.push(args) });
-  view.pending[0].resolve({ loggedIn: true, name: '账号', avatar: '' });
+  view.pending[0].resolve({ loggedIn: true, name: 'Konten', avatar: '' });
   await settle();
   assert.equal(view.exports.getWhoamiCache().xiaohongshu.loggedIn, true);
   assert.equal(updates.length, 1);

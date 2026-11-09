@@ -60,8 +60,8 @@ function HtmlArtifact({ artifact }: { artifact: Artifact }) {
   const fitted = fitArtifact(bounds.width, bounds.height, available.width - 24, available.height - 24);
   return (
     <div className="artifact-html-stage" ref={stage}>
-      {error ? <span className="artifact-hint">预览加载失败，可在新标签打开原文件</span>
-        : !source ? <span className="artifact-hint">正在加载预览…</span>
+      {error ? <span className="artifact-hint">Vorschau konnte nicht geladen werden; Originaldatei in neuem Tab öffnen</span>
+        : !source ? <span className="artifact-hint">Vorschau wird geladen …</span>
         : <div className="artifact-html-fit" style={{ width: fitted.width, height: fitted.height }}>
           <iframe ref={frame} srcDoc={source} title={artifact.name} sandbox="allow-scripts" allow="clipboard-write"
             style={{ width: bounds.width, height: bounds.height, transform: `scale(${fitted.scale})` }} />
@@ -72,7 +72,7 @@ function HtmlArtifact({ artifact }: { artifact: Artifact }) {
 
 function ArtifactPreview({ artifact }: { artifact: Artifact }) {
   const [error, setError] = useState(false);
-  if (error) return <div className="artifact-hint">预览加载失败，可打开或下载原文件</div>;
+  if (error) return <div className="artifact-hint">Vorschau konnte nicht geladen werden; Originaldatei öffnen oder herunterladen</div>;
   if (artifact.kind === 'html') return <HtmlArtifact artifact={artifact} />;
   if (artifact.kind === 'image') return <img src={artifact.url} alt={artifact.name} onError={() => setError(true)} />;
   if (artifact.kind === 'video') return <video src={artifact.url} controls preload="metadata" onError={() => setError(true)} />;
@@ -103,7 +103,7 @@ export default function ArtifactGallery({ artifacts, archives }: { artifacts: Ar
   if (!artifact) return null;
   const move = (direction: number) => setIndex((current + direction + items.length) % items.length);
   return (
-    <section className="artifact-gallery" aria-label="对话产物预览" aria-roledescription="轮播"
+    <section className="artifact-gallery" aria-label="Vorschau der Chat-Ergebnisse" aria-roledescription="Karussell"
       tabIndex={items.length > 1 ? 0 : undefined}
       onKeyDown={event => {
         if (event.target !== event.currentTarget || items.length < 2) return;
@@ -112,21 +112,21 @@ export default function ArtifactGallery({ artifacts, archives }: { artifacts: Ar
           move(event.key === 'ArrowLeft' ? -1 : 1);
         }
       }}>
-      <div className="artifact-header"><IconOutputs size={16} /><span>创作产物</span>
+      <div className="artifact-header"><IconOutputs size={16} /><span>Ergebnisse</span>
         <span className="artifact-count" aria-live="polite">{current + 1} / {items.length}</span></div>
       <div className="artifact-stage">
         <ArtifactPreview key={artifact.url} artifact={artifact} />
         {items.length > 1 && <>
-          <button type="button" className="artifact-arrow previous" aria-label="上一个产物" onClick={() => move(-1)}>
+          <button type="button" className="artifact-arrow previous" aria-label="Vorheriges Ergebnis" onClick={() => move(-1)}>
             <IconChevron size={20} /></button>
-          <button type="button" className="artifact-arrow next" aria-label="下一个产物" onClick={() => move(1)}>
+          <button type="button" className="artifact-arrow next" aria-label="Nächstes Ergebnis" onClick={() => move(1)}>
             <IconChevron size={20} /></button>
         </>}
       </div>
       <div className="artifact-footer">
         <span className="artifact-name" title={artifact.name}>{artifact.name}</span>
-        <a href={artifact.url} target="_blank" rel="noreferrer">打开 ↗</a>
-        <a href={artifact.url} download={artifact.name}>下载</a>
+        <a href={artifact.url} target="_blank" rel="noreferrer">Öffnen ↗</a>
+        <a href={artifact.url} download={artifact.name}>Herunterladen</a>
       </div>
     </section>
   );

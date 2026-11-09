@@ -32,7 +32,7 @@ export default function SkillDrawer({ skillName, persona, onClose, onConfigured 
     let ignore = false;
     fetchSkillDetail(skillName)
       .then((d) => { if (!ignore) { setDetail(d); setLoadErr(''); } })
-      .catch(() => { if (!ignore) setLoadErr('加载 SKILL 详情失败'); });
+      .catch(() => { if (!ignore) setLoadErr('SKILL-Details konnten nicht geladen werden'); });
     return () => { ignore = true; };
   };
 
@@ -45,7 +45,7 @@ export default function SkillDrawer({ skillName, persona, onClose, onConfigured 
     const updates = Object.fromEntries(
       Object.entries(envInputs).filter(([, v]) => v.trim() !== '')
     );
-    if (Object.keys(updates).length === 0) { setSavedMsg('没有填写新值'); return; }
+    if (Object.keys(updates).length === 0) { setSavedMsg('Kein neuer Wert eingetragen'); return; }
     setSaving(true);
     setSavedMsg('');
     try {
@@ -54,11 +54,11 @@ export default function SkillDrawer({ skillName, persona, onClose, onConfigured 
       const seq = ++reqSeq.current;
       const fresh = await fetchSkillDetail(skillName);
       if (seq === reqSeq.current) setDetail(fresh);
-      setSavedMsg('已保存 ✓');
+      setSavedMsg('Gespeichert ✓');
       onConfigured();
       setTimeout(() => setSavedMsg(''), 2500);
     } catch (e) {
-      setSavedMsg(e instanceof Error ? e.message : '保存失败');
+      setSavedMsg(e instanceof Error ? e.message : 'Speichern fehlgeschlagen');
     } finally {
       setSaving(false);
     }
@@ -74,7 +74,7 @@ export default function SkillDrawer({ skillName, persona, onClose, onConfigured 
       const res = await executeSkill(skillName, input.trim(), persona || undefined);
       if (seq === reqSeq.current) setResult(res.response);
     } catch (e) {
-      if (seq === reqSeq.current) setRunErr(e instanceof Error ? e.message : '执行失败');
+      if (seq === reqSeq.current) setRunErr(e instanceof Error ? e.message : 'Ausführung fehlgeschlagen');
     } finally {
       if (seq === reqSeq.current) setRunning(false);
     }
@@ -91,15 +91,15 @@ export default function SkillDrawer({ skillName, persona, onClose, onConfigured 
               <div className="skill-detail-title">{displayName(skillName)}</div>
               <div className="skill-detail-rawname">{skillName}</div>
               <div className="skill-detail-meta">
-                {detail?.layer && <span className="badge badge-accent">{{discover:'发现',plan:'策划',produce:'制作',publish:'发布',attribute:'归因',general:'通用'}[detail.layer] || detail.layer}</span>}
+                {detail?.layer && <span className="badge badge-accent">{{discover:'Entdecken',plan:'Planen',produce:'Produzieren',publish:'Veröffentlichen',attribute:'Auswerten',general:'Allgemein'}[detail.layer] || detail.layer}</span>}
                 {detail?.needsApi && (
                   detail.apiConfigured
-                    ? <span className="badge badge-ok">✓ 已配置</span>
-                    : <span className="badge badge-warn">❗ 需配置 API</span>
+                    ? <span className="badge badge-ok">✓ Eingerichtet</span>
+                    : <span className="badge badge-warn">❗ API einrichten</span>
                 )}
               </div>
             </div>
-            <button className="icon-btn" onClick={onClose} title="关闭">×</button>
+            <button className="icon-btn" onClick={onClose} title="Schließen">×</button>
           </div>
         </div>
 
@@ -109,32 +109,32 @@ export default function SkillDrawer({ skillName, persona, onClose, onConfigured 
           {/* API 配置 */}
           {detail?.needsApi && detail.apiSpec && (
             <div className="panel">
-              <div className="panel-title">🔑 {detail.apiSpec.label} · API 配置
+              <div className="panel-title">🔑 {detail.apiSpec.label} · API-Einstellungen
                 <span style={{ fontWeight: 400, color: 'var(--text-secondary)', fontSize: 12 }}>
-                  （任选一个服务商填齐即可用）
+                  (ein beliebiger Anbieter vollständig ausgefüllt genügt)
                 </span>
               </div>
               {detail.apiSpec.settings.length > 0 && (
                 <div className="provider-block">
-                  <div className="provider-head"><strong style={{ fontSize: 13 }}>默认选择与能力</strong></div>
+                  <div className="provider-head"><strong style={{ fontSize: 13 }}>Standardauswahl und Fähigkeiten</strong></div>
                   {detail.apiSpec.settings.map((k) => (
                     <div key={k.env}>
                       <label className="field-label">
-                        {k.label} · 可选
+                        {k.label} · optional
                         {k.configured && <span style={{ color: 'var(--green)', marginLeft: 6 }}>
-                          已配置{k.masked ? `：${k.masked}` : ''}
+                          Eingerichtet{k.masked ? `: ${k.masked}` : ''}
                         </span>}
                       </label>
                       {k.choices.length > 0 ? (
                         <SettingsSelect label={k.label} value={envInputs[k.env] ?? ''}
-                          options={[{ value: '', label: k.configured ? `当前：${k.masked}` : `请选择 ${k.env}` },
+                          options={[{ value: '', label: k.configured ? `Aktuell: ${k.masked}` : `Bitte wählen: ${k.env}` },
                             ...k.choices.map(choice => ({ value: choice, label: choice }))]}
                           onChange={(value) => setEnvInputs(p => ({ ...p, [k.env]: value }))} />
                       ) : (
                         <input
                           className="field"
                           type={k.secret ? 'password' : 'text'}
-                          placeholder={k.configured ? '留空则保持不变，输入以覆盖' : `请输入 ${k.env}`}
+                          placeholder={k.configured ? 'Leer lassen = unverändert, Eingabe überschreibt' : `Bitte eingeben: ${k.env}`}
                           value={envInputs[k.env] || ''}
                           onChange={(e) => setEnvInputs((p) => ({ ...p, [k.env]: e.target.value }))}
                         />
@@ -150,27 +150,27 @@ export default function SkillDrawer({ skillName, persona, onClose, onConfigured 
                     <div className="provider-head">
                       <strong style={{ fontSize: 13 }}>{prov.name}</strong>
                       {provOk
-                        ? <span className="badge badge-ok">✓ 就绪</span>
-                        : <span className="badge">未配置</span>}
+                        ? <span className="badge badge-ok">✓ Bereit</span>
+                        : <span className="badge">Nicht eingerichtet</span>}
                     </div>
                     {prov.keys.map((k) => (
                       <div key={k.env}>
                         <label className="field-label">
-                          {k.label}{k.required ? '' : ' · 可选'}
+                          {k.label}{k.required ? '' : ' · optional'}
                           {k.configured && <span style={{ color: 'var(--green)', marginLeft: 6 }}>
-                            已配置{k.secret && k.masked ? `（${k.masked}）` : k.masked ? `：${k.masked}` : ''}
+                            Eingerichtet{k.secret && k.masked ? ` (${k.masked})` : k.masked ? `: ${k.masked}` : ''}
                           </span>}
                         </label>
                         {k.choices.length > 0 ? (
                           <SettingsSelect label={k.label} value={envInputs[k.env] ?? ''}
-                          options={[{ value: '', label: k.configured ? `当前：${k.masked}` : `请选择 ${k.env}` },
+                          options={[{ value: '', label: k.configured ? `Aktuell: ${k.masked}` : `Bitte wählen: ${k.env}` },
                             ...k.choices.map(choice => ({ value: choice, label: choice }))]}
                           onChange={(value) => setEnvInputs(p => ({ ...p, [k.env]: value }))} />
                         ) : (
                           <input
                             className="field"
                             type={k.secret ? 'password' : 'text'}
-                            placeholder={k.configured ? '留空则保持不变，输入以覆盖' : `请输入 ${k.env}`}
+                            placeholder={k.configured ? 'Leer lassen = unverändert, Eingabe überschreibt' : `Bitte eingeben: ${k.env}`}
                             value={envInputs[k.env] || ''}
                             onChange={(e) => setEnvInputs((p) => ({ ...p, [k.env]: e.target.value }))}
                           />
@@ -182,7 +182,7 @@ export default function SkillDrawer({ skillName, persona, onClose, onConfigured 
               })}
               <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 8 }}>
                 <button className="btn btn-primary btn-sm" onClick={handleSaveEnv} disabled={saving}>
-                  {saving ? '保存中…' : '保存到 .env'}
+                  {saving ? 'Wird gespeichert …' : 'In .env speichern'}
                 </button>
                 {savedMsg && <span style={{ fontSize: 13, color: savedMsg.includes('✓') ? 'var(--green)' : 'var(--text-secondary)' }}>{savedMsg}</span>}
               </div>
@@ -191,15 +191,15 @@ export default function SkillDrawer({ skillName, persona, onClose, onConfigured 
 
           {/* 执行 */}
           <div className="panel">
-            <div className="panel-title">▶ 运行</div>
+            <div className="panel-title">▶ Ausführen</div>
             {blocked && (
               <div style={{ fontSize: 13, color: 'var(--amber)', marginBottom: 10 }}>
-                该 SKILL 需要先配置上面的 API 才能运行。
+                Dieser SKILL braucht zuerst die API-Einstellungen oben.
               </div>
             )}
             <textarea
               className="field"
-              placeholder="输入内容，例如主题 / 素材 / 要求…"
+              placeholder="Eingabe, z. B. Thema / Material / Anforderungen …"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               style={{ minHeight: 100 }}
@@ -207,8 +207,8 @@ export default function SkillDrawer({ skillName, persona, onClose, onConfigured 
             <div style={{ marginTop: 10 }}>
               <button className="btn btn-primary" onClick={handleRun} disabled={running || !input.trim() || blocked}>
                 {running
-                  ? <><span className="spinner" style={{ width: 14, height: 14, margin: 0 }} />执行中…</>
-                  : '执行'}
+                  ? <><span className="spinner" style={{ width: 14, height: 14, margin: 0 }} />Läuft …</>
+                  : 'Ausführen'}
               </button>
             </div>
             {runErr && <div style={{ color: 'var(--red)', fontSize: 13, marginTop: 10 }}>{runErr}</div>}
@@ -219,10 +219,10 @@ export default function SkillDrawer({ skillName, persona, onClose, onConfigured 
 
           {/* 描述 */}
           <div className="panel">
-            <div className="panel-title">📖 说明</div>
+            <div className="panel-title">📖 Beschreibung</div>
             {detail
               ? <div className="skill-body-md" dangerouslySetInnerHTML={{ __html: bodyHtml }} />
-              : !loadErr && <div className="loading"><div className="spinner" />加载中…</div>}
+              : !loadErr && <div className="loading"><div className="spinner" />Wird geladen …</div>}
           </div>
         </div>
       </div>

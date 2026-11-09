@@ -24,11 +24,11 @@ export default class ErrorBoundary extends Component<Props, State> {
           height: '100vh', gap: 12, color: 'var(--text)', background: 'var(--bg)', padding: 24, textAlign: 'center',
         }}>
           <div style={{ fontSize: 40 }}>😵</div>
-          <h2 style={{ margin: 0 }}>页面出错了</h2>
+          <h2 style={{ margin: 0 }}>Auf der Seite ist ein Fehler aufgetreten</h2>
           <p style={{ color: 'var(--text-secondary)', fontSize: 14, maxWidth: 420 }}>{this.state.message}</p>
           <button onClick={() => window.location.reload()}
             style={{ padding: '9px 18px', borderRadius: 8, border: 'none', background: 'var(--text, #17191c)', color: 'var(--bg, #fff)', cursor: 'pointer' }}>
-            刷新页面
+            Seite neu laden
           </button>
         </div>
       );

@@ -19,7 +19,7 @@ async function request<T>(url: string, options?: RequestInit): Promise<T> {
     } catch {
       /* 响应体不是 JSON，忽略 */
     }
-    throw new Error(detail || `请求失败（${res.status} ${res.statusText}）`);
+    throw new Error(detail || `Anfrage fehlgeschlagen (${res.status} ${res.statusText})`);
   }
   return res.json() as Promise<T>;
 }
@@ -207,7 +207,7 @@ import { parseTrends, parseTrendSources, parseTrendManagement } from './trendVal
 async function trendRequest(url: string, options: RequestInit = {}, timeout = 10000): Promise<unknown> {
   try {
     const response = await fetch(`${BASE}${url}`, { cache: 'no-store', ...options, signal: AbortSignal.timeout(timeout) });
-    if (!response.body) throw new Error('热点接口未返回数据。');
+    if (!response.body) throw new Error('Die Trend-Schnittstelle hat keine Daten geliefert.');
     const reader = response.body.getReader();
     const chunks: Uint8Array[] = [];
     let size = 0;
@@ -216,7 +216,7 @@ async function trendRequest(url: string, options: RequestInit = {}, timeout = 10
         const { value, done } = await reader.read();
         if (done) break;
         size += value.byteLength;
-        if (size > 4 * 1024 * 1024) { await reader.cancel(); throw new Error('热点接口响应过大，已停止加载。'); }
+        if (size > 4 * 1024 * 1024) { await reader.cancel(); throw new Error('Antwort der Trend-Schnittstelle zu groß, Laden abgebrochen.'); }
         chunks.push(value);
       }
     } finally { reader.releaseLock(); }
@@ -237,15 +237,15 @@ async function trendRequest(url: string, options: RequestInit = {}, timeout = 10
         else if (char === '}' || char === ']') depth--;
       }
       data = JSON.parse(raw);
-    } catch { throw new Error('热点接口响应格式异常，请稍后重试。'); }
+    } catch { throw new Error('Ungültiges Antwortformat der Trend-Schnittstelle, bitte später erneut versuchen.'); }
     if (!response.ok) {
       const detail = data && typeof data === 'object' && 'detail' in data ? data.detail : null;
-      throw new Error(typeof detail === 'string' ? detail.slice(0, 240) : `热点请求失败（${response.status}）`);
+      throw new Error(typeof detail === 'string' ? detail.slice(0, 240) : `Trend-Anfrage fehlgeschlagen (${response.status})`);
     }
     return data;
   } catch (error: unknown) {
-    if (error instanceof DOMException && ['TimeoutError', 'AbortError'].includes(error.name)) throw new Error('热点请求超时，请稍后重试。');
-    throw error instanceof Error ? error : new Error('热点请求失败，请稍后重试。');
+    if (error instanceof DOMException && ['TimeoutError', 'AbortError'].includes(error.name)) throw new Error('Zeitüberschreitung bei der Trend-Anfrage, bitte später erneut versuchen.');
+    throw error instanceof Error ? error : new Error('Trend-Anfrage fehlgeschlagen, bitte später erneut versuchen.');
   }
 }
 export interface TrendItem {
@@ -276,7 +276,7 @@ export async function updateTrendSource(value: Record<string, unknown>): Promise
   const result = await trendRequest('/api/trends/manage', {
     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(value),
   }, 15000);
-  if (!result || typeof result !== 'object' || !('ok' in result) || result.ok !== true || !('id' in result) || typeof result.id !== 'string' || !/^[a-z0-9][a-z0-9_-]{0,63}$/.test(result.id)) throw new Error('保存结果异常，请刷新数据源列表确认。');
+  if (!result || typeof result !== 'object' || !('ok' in result) || result.ok !== true || !('id' in result) || typeof result.id !== 'string' || !/^[a-z0-9][a-z0-9_-]{0,63}$/.test(result.id)) throw new Error('Speicherergebnis ungültig, bitte Datenquellenliste neu laden und prüfen.');
   return { id: result.id };
 }
 
@@ -747,7 +747,7 @@ export function streamChat(
           // 防呆心跳：独立于 activity/thinking，仅作「未卡住」提示，不覆盖真实状态。
           if (onHeartbeat) { try { onHeartbeat(JSON.parse(data) as string); } catch { onHeartbeat(data); } }
         } else if (currentEvent === 'error') {
-          let msg = '执行失败';
+          let msg = 'Ausführung fehlgeschlagen';
           try { msg = JSON.parse(data) as string; } catch { msg = data; }
           onError(new Error(msg));
           return true;
@@ -805,7 +805,7 @@ export function streamChat(
         // 无限重试（1s 一次 ×130 分钟），onError 永不触发，会话卡死在「自动续接」。
         if (!first && res.status === 404) {
           if (onRecoveryUnavailable) onRecoveryUnavailable();
-          else onError(new Error('任务记录不存在或已失效，无法续接；请重新发送'));
+          else onError(new Error('Aufgabe nicht gefunden oder abgelaufen, Fortsetzen nicht möglich; bitte erneut senden'));
           return;
         }
         if (await consume(res)) return;
@@ -813,7 +813,7 @@ export function streamChat(
         if (err instanceof Error && err.name === 'AbortError') return;
         const status = (err as Error & { status?: number })?.status;
         if (first && status && status >= 400 && status < 500) {
-          onError(err instanceof Error ? err : new Error('请求失败'));
+          onError(err instanceof Error ? err : new Error('Anfrage fehlgeschlagen'));
           return;
         }
       }
@@ -821,7 +821,7 @@ export function streamChat(
       // Backend chat runs may spend 5 minutes waiting for a session lock and then
       // run for 2 hours. Keep reconnecting for the same end-to-end budget.
       if (!turnId || Date.now() - started >= 130 * 60 * 1000) {
-        onError(new Error('连接中断，自动重连超时'));
+        onError(new Error('Verbindung unterbrochen, automatische Wiederverbindung abgelaufen'));
         return;
       }
       onInterrupted?.();

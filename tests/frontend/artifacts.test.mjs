@@ -122,7 +122,7 @@ test('multiple artifact arrows and keyboard controls wrap around without losing 
   let tree = view.render();
   let buttons = view.buttons(tree);
   assert.equal(buttons.length, 2);
-  buttons.find(button => button.props['aria-label'] === '下一个产物').props.onClick();
+  buttons.find(button => button.props['aria-label'] === 'Nächstes Ergebnis').props.onClick();
   assert.equal(view.selected(), 1);
   tree = view.render();
   tree.props.onKeyDown({ key: 'ArrowRight', preventDefault() {} });
@@ -130,6 +130,6 @@ test('multiple artifact arrows and keyboard controls wrap around without losing 
   view.render().props.onKeyDown({ key: 'ArrowRight', preventDefault() {} });
   assert.equal(view.selected(), 0);
   buttons = view.buttons(view.render());
-  buttons.find(button => button.props['aria-label'] === '上一个产物').props.onClick();
+  buttons.find(button => button.props['aria-label'] === 'Vorheriges Ergebnis').props.onClick();
   assert.equal(view.selected(), 2);
 });

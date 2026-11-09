@@ -35,7 +35,7 @@ export default function HarnessSettings({ onChange, onSelect }: {
       onChange(value.runtime);
       onSelect(value.runtime);
     }).catch((error) => {
-      if (alive) setNote(`读取失败：${error instanceof Error ? error.message : String(error)}`);
+      if (alive) setNote(`Lesen fehlgeschlagen: ${error instanceof Error ? error.message : String(error)}`);
     }).finally(() => {
       if (alive) setSettingsLoading(false);
     });
@@ -53,10 +53,10 @@ export default function HarnessSettings({ onChange, onSelect }: {
       const result = await fetchHarnessModels(requested);
       if (modelRequest.current !== sequence) return;
       setCatalogs((previous) => ({ ...previous, [requested]: result.models }));
-      if (!result.models.length) setModelNote('原生 CLI 没有返回模型，可使用默认模型或手动填写。');
+      if (!result.models.length) setModelNote('Das native CLI liefert keine Modelle; Standardmodell nutzen oder selbst eintragen.');
     } catch (error) {
       if (modelRequest.current === sequence) {
-        setModelNote(`读取失败：${error instanceof Error ? error.message : String(error)}`);
+        setModelNote(`Lesen fehlgeschlagen: ${error instanceof Error ? error.message : String(error)}`);
       }
     } finally {
       if (modelRequest.current === sequence) setModelLoading(false);
@@ -69,34 +69,34 @@ export default function HarnessSettings({ onChange, onSelect }: {
       const value = await saveHarnessSettings(runtime, model, sandbox, runtime === 'codex' ? autoApprove : undefined);
       setSettings(value);
       onChange(value.runtime);
-      setNote('已保存，请新建对话；旧对话仍保留在原底座，不迁移历史。');
+      setNote('Gespeichert, bitte einen neuen Chat starten; alte Chats bleiben bei der bisherigen Engine.');
     } catch (error) {
-      setNote(`保存失败：${error instanceof Error ? error.message : String(error)}`);
+      setNote(`Speichern fehlgeschlagen: ${error instanceof Error ? error.message : String(error)}`);
     } finally {
       setBusy(false);
     }
   };
 
   return (
-    <section className="st-panel active harness-settings" aria-label="Agent 底座设置">
+    <section className="st-panel active harness-settings" aria-label="Agent-Engine">
       <div className="panel-top">
-        <strong>Agent 底座</strong>
-        <span className="desc">选择仅聊天，或使用 Agent 执行工具</span>
+        <strong>Agent-Engine</strong>
+        <span className="desc">Nur Chat oder Agent mit Werkzeugen</span>
         <span className="spacer" />
         <button className="btn btn-sm" disabled={!settings || settingsLoading || busy || settings.locked || !selected?.installed}
-          onClick={() => void save()}>{busy ? '保存中…' : '保存底座'}</button>
+          onClick={() => void save()}>{busy ? 'Wird gespeichert …' : 'Engine speichern'}</button>
         <button className="btn btn-sm" disabled={settingsLoading || busy}
-          onClick={() => setRefresh((previous) => previous + 1)}>{settingsLoading ? '读取中…' : '重新读取'}</button>
+          onClick={() => setRefresh((previous) => previous + 1)}>{settingsLoading ? 'Wird gelesen …' : 'Erneut laden'}</button>
       </div>
       <div className="settings-field">
-        <span className="settings-field-label">执行引擎</span>
+        <span className="settings-field-label">Ausführende Engine</span>
         <div className="settings-field-body">
           <div className="settings-engine-control">
-            <SettingsSelect label="执行引擎" value={runtime} disabled={!settings || settingsLoading || busy || settings.locked}
-              options={(settings?.agents || [{ id: 'api', label: '仅聊天模式', installed: true }])
+            <SettingsSelect label="Ausführende Engine" value={runtime} disabled={!settings || settingsLoading || busy || settings.locked}
+              options={(settings?.agents || [{ id: 'api', label: 'Nur Chat', installed: true }])
                 .map((agent) => ({
                 value: agent.id,
-                label: `${agent.label}${agent.installed ? '' : '（未安装 / 未配置）'}`,
+                label: `${agent.label}${agent.installed ? '' : '(nicht installiert / nicht eingerichtet)'}`,
               }))}
               onChange={(value) => {
                 setRuntime(value);
@@ -108,92 +108,92 @@ export default function HarnessSettings({ onChange, onSelect }: {
                 onSelect(value);
               }} />
             <span className="settings-help">
-              <button type="button" className="settings-help-trigger" aria-label="仅聊天模式说明"
+              <button type="button" className="settings-help-trigger" aria-label="Was der Nur-Chat-Modus kann"
                 aria-describedby="chat-only-help">ⓘ</button>
               <span id="chat-only-help" className="settings-help-tooltip" role="tooltip">
-                仅聊天模式直接调用模型 API，适合问答、写作和内容分析，不启动 Agent，
-                不能操作本机文件、运行命令、使用浏览器或执行技能。请在下方配置模型、API 地址和 Key；
-                需要工具时可切换到 OpenClaw、OpenCode、Codex 或其它 Agent。切换后请新建对话，旧历史保留。
+                Der Nur-Chat-Modus ruft die Modell-API direkt auf: gut für Fragen, Texte und Analysen. Es startet kein Agent,
+                es gibt keinen Zugriff auf lokale Dateien, Befehle, Browser oder Skills. Modell, API-Adresse und Schlüssel unten eintragen;
+                für Werkzeuge zu OpenClaw, OpenCode, Codex oder einem anderen Agent wechseln. Danach neuen Chat starten, alte Verläufe bleiben.
               </span>
             </span>
           </div>
-          <p className="desc">{runtime === 'api' ? '模型 API 直连 · 无需安装 Agent，模型在下方配置'
-            : runtime === 'openclaw' ? 'OpenClaw 的模型、API 地址和 Key 在下方配置，保存后同步到 gateway'
-            : `${selected?.protocol || ''} · 连接由适配器管理，无需另选连接方式`}</p>
-          <p className="desc">安装时可选择 OpenClaw，也可先跳过，进入这里选择已安装的其它引擎。选择引擎可查看对应配置，只有「保存底座」才切换；认证沿用各引擎自身配置。</p>
+          <p className="desc">{runtime === 'api' ? 'Direkte Modell-API · ohne Agent-Installation, Modell unten einrichten'
+            : runtime === 'openclaw' ? 'Modell, API-Adresse und Schlüssel für OpenClaw unten eintragen; nach dem Speichern an den Gateway übertragen'
+            : `${selected?.protocol || ''} · Verbindung über den Adapter, keine weitere Auswahl nötig`}</p>
+          <p className="desc">Bei der Installation kann OpenClaw gewählt oder übersprungen werden; hier lassen sich andere installierte Engines wählen. Die Auswahl zeigt deren Einstellungen; erst „Engine speichern“ wechselt. Anmeldungen bleiben bei der jeweiligen Engine.</p>
           {selected && !selected.installed && (
-            <p className="desc" role="status">未检测到 {selected.label}。请确认 CLI 已安装在运行 Web 的服务器账户下，并检查启动 PATH；
-              安装或调整路径后重启 Web。原有配置未删除，安装前不能保存为执行引擎。</p>
+            <p className="desc" role="status">Nicht gefunden:  {selected.label}. Bitte prüfen, ob das CLI im Benutzerkonto installiert ist, unter dem die Weboberfläche läuft, und ob der PATH beim Start stimmt;
+              nach Installation oder Pfadänderung die Weboberfläche neu starten. Bestehende Einstellungen bleiben; vor der Installation kann es nicht als Engine gespeichert werden.</p>
           )}
-          {runtime !== settings?.runtime && <p className="desc">当前为配置预览；请先「保存底座」，再保存下方 API 配置。旧对话不迁移。</p>}
+          {runtime !== settings?.runtime && <p className="desc">Das ist eine Vorschau der Einstellungen; erst „Engine speichern“, dann unten die API-Einstellungen speichern. Alte Chats werden nicht übertragen.</p>}
         </div>
       </div>
       {runtime !== 'openclaw' && runtime !== 'api' && (
         <>
           <div className="settings-field">
-            <label className="settings-field-label" htmlFor="harness-model">模型覆盖</label>
+            <label className="settings-field-label" htmlFor="harness-model">Modell überschreiben</label>
             <div className="settings-field-body">
               {(runtime === 'codex' || runtime === 'opencode') && (
                 <div className="settings-native-models">
-                  <SettingsSelect label="原生模型" value={model} disabled={busy || settings?.locked}
+                  <SettingsSelect label="Natives Modell" value={model} disabled={busy || settings?.locked}
                     options={[
-                      { value: '', label: '使用原生默认模型' },
+                      { value: '', label: 'Natives Standardmodell nutzen' },
                       ...nativeModels.map((item) => ({ value: item.id,
-                        label: `${item.label}${item.default ? '（原生默认）' : ''}` })),
+                        label: `${item.label}${item.default ? '(nativer Standard)' : ''}` })),
                       ...(model && !nativeModels.some((item) => item.id === model)
-                        ? [{ value: model, label: `${model}（当前 / 自定义）` }] : []),
+                        ? [{ value: model, label: `${model}(aktuell / eigenes)` }] : []),
                     ]} onChange={setModel} />
                   <button className="btn btn-sm" disabled={modelLoading || busy || !selected?.installed}
-                    onClick={() => void pullModels()}>{modelLoading ? '读取中…' : '拉取模型'}</button>
+                    onClick={() => void pullModels()}>{modelLoading ? 'Wird gelesen …' : 'Modelle abrufen'}</button>
                 </div>
               )}
               <input id="harness-model" className="mock" value={model} disabled={busy || settings?.locked} maxLength={240}
               onChange={(event) => setModel(event.target.value)}
-              placeholder={runtime === 'codex' ? '留空使用 Codex 原生配置' : 'provider/model；留空使用原生配置'} />
-              <p className="desc">可从原生 CLI 列表选择，也可手动填写；留空沿用原生默认模型，不修改其它底座的供应商配置。
-                模型是否可用仍取决于当前账号、供应商和原生 CLI 支持。</p>
+              placeholder={runtime === 'codex' ? 'Leer lassen = native Codex-Einstellung' : 'provider/model; leer = native Einstellung'} />
+              <p className="desc">Aus der Liste des nativen CLI wählen oder selbst eintragen; leer = natives Standardmodell, Anbieter anderer Engines bleiben unverändert.
+                Ob das Modell nutzbar ist, hängt von Konto, Anbieter und nativem CLI ab.</p>
               {modelNote && <p className="desc" role="status">{modelNote}</p>}
             </div>
           </div>
           {runtime === 'codex' && (
             <>
             <div className="settings-field">
-              <span className="settings-field-label">Codex 沙箱</span>
+              <span className="settings-field-label">Codex-Sandbox</span>
               <div className="settings-field-body">
-                <SettingsSelect label="Codex 沙箱" value={sandbox} disabled={busy || settings?.locked}
+                <SettingsSelect label="Codex-Sandbox" value={sandbox} disabled={busy || settings?.locked}
                   options={[
-                    { value: 'workspace-write', label: '项目工作区写入' },
-                    { value: 'read-only', label: '只读' },
+                    { value: 'workspace-write', label: 'Schreiben im Projektordner' },
+                    { value: 'read-only', label: 'Nur lesen' },
                   ]}
                   onChange={setSandbox} />
-                <p className="desc">保留所选沙箱边界，不授予系统完全访问权限。</p>
+                <p className="desc">Gewählte Sandbox-Grenze bleibt, kein voller Systemzugriff.</p>
               </div>
             </div>
             <div className="settings-field">
-              <label className="settings-field-label" htmlFor="codex-auto-approve">永久通过授权</label>
+              <label className="settings-field-label" htmlFor="codex-auto-approve">Dauerhaft erlauben</label>
               <div className="settings-field-body">
                 <button id="codex-auto-approve" type="button" role="switch"
-                  aria-checked={autoApprove} aria-label="永久通过授权"
+                  aria-checked={autoApprove} aria-label="Dauerhaft erlauben"
                   aria-describedby="codex-auto-approve-help" className="settings-permission-switch"
                   disabled={busy || settingsLoading || !settings || settings.locked}
                   onClick={() => setAutoApprove((previous) => !previous)}>
                   <span className="settings-permission-switch__thumb" />
                 </button>
-                <p id="codex-auto-approve-help" className="desc">保存后持续生效，仅影响 Postloop 的 Codex：
-                  自动批准普通文件读取、搜索、Git 查看/拉取，以及项目工作区内的文件修改授权。
-                  sudo、删除、系统修改、执行脚本及无法判断安全性的操作仍需确认；不是无限权限，可随时关闭。</p>
+                <p id="codex-auto-approve-help" className="desc">Gilt nach dem Speichern dauerhaft und nur für Codex in Postloop:
+                  Dateien lesen, suchen, Git ansehen/holen und Dateiänderungen im Projektordner werden automatisch erlaubt.
+                  sudo, Löschen, Systemänderungen, Skripte und unklare Aktionen bleiben bestätigungspflichtig; keine unbegrenzten Rechte, jederzeit abschaltbar.</p>
               </div>
             </div>
             </>
           )}
-          <p className="desc">认证由原生 CLI 管理，Postloop 不迁移密钥。未自动批准的额外权限需在对话中确认；
-            OpenCode / 通用 ACP 使用其原生权限策略，不是 Codex 沙箱。</p>
+          <p className="desc">Die Anmeldung verwaltet das native CLI; Postloop überträgt keine Schlüssel. Nicht automatisch erlaubte Rechte werden im Chat bestätigt;
+            OpenCode / allgemeines ACP nutzen ihre eigenen Rechteregeln, nicht die Codex-Sandbox.</p>
           <p className="desc"><code>{selected?.install_hint}</code></p>
-          <p className="desc">“已安装”仅表示找到 CLI，不代表模型已登录；保存后请发送消息验证。</p>
+          <p className="desc">„Installiert“ heißt nur, dass das CLI gefunden wurde, nicht, dass ein Modell angemeldet ist; nach dem Speichern zum Prüfen eine Nachricht senden.</p>
         </>
       )}
-      {settings?.locked && <p className="desc">启动环境 EASEL_AGENT_RUNTIME 已固定底座，请修改启动环境后重启。</p>}
-      {note && <div className={`save-note${note.includes('失败') ? ' err' : ''}`} role="status">{note}</div>}
+      {settings?.locked && <p className="desc">EASEL_AGENT_RUNTIME ist in der Startumgebung fest gesetzt; zum Ändern die Startumgebung anpassen und neu starten.</p>}
+      {note && <div className={`save-note${/失败|fehlgeschlagen/.test(note) ? ' err' : ''}`} role="status">{note}</div>}
     </section>
   );
 }

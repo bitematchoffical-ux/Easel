@@ -13,7 +13,7 @@ class TrendBoundary extends Component<{ children: ReactNode }, { failed: boolean
   state = { failed: false };
   static getDerivedStateFromError() { return { failed: true }; }
   render() {
-    return this.state.failed ? <div className="page-scroll trends-page"><div className="notice-error" role="alert">热点页面暂时无法显示，其他工作台功能仍可使用。<button className="btn btn-sm" onClick={() => this.setState({ failed: false })}>重新加载热点</button></div></div> : this.props.children;
+    return this.state.failed ? <div className="page-scroll trends-page"><div className="notice-error" role="alert">Die Trend-Seite kann gerade nicht angezeigt werden; der Rest des Arbeitsbereichs funktioniert.<button className="btn btn-sm" onClick={() => this.setState({ failed: false })}>Trends neu laden</button></div></div> : this.props.children;
   }
 }
 
@@ -42,7 +42,7 @@ function TrendsPanel({ onUseTopic }: TrendsPageProps) {
     try {
       await createIdea({ title, source, status: 'pending' });
       setSaved((prev) => new Set(prev).add(key));
-    } catch { setSaveError('收藏失败，请稍后重试。'); }
+    } catch { setSaveError('Merken fehlgeschlagen, bitte später erneut versuchen.'); }
   };
 
   const load = useCallback((pfs: string[]) => {
@@ -54,7 +54,7 @@ function TrendsPanel({ onUseTopic }: TrendsPageProps) {
     fetchTrends(pfs.join(','), 15)
       .then((d) => { if (requestId.current === id) { setGroups(d.trends); setUpdated(d.updated); setWarnings(d.warnings); } })
       .catch((e: unknown) => {
-        if (requestId.current === id) setError(e instanceof Error ? e.message : '热点拉取失败，请稍后重试。');
+        if (requestId.current === id) setError(e instanceof Error ? e.message : 'Trends konnten nicht geladen werden, bitte später erneut versuchen.');
       })
       .finally(() => { if (requestId.current === id) setLoading(false); });
   }, []);
@@ -79,7 +79,7 @@ function TrendsPanel({ onUseTopic }: TrendsPageProps) {
       if (discoveryId.current === id) {
         setGroups([]);
         setSources([]);
-        setError(e instanceof Error ? e.message : '无法加载热点数据源。');
+        setError(e instanceof Error ? e.message : 'Trend-Quellen konnten nicht geladen werden.');
       }
     });
   }, []);
@@ -100,15 +100,15 @@ function TrendsPanel({ onUseTopic }: TrendsPageProps) {
     <div className="page-scroll trends-page" aria-busy={loading}>
       <div className="page-head">
         <div>
-          <h1 className="page-title"><IconFire size={22} /> 热点雷达</h1>
+          <h1 className="page-title"><IconFire size={22} /> Trend-Radar</h1>
           <p className="page-subtitle">
-            汇集平台热搜与自定义数据源，挑选题，一键交给 AI 做成你的内容。
-            {updated > 0 && <span style={{ color: 'var(--text-tertiary)' }}> · {new Date(updated * 1000).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })} 查询</span>}
+            Trends und eigene Datenquellen an einem Ort: Thema auswählen und mit einem Klick von der KI in deinen Inhalt verwandeln lassen.
+            {updated > 0 && <span style={{ color: 'var(--text-tertiary)' }}> · {new Date(updated * 1000).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })} Suchen</span>}
           </p>
         </div>
-        <div className="trend-actions"><button className="btn btn-sm" onClick={() => setManagerOpen(true)}>数据源</button>
+        <div className="trend-actions"><button className="btn btn-sm" onClick={() => setManagerOpen(true)}>Datenquellen</button>
         <button className="btn btn-sm" onClick={() => { void discover(); }} disabled={loading}>
-          <IconRefresh size={14} /> {loading ? '刷新中…' : '刷新'}
+          <IconRefresh size={14} /> {loading ? 'Wird aktualisiert …' : 'Aktualisieren'}
         </button></div>
       </div>
 
@@ -122,24 +122,24 @@ function TrendsPanel({ onUseTopic }: TrendsPageProps) {
       {error && <div className="notice-error" role="alert">{error}</div>}
       {saveError && <div className="notice-error" role="alert">{saveError}</div>}
       {warnings.map((warning, i) => <div className="notice-error" role="status" key={i}>{warning}</div>)}
-      {!ready && !error && <div className="trend-platforms" role="status">正在加载数据源…</div>}
-      {ready && sources.length === 0 && <div className="trend-platforms">尚未启用数据源，请在本地热点数据源配置中添加或启用。</div>}
-      {ready && sources.length > 0 && selected.length === 0 && <div className="trend-platforms">请选择上方的数据源查看热点。</div>}
-      {loading && <div className="trend-platforms" role="status">正在获取热点…</div>}
+      {!ready && !error && <div className="trend-platforms" role="status">Datenquellen werden geladen …</div>}
+      {ready && sources.length === 0 && <div className="trend-platforms">Noch keine Datenquelle aktiv; bitte in der lokalen Trend-Konfiguration hinzufügen oder aktivieren.</div>}
+      {ready && sources.length > 0 && selected.length === 0 && <div className="trend-platforms">Oben eine Datenquelle wählen, um Trends zu sehen.</div>}
+      {loading && <div className="trend-platforms" role="status">Trends werden geladen …</div>}
 
       <div className="trend-grid">
         {groups.map((g) => (
           <div key={g.platform} className="card trend-col">
             <div className="trend-col-head">{g.label}<span className="trend-count">{g.items.length}</span></div>
             <div className="trend-source-status">
-              {g.fetched_at && <span>采集于 {new Date(g.fetched_at).toLocaleString('zh-CN')}</span>}
-              {g.stale && <span> · 缓存已过期</span>}
-              {g.error && <div role="status">{g.error.message}{g.stale ? '，暂用上次结果' : ''}</div>}
+              {g.fetched_at && <span>Abgerufen am {new Date(g.fetched_at).toLocaleString('zh-CN')}</span>}
+              {g.stale && <span> · Cache abgelaufen</span>}
+              {g.error && <div role="status">{g.error.message}{g.stale ? ', vorerst letztes Ergebnis' : ''}</div>}
             </div>
             <div className="trend-list">
               {g.items.length === 0 && !loading && (
                 <div className="trend-empty">
-                  {!g.ok ? '该数据源暂时不可用' : '采集成功，暂无热点'}
+                  {!g.ok ? 'Diese Datenquelle ist gerade nicht verfügbar' : 'Abruf erfolgreich, aber keine Trends'}
                 </div>
               )}
               {g.items.map((it, i) => (
@@ -150,13 +150,13 @@ function TrendsPanel({ onUseTopic }: TrendsPageProps) {
                       title={it.title}>{it.title}</a>
                     {it.hot && <span className="trend-hot">{it.hot}</span>}
                   </div>
-                  <button className="trend-save" title={saved.has(`${g.platform}:${it.id}`) ? '已收藏到选题库' : '收藏到选题库'}
-                    aria-label={`收藏选题：${it.title}`}
+                  <button className="trend-save" title={saved.has(`${g.platform}:${it.id}`) ? 'Im Ideenpool gemerkt' : 'Im Ideenpool merken'}
+                    aria-label={`Thema merken: ${it.title}`}
                     onClick={() => save(`${g.platform}:${it.id}`, it.title, g.label)}>
                     {saved.has(`${g.platform}:${it.id}`) ? <IconCheck size={14} /> : <IconBookmark size={14} />}
                   </button>
-                  <button className="trend-use" title="做成内容"
-                    onClick={() => onUseTopic(it.title)}>做内容</button>
+                  <button className="trend-use" title="Zu Inhalt machen"
+                    onClick={() => onUseTopic(it.title)}>Inhalt machen</button>
                 </div>
               ))}
             </div>

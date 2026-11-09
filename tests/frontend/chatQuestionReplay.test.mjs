@@ -49,7 +49,7 @@ async function consume(payloads, resumeOnly) {
 
 for (const resumeOnly of [false, true]) {
   test(`question parser handles chunked ${resumeOnly ? 'replayed' : 'live'} SSE`, async () => {
-    const question = { id: 'question-1', questions: [{ question: '选择？', options: ['抖音'] }] };
+    const question = { id: 'question-1', questions: [{ question: '选择？', options: ['Douyin'] }] };
     const result = await consume([
       JSON.stringify(question), JSON.stringify(JSON.stringify(question)),
       'null', '"text"', '{}', '{"questions":null}', 'not-json',

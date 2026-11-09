@@ -30,9 +30,9 @@ const ICONS: Record<string, ComponentType<{ size?: number }>> = {
 };
 
 const GROUPS: { id: string; title: string; en: string }[] = [
-  { id: 'rm', title: '视频产线套件', en: 'Remotion' },
-  { id: 'pub', title: '发布链', en: '发布与读回' },
-  { id: 'common', title: '常用库', en: '按需' },
+  { id: 'rm', title: 'Video-Produktionspaket', en: 'Remotion' },
+  { id: 'pub', title: 'Veröffentlichungskette', en: 'Posten und Rücklesen' },
+  { id: 'common', title: 'Standardbibliotheken', en: 'Bei Bedarf' },
 ];
 
 /** 环境安装页：引擎（install_tool）的真实体检 + 后台安装 + 进度轮询。 */
@@ -56,37 +56,37 @@ export default function EnvBoard({ tools, python, loading, error, jobs, anyRunni
 
   const view = (t: EnvTool): { state: 'ok' | 'missing' | 'busy' | 'fail' | 'nodir'; badge: string; cls: string } => {
     const job = jobs[t.id];
-    if (job?.state === 'running') return { state: 'busy', badge: '安装中', cls: 'warn' };
-    if (t.state === 'ok') return { state: 'ok', badge: '已装', cls: 'ok' };
+    if (job?.state === 'running') return { state: 'busy', badge: 'Wird installiert', cls: 'warn' };
+    if (t.state === 'ok') return { state: 'ok', badge: 'Installiert', cls: 'ok' };
     // 刚装完、面板还在重新体检的过渡窗口：显示「校验中」，别闪回「未装」
-    if (job?.state === 'ok') return { state: 'busy', badge: '校验中', cls: 'warn' };
-    if (job?.state === 'fail') return { state: 'fail', badge: '失败', cls: 'fail' };
-    if (t.state === 'no_dir') return { state: 'nodir', badge: '需目录', cls: 'warn' };
-    if (t.state === 'fail') return { state: 'fail', badge: '异常', cls: 'fail' };
-    return { state: 'missing', badge: '未装', cls: 'off' };
+    if (job?.state === 'ok') return { state: 'busy', badge: 'Wird geprüft', cls: 'warn' };
+    if (job?.state === 'fail') return { state: 'fail', badge: 'Fehler', cls: 'fail' };
+    if (t.state === 'no_dir') return { state: 'nodir', badge: 'Verzeichnis nötig', cls: 'warn' };
+    if (t.state === 'fail') return { state: 'fail', badge: 'Fehler', cls: 'fail' };
+    return { state: 'missing', badge: 'Nicht installiert', cls: 'off' };
   };
 
   return (
     <section className="st-env">
       <div className="panel-top">
-        <span className="pill sum" aria-live="polite">{allDone ? '全就绪' : `就绪 ${okCount} / ${total}`}</span>
+        <span className="pill sum" aria-live="polite">{allDone ? 'Alles bereit' : `Bereit ${okCount} / ${total}`}</span>
         <span className="desc">
-          装完自动校验{pid ? ` · 目标解释器 ${pid}` : ''} · 给其他机器＝整个目录拷过去
+          Nach Installation automatisch prüfen{pid ? ` · Ziel-Interpreter ${pid}` : ''} · für andere Rechner = ganzen Ordner kopieren
         </span>
         <span className="spacer" />
         <button className="btn btn-sm" onClick={onRefresh} disabled={loading || anyRunning}>
-          {loading ? '检测中…' : '重新检测'}
+          {loading ? 'Wird geprüft …' : 'Erneut prüfen'}
         </button>
         <button className="btn btn-sm btn-primary" onClick={runAll} disabled={anyRunning || allDone || !total}>
-          全部安装
+          Alles installieren
         </button>
       </div>
-      <div className="env-meter" role="progressbar" aria-label="环境就绪进度">
+      <div className="env-meter" role="progressbar" aria-label="Einrichtungsfortschritt">
         <i style={{ transform: `scaleX(${total ? okCount / total : 0})` }} />
       </div>
       {error ? <div className="env-error">{error}</div> : null}
       {loading && !tools.length ? (
-        <div className="board"><div className="empty"><span className="spin" /> 正在体检环境…<span className="hint">（后台繁忙时可能稍慢，会自动重试）</span></div></div>
+        <div className="board"><div className="empty"><span className="spin" /> Umgebung wird geprüft …<span className="hint">(bei hoher Last etwas langsamer, wird automatisch wiederholt)</span></div></div>
       ) : null}
 
       {GROUPS.map((g) => {
@@ -98,9 +98,9 @@ export default function EnvBoard({ tools, python, loading, error, jobs, anyRunni
           <div className="grp" key={g.id}>
             <div className="grp-hd">
               <h3>{g.title} <span className="en">{g.en}</span></h3>
-              <span className="grp-stat">{ok} / {list.length} 就绪</span>
+              <span className="grp-stat">{ok} / {list.length} Bereit</span>
               <button className="btn btn-sm" onClick={() => runGroup(g.id)} disabled={anyRunning || pending === 0}>
-                整组安装
+                Gruppe installieren
               </button>
             </div>
             <div className="grid">
@@ -119,12 +119,12 @@ export default function EnvBoard({ tools, python, loading, error, jobs, anyRunni
                     <div className="card-foot">
                       {v.state === 'busy' ? (
                         <>
-                          <span className="foot-status busy" title={job?.line || ''}>{job?.line || '启动中…'}</span>
+                          <span className="foot-status busy" title={job?.line || ''}>{job?.line || 'Startet …'}</span>
                           <div className="prog">
                             <div className="bar"><i /></div>
                             <span className="spin" />
                           </div>
-                          <button className="btn btn-sm" disabled>安装中</button>
+                          <button className="btn btn-sm" disabled>Wird installiert</button>
                         </>
                       ) : (
                         <>
@@ -133,24 +133,24 @@ export default function EnvBoard({ tools, python, loading, error, jobs, anyRunni
                             title={v.state === 'fail' ? (job?.detail || t.detail || '') : (t.version || '')}
                           >
                             {v.state === 'ok'
-                              ? (t.version || '已就绪')
+                              ? (t.version || 'Bereit')
                               : v.state === 'fail'
-                                ? (job?.detail || t.detail || '查看原因')
+                                ? (job?.detail || t.detail || 'Grund anzeigen')
                                 : v.state === 'nodir'
-                                  ? '需要指定工程目录'
+                                  ? 'Projektverzeichnis angeben'
                                   : ''}
                           </span>
                           {v.state === 'nodir' ? (
-                            <button className="btn btn-sm" disabled title="需要 --dir 工程目录（随独立版内置）">需目录</button>
+                            <button className="btn btn-sm" disabled title="Benötigt --dir Projektverzeichnis (in der Standalone-Version enthalten)">Verzeichnis nötig</button>
                           ) : v.state === 'fail' ? (
-                            <button className="btn btn-sm btn-fill" onClick={() => void onInstall(t.id)} disabled={anyRunning}>重试</button>
+                            <button className="btn btn-sm btn-fill" onClick={() => void onInstall(t.id)} disabled={anyRunning}>Erneut versuchen</button>
                           ) : (
                             <button
                               className={`btn btn-sm ${v.state === 'ok' ? '' : 'btn-fill'}`}
                               onClick={() => void onInstall(t.id)}
                               disabled={anyRunning}
                             >
-                              {v.state === 'ok' ? '重装' : '安装'}
+                              {v.state === 'ok' ? 'Neu installieren' : 'Installieren'}
                             </button>
                           )}
                         </>
@@ -164,7 +164,7 @@ export default function EnvBoard({ tools, python, loading, error, jobs, anyRunni
         );
       })}
 
-      <div className="foot-note">装到哪：本机用户环境（Python 用户级 · PATH 自动接好）；给其他机器＝把独立版整个目录拷过去，双击即开。</div>
+      <div className="foot-note">Ziel: Benutzerumgebung dieses Rechners (Python auf Benutzerebene, PATH wird automatisch gesetzt). Für andere Rechner den ganzen Ordner der Standalone-Version kopieren und per Doppelklick öffnen.</div>
     </section>
   );
 }

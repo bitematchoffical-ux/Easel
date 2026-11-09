@@ -129,10 +129,10 @@ export function OptionsDropdown({ anchor, items, current, emptyHint, onPull, pul
       style={{ position: 'fixed', top: pos.top, left: pos.left, width: pos.width }}>
       {items.length === 0 && (
         <div className="dd-empty">
-          <span>{emptyHint || '该端点没有返回模型'}</span>
+          <span>{emptyHint || 'Dieser Endpunkt liefert keine Modelle'}</span>
           {onPull && (
             <button className="dd-pull" onMouseDown={(event) => { event.preventDefault(); onPull(); }} disabled={pulling}>
-              {pulling ? <><span className="spin" />拉取中</> : '立即拉取'}
+              {pulling ? <><span className="spin" />Wird abgerufen</> : 'Jetzt abrufen'}
             </button>
           )}
         </div>
@@ -148,7 +148,7 @@ export function OptionsDropdown({ anchor, items, current, emptyHint, onPull, pul
             }
           }}>
           <span>{item.label}</span>
-          {item.value === current && <small>当前</small>}
+          {item.value === current && <small>Aktuell</small>}
         </div>
       ))}
     </div>,

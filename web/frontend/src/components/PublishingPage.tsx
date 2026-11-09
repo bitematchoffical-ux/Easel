@@ -19,31 +19,31 @@ export default function PublishingPage({ persona }: { persona: string }) {
         setMode('manual');
       }
     })
-      .catch(() => { if (active) setError('无法读取发布方式，请重试。'); });
+      .catch(() => { if (active) setError('Veröffentlichungsmodus konnte nicht gelesen werden, bitte erneut versuchen.'); });
     return () => { active = false; };
   }, [retry]);
   if (error) return <div className="panel" role="alert">{error}
-    <button className="btn btn-sm" onClick={() => setRetry((value) => value + 1)}>重新读取</button>
+    <button className="btn btn-sm" onClick={() => setRetry((value) => value + 1)}>Erneut laden</button>
   </div>;
-  if (!policy) return <div className="dash-empty">正在读取发布方式…</div>;
+  if (!policy) return <div className="dash-empty">Veröffentlichungsmodus wird geladen …</div>;
   const automaticAllowed = policy.mode === 'automated' && policy.automaticSubmission;
   const manual = mode === 'manual' || !automaticAllowed;
   return <div className="publishing-workspace">
     <div className="publishing-mode-bar">
-      <div className="subnav-tabs" role="group" aria-label="发布方式">
+      <div className="subnav-tabs" role="group" aria-label="Veröffentlichungsmodus">
         <button type="button" className={`subnav-tab ${!manual ? 'active' : ''}`}
           aria-pressed={!manual} disabled={!automaticAllowed} onClick={() => setMode('automated')}>
-          自动发布
+          Automatisch
         </button>
         <button type="button" className={`subnav-tab ${manual ? 'active' : ''}`}
           aria-pressed={manual} onClick={() => setMode('manual')}>
-          人工审核发布
+          Export (selbst posten)
         </button>
       </div>
       <span className="pv-hint">{!automaticAllowed
-        ? '管理员已禁用自动发布，当前仅提供人工审核路径。'
-        : manual ? '审核后复制或导出，前往官方页面亲自提交；切换不更改全局自动发布权限。'
-          : '保留原有账号检查、预检、确认及自动提交流程。'}</span>
+        ? 'Automatisches Posten ist vom Administrator deaktiviert; nur der Export ist verfügbar.'
+        : manual ? 'Prüfen, dann kopieren oder exportieren und auf der offiziellen Seite selbst posten; der Wechsel ändert die globale Einstellung nicht.'
+          : 'Bisheriger Ablauf mit Kontoprüfung, Vorabcheck, Bestätigung und automatischem Posten.'}</span>
     </div>
     <div className="publishing-mode-content">
       {manual ? <ManualPublishPage persona={persona} /> : <AutomatedPublishPage persona={persona} />}
