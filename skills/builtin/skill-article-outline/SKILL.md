@@ -1,8 +1,6 @@
 ---
 name: skill-article-outline
-description: >-
-  生成长文大纲：基于搜索分析生成 H2/H3 标题结构、段落字数目标、图表位置和 FAQ 规划，适用于公众号文章、知乎专栏、博客。
-  当用户说"文章大纲""长文结构""公众号大纲""知乎回答框架""写作提纲""文章框架""H2/H3 结构"时使用。
+description: "Gliederung für lange Artikel: H2/H3-Struktur, Zielwortzahl pro Abschnitt, Platz für Grafiken und FAQ, auf Basis einer Suchanalyse. Für Blog, LinkedIn-Artikel, Newsletter. Verwenden bei: Artikelgliederung, Struktur für langen Text, H2/H3-Struktur."
 layer: plan
 ---
 

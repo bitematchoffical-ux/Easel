@@ -1,9 +1,6 @@
 ---
 name: multi-voice-dubbing
-description: >
-  多角色对话配音：按 cast 和逐行对白为不同角色分配音色与情绪，合成多声线音轨和带角色名字幕。
-  当用户说“多角色/双人/剧本/对话配音、多人对白、不同角色不同声音、有声剧配音”时使用。
-  单一公共音色用 tts-voiceover；克隆本人音色用 voice-clone；整部短剧制作由 short-drama 编排。
+description: "Mehrstimmige Vertonung: weist jeder Rolle eine eigene Stimme und Stimmung zu und erzeugt eine Tonspur mit mehreren Sprechern plus Untertiteln mit Rollennamen. Verwenden bei: Dialog vertonen, zwei Sprecher, Hörspiel, verschiedene Stimmen. Eine einzelne Stimme: tts-voiceover; eigene Stimme klonen: voice-clone."
 layer: produce
 ---
 

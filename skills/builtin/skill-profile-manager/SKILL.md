@@ -1,9 +1,6 @@
 ---
 name: skill-profile-manager
-description: >
-  管理账号画像全生命周期：创建空白画像、编辑六维字段、更新记忆、切换、导出和对比。
-  当用户说“新建/编辑/更新/切换/导出/对比画像、写进画像记忆”时使用。
-  首次从社媒数据生成画像用 skill-profile-builder；只提炼语言风格用 skill-voice-builder；品牌首次入驻引导用 skill-brand-onboarding。
+description: "Verwaltet Konto-Profile: leeres Profil anlegen, die sechs Bereiche bearbeiten, Gedächtnis aktualisieren, wechseln, exportieren und vergleichen. Verwenden bei: Profil anlegen, bearbeiten, wechseln, exportieren, „merk dir das im Profil“. Erstes Profil aus Social-Media-Daten: skill-profile-builder."
 layer: general
 ---
 

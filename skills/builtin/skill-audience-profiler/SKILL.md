@@ -1,9 +1,6 @@
 ---
 name: skill-audience-profiler
-description: >-
-  构建目标受众画像：分析粉丝人群特征、痛点需求、内容偏好和触达渠道，输出可执行的受众画像卡。
-  当用户说"受众画像""粉丝画像""我的用户是谁""目标人群""用户痛点""受众分析""谁在看我"时使用。
-  构建的是受众/粉丝画像，创作者自己的声音画像用 skill-voice-builder。
+description: "Zielgruppenprofil: Merkmale, Probleme und Wünsche, Inhaltsvorlieben und Kanäle der Zielgruppe als umsetzbare Profilkarte. Verwenden bei: Zielgruppe, wer sind meine Follower, Pain Points, Zielgruppenanalyse. Für die eigene Stimme des Creators skill-voice-builder."
 layer: plan
 ---
 

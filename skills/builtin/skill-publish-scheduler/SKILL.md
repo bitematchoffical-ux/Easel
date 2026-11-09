@@ -1,9 +1,6 @@
 ---
 name: skill-publish-scheduler
-description: >-
-  批量定时发布排期：管理"内容 × 平台 × 发布时间"的排期表，导入排期、查看队列、计算到期项、
-  到期派发给各平台发布 SKILL、回填状态。当用户说"定时发布""批量发布""排期发布""发布队列"
-  "按计划发""这几条按时间自动发""发布排期表""到点发布"时使用。调度逻辑纯脚本，实际发布委派平台 SKILL。
+description: "Zeitplan für Veröffentlichungen: verwaltet die Tabelle Inhalt × Plattform × Zeitpunkt, importiert Pläne, zeigt die Warteschlange und markiert fällige Beiträge. Verwenden bei: geplant posten, Veröffentlichungsplan, Warteschlange. Instagram und TikTok werden als Export-Paket vorbereitet, gepostet wird von Hand."
 layer: publish
 ---
 

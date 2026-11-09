@@ -1,6 +1,6 @@
 ---
 name: poster-hero
-description: "生成 1080×1920 竖版营销海报，包含大标题、核心卖点和可选二维码，适合产品发布、活动宣传与朋友圈传播。当用户说“做竖版营销海报、活动宣传图、朋友圈海报、产品发布海报”时使用。横版金句卡用 card-quote，小红书知识卡用 card-xiaohongshu。"
+description: "Erstellt ein Werbeposter im Hochformat 1080×1920 mit großer Überschrift, Kernaussagen und optionalem QR-Code – für Produktstarts, Aktionen und Storys. Verwenden bei: Poster, Aktionsgrafik, Story-Grafik. Querformat-Zitatkarte: card-quote; Karussell-Karten: card-xiaohongshu."
 layer: produce
 ---
 

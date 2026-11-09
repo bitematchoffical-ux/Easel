@@ -1,9 +1,6 @@
 ---
 name: video-editing
-description: >-
-  用自然语言指令剪辑视频：裁剪、拼接、变速、跳切去静音、文字覆盖、横竖比转换、抽帧封面、转 GIF、压缩、加 BGM/水印，基于 ffmpeg。
-  当用户说"剪视频""裁剪视频""拼接视频""视频变速""去静音""视频加文字""视频转GIF""压缩视频""加BGM/水印"时使用。
-  本 SKILL 做单条视频的通用剪辑；智能画幅转换用 video-reframe，长视频切片用 clipify/video-highlights，从 0 生成用 ai-video-gen。
+description: "Videos per Sprachbefehl schneiden: kürzen, zusammenfügen, Tempo ändern, Pausen herausschneiden, Text einblenden, Format ändern, Coverbild ziehen, GIF erzeugen, komprimieren, Musik oder Wasserzeichen hinzufügen (ffmpeg). Verwenden bei: Video schneiden, Videos zusammenfügen, Text ins Video, Video komprimieren. Formatumwandlung mit Fokus: video-reframe; Clips aus langen Videos: clipify oder video-highlights."
 layer: produce
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: video-highlights
-description: "长视频 / 直播录像高光切片：从一条长视频里找出高光片段，切成多条独立短视频，可选转竖版 9:16 + 加字幕。找点两种方式——音频能量峰值（情绪高涨/欢呼/大声处）或转录后由内容判断挑金句段。当用户说 直播切片、高光切片、长视频切短、录像剪精华、切片、高光时刻、把直播剪成短视频、提取精彩片段、长视频找亮点 时使用。基于 shared/scripts/highlight_cut.py（librosa 能量分析）。与 clipify 区别：clipify 专做英文口播找笑点+动态人脸pan，本 SKILL 更通用（中文/直播皆可）、静态转竖版更稳。"
+description: "Highlights aus langen Videos oder Livestream-Aufzeichnungen: findet die besten Stellen und schneidet sie als eigene Kurzvideos, optional im Hochformat 9:16 mit Untertiteln. Erkennung über Lautstärke-Spitzen oder über das Transkript. Verwenden bei: Livestream-Clips, Highlights, langes Video in Shorts zerlegen."
 layer: produce
 ---
 

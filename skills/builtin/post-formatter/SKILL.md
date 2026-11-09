@@ -1,10 +1,6 @@
 ---
 name: post-formatter
-description: >
-  用 PAS、AIDA、BAB、STAR、SLAY 等经典框架将主题结构化为社媒帖子。
-  200-250 字、20 行以内、移动端友好排版。适用于公众号、知乎、微博、LinkedIn 等长文帖子。
-  当用户说"用 PAS 写"、"AIDA 框架"、"结构化帖子"、"套框架写"时使用。
-  和 social-content 的区别：post-formatter 严格套用营销框架，social-content 偏自由写作。
+description: "Strukturiert ein Thema mit bewährten Rahmen wie PAS, AIDA, BAB, STAR oder SLAY als Social-Media-Beitrag – kurz, höchstens 20 Zeilen, gut lesbar auf dem Handy. Für LinkedIn, Blog oder längere Captions. Verwenden bei: mit PAS schreiben, AIDA-Rahmen, strukturierter Beitrag. social-content schreibt freier, post-formatter hält sich streng an den Rahmen."
 layer: produce
 ---
 

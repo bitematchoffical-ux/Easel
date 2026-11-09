@@ -1,6 +1,6 @@
 ---
 name: skill-account-diagnosis
-description: "账号诊断/起号体检：读取已完善的画像 Profile + 近期内容数据，诊断垂直度、定位清晰度、限流降权信号、流量池阶段，给出病因→证据→处方式的起号意见与发布建议。当用户说账号诊断/起号体检/为什么没流量/是不是被限流了/账号定位诊断/起号建议/怎么起号时使用"
+description: "Konto-Check: liest das Konto-Profil und aktuelle Kennzahlen und prüft thematischen Fokus, Klarheit der Positionierung, Anzeichen für gedrosselte Reichweite und die Wachstumsphase – mit Ursache, Beleg und konkreten Empfehlungen. Verwenden bei: Konto analysieren, warum keine Reichweite, werde ich gedrosselt, wie baue ich das Konto auf."
 layer: plan
 ---
 

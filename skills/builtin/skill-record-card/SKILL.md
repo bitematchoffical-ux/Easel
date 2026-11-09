@@ -1,7 +1,6 @@
 ---
 name: skill-record-card
-description: >-
-  项目内容记录卡片：以访谈方式陪用户把"当天真做成的一件事"沉淀成四段卡片（核心要点/机理/具体方法/使用范围）。以用户亲口表达为底稿——AI 一次只问一个问题、追问到具体，并补充观点、提炼拔高、指出认知盲点；AI 补充显式标注、经用户确认采纳后才落盘。卡片是用户心里"看不见的稿子"，登记为 general 层产物供分享消费，可随新理解迭代版本。当用户说"写卡片"、"记录卡片"、"记录今天做的事"、"帮我沉淀今天做的事"、"经验卡片"、"每日记录"时触发。边界：已发布内容数据分析用 skill-content-postmortem；画像偏好沉淀用 skill-profile-manager。
+description: "Lernkarte zu einem Projekt: hält im Gespräch fest, was heute wirklich geschafft wurde, als Karte mit vier Teilen (Kern, Wirkprinzip, Vorgehen, Anwendungsbereich). Grundlage sind die eigenen Worte des Nutzers; Ergänzungen der KI werden markiert und erst nach Zustimmung übernommen. Verwenden bei: Karte schreiben, festhalten was ich heute gemacht habe, Erfahrungskarte."
 layer: general
 ---
 

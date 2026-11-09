@@ -1,13 +1,6 @@
 ---
 name: image-editing
-description: >-
-  通用图像处理加工：改尺寸/缩放、裁剪、补边适配平台尺寸、格式转换（png/jpg/webp）、
-  压缩到目标大小、加文字或图片水印、圆角、多图拼接、生成缩略图、读图片信息。
-  基于 image_ops.py 确定性处理。
-  使用时机：用户说"改尺寸"、"缩放图片"、"裁剪"、"压缩图片"、"加水印"、"转格式"、
-  "圆角"、"拼图/多图联排"、"缩略图"、"适配小红书/朋友圈尺寸"、"把图 pad 成 1:1"。
-  和 card-*（卡片类）的区别：card-* 是"HTML 设计→渲染出图"，
-  image-editing 只加工已有图片，不负责视觉设计。
+description: "Allgemeine Bildbearbeitung: Größe ändern, zuschneiden, auf Plattformformat auffüllen, Format umwandeln (png/jpg/webp), auf Zielgröße komprimieren, Text- oder Bildwasserzeichen, abgerundete Ecken, Collagen, Vorschaubilder, Bildinfos. Verwenden bei: Größe ändern, zuschneiden, komprimieren, Wasserzeichen, für Instagram auf 4:5 oder 1:1 bringen. card-* gestalten neue Bilder, image-editing bearbeitet vorhandene."
 layer: produce
 ---
 

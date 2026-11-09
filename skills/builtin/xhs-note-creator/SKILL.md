@@ -1,9 +1,6 @@
 ---
 name: xhs-note-creator
-description: >
-  小红书内容总入口：生成标题、正文、caption、hashtags，以及 3-9 张图文卡片或短视频分镜，覆盖素材分析、卖点评估、去 AI 味和质检。
-  当用户说“写/做小红书笔记、小红书图文/种草/文案、出一套卡片、小红书视频”时使用。
-  整套笔记用本 SKILL；仅渲染卡片用 card-xiaohongshu；其他平台的通用文案用 social-content。
+description: "Nur für Xiaohongshu (chinesische Plattform): komplette Notiz mit Titel, Text, Hashtags und Karten. Für Instagram, TikTok, YouTube Shorts und X stattdessen social-content, skill-carousel-planner und card-xiaohongshu nutzen."
 layer: produce
 ---
 

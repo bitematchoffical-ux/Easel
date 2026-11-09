@@ -23,158 +23,158 @@ def _key(env: str, label: str, *, required: bool = True, secret: bool = True,
 
 MODEL_GROUPS: dict[str, dict[str, Any]] = {
     "image": {
-        "label": "AI 生图",
+        "label": "KI-Bilder",
         "settings": [],
         "providers": [{
             "id": "openai",
-            "name": "OpenAI 兼容 / apimart / 小红书 MaaS",
+            "name": "OpenAI-kompatibel / apimart / Xiaohongshu MaaS",
             "keys": [
                 _key("IMG_API_KEY", "API Key", aliases=("OPENAI_API_KEY", "API_KEY")),
-                _key("IMG_BASE_URL", "API 根地址", secret=False,
+                _key("IMG_BASE_URL", "API-Basis-URL", secret=False,
                      aliases=("OPENAI_BASE_URL", "OPENAI_API_BASE", "BASE_URL")),
-                _key("IMG_MODEL", "模型", required=False, secret=False),
-                _key("IMG_API_KEY_HEADER", "鉴权头名", required=False, secret=False),
+                _key("IMG_MODEL", "Modell", required=False, secret=False),
+                _key("IMG_API_KEY_HEADER", "Name des Auth-Headers", required=False, secret=False),
                 _key("IMG_API_VERSION", "api-version", required=False, secret=False),
-                _key("IMG_NO_PROXY", "内网直连（填 1）", required=False, secret=False),
+                _key("IMG_NO_PROXY", "Direkt im lokalen Netz (1 eintragen)", required=False, secret=False),
             ],
         }],
     },
     "video": {
-        "label": "AI 视频生成",
+        "label": "KI-Video",
         "settings": [
-            _key("VIDEO_PROVIDER", "默认视频 provider", required=False, secret=False,
+            _key("VIDEO_PROVIDER", "Standard-Videoanbieter", required=False, secret=False,
                  choices=("dashscope", "ark", "kling", "openai-compatible", "xhs-maas", "agnes")),
-            _key("VIDEO_CAPABILITIES_JSON", "模型能力覆盖 JSON", required=False, secret=False),
+            _key("VIDEO_CAPABILITIES_JSON", "Modellfähigkeiten überschreiben (JSON)", required=False, secret=False),
         ],
         "providers": [
             {
-                "id": "dashscope", "name": "阿里通义万相 Wan", "keys": [
+                "id": "dashscope", "name": "Alibaba Wan", "keys": [
                     _key("DASHSCOPE_API_KEY", "DashScope API Key",
                          aliases=("DASHSCOPE_KEY", "ALIYUN_API_KEY")),
-                    _key("DASHSCOPE_VIDEO_MODEL", "视频模型", required=False, secret=False,
+                    _key("DASHSCOPE_VIDEO_MODEL", "Videomodell", required=False, secret=False,
                          aliases=("DASHSCOPE_MODEL",)),
-                    _key("DASHSCOPE_BASE_URL", "根地址", required=False, secret=False),
+                    _key("DASHSCOPE_BASE_URL", "Basis-URL", required=False, secret=False),
                 ],
             },
             {
-                "id": "ark", "name": "火山引擎 Seedance", "keys": [
+                "id": "ark", "name": "Volcengine Seedance", "keys": [
                     _key("ARK_API_KEY", "Ark API Key",
                          aliases=("VOLCENGINE_API_KEY", "VOLC_ARK_API_KEY")),
-                    _key("ARK_MODEL", "视频模型", required=False, secret=False),
-                    _key("ARK_BASE_URL", "根地址", required=False, secret=False),
+                    _key("ARK_MODEL", "Videomodell", required=False, secret=False),
+                    _key("ARK_BASE_URL", "Basis-URL", required=False, secret=False),
                 ],
             },
             {
-                "id": "kling", "name": "快手可灵", "keys": [
+                "id": "kling", "name": "Kling (Kuaishou)", "keys": [
                     _key("KLING_ACCESS_KEY", "Access Key"),
                     _key("KLING_SECRET_KEY", "Secret Key"),
-                    _key("KLING_BASE_URL", "根地址", required=False, secret=False),
+                    _key("KLING_BASE_URL", "Basis-URL", required=False, secret=False),
                 ],
             },
             {
-                "id": "openai-compatible", "name": "OpenAI 兼容 /videos", "keys": [
+                "id": "openai-compatible", "name": "OpenAI-kompatibel /videos", "keys": [
                     _key("VIDEO_API_KEY", "API Key", aliases=("OPENAI_API_KEY", "API_KEY")),
-                    _key("VIDEO_BASE_URL", "API 根地址", secret=False,
+                    _key("VIDEO_BASE_URL", "API-Basis-URL", secret=False,
                          aliases=("OPENAI_BASE_URL", "BASE_URL")),
-                    _key("VIDEO_MODEL", "视频模型", required=False, secret=False,
+                    _key("VIDEO_MODEL", "Videomodell", required=False, secret=False,
                          aliases=("VIDEO_MODEL_NAME",)),
                 ],
             },
             {
-                "id": "xhs-maas", "name": "小红书 MaaS（happyhorse）", "keys": [
+                "id": "xhs-maas", "name": "Xiaohongshu MaaS (happyhorse)", "keys": [
                     _key("XHS_MAAS_API_KEY", "MaaS api-key"),
-                    _key("XHS_MAAS_VIDEO_BASE", "视频端点根地址", required=False, secret=False),
-                    _key("XHS_MAAS_T2V_MODEL", "文生视频模型", required=False, secret=False),
-                    _key("XHS_MAAS_I2V_MODEL", "图生视频模型", required=False, secret=False),
-                    _key("XHS_MAAS_RESOLUTION", "分辨率", required=False, secret=False),
+                    _key("XHS_MAAS_VIDEO_BASE", "Basis-URL Video-Endpunkt", required=False, secret=False),
+                    _key("XHS_MAAS_T2V_MODEL", "Modell Text zu Video", required=False, secret=False),
+                    _key("XHS_MAAS_I2V_MODEL", "Modell Bild zu Video", required=False, secret=False),
+                    _key("XHS_MAAS_RESOLUTION", "Auflösung", required=False, secret=False),
                 ],
             },
             {
                 "id": "agnes", "name": "Agnes Video", "keys": [
                     _key("AGNES_API_KEY", "Agnes API Key"),
-                    _key("AGNES_BASE_URL", "创建端点根地址", required=False, secret=False),
-                    _key("AGNES_POLL_BASE", "轮询端点", required=False, secret=False),
-                    _key("AGNES_MODEL", "视频模型", required=False, secret=False),
-                    _key("AGNES_SIZE", "分辨率", required=False, secret=False),
+                    _key("AGNES_BASE_URL", "Basis-URL zum Anlegen", required=False, secret=False),
+                    _key("AGNES_POLL_BASE", "Abfrage-Endpunkt", required=False, secret=False),
+                    _key("AGNES_MODEL", "Videomodell", required=False, secret=False),
+                    _key("AGNES_SIZE", "Auflösung", required=False, secret=False),
                 ],
             },
         ],
     },
     "music": {
-        "label": "AI 音乐 / BGM",
+        "label": "KI-Musik",
         "settings": [
-            _key("MUSIC_PROVIDER", "默认音乐 provider", required=False, secret=False,
+            _key("MUSIC_PROVIDER", "Standard-Musikanbieter", required=False, secret=False,
                  choices=("dashscope", "suno-compatible")),
         ],
         "providers": [
             {
-                "id": "dashscope", "name": "阿里 DashScope", "keys": [
+                "id": "dashscope", "name": "Alibaba DashScope", "keys": [
                     _key("DASHSCOPE_API_KEY", "DashScope API Key",
                          aliases=("DASHSCOPE_KEY", "ALIYUN_API_KEY")),
-                    _key("DASHSCOPE_MUSIC_MODEL", "音乐模型", required=False, secret=False,
+                    _key("DASHSCOPE_MUSIC_MODEL", "Musikmodell", required=False, secret=False,
                          aliases=("DASHSCOPE_MODEL",)),
-                    _key("DASHSCOPE_BASE_URL", "根地址", required=False, secret=False),
+                    _key("DASHSCOPE_BASE_URL", "Basis-URL", required=False, secret=False),
                 ],
             },
             {
-                "id": "suno-compatible", "name": "Suno 类第三方 API", "keys": [
+                "id": "suno-compatible", "name": "Suno-ähnliche Dritt-API", "keys": [
                     _key("MUSIC_API_KEY", "API Key", aliases=("SUNO_API_KEY", "API_KEY")),
-                    _key("MUSIC_BASE_URL", "API 根地址", secret=False,
+                    _key("MUSIC_BASE_URL", "API-Basis-URL", secret=False,
                          aliases=("SUNO_BASE_URL", "BASE_URL")),
-                    _key("MUSIC_MODEL", "音乐模型", required=False, secret=False),
+                    _key("MUSIC_MODEL", "Musikmodell", required=False, secret=False),
                 ],
             },
         ],
     },
     "voice": {
-        "label": "云端语音 / 声音克隆",
+        "label": "Cloud-Stimmen / Stimmklon",
         "settings": [
-            _key("VOICE_PROVIDER", "默认语音 provider", required=False, secret=False,
+            _key("VOICE_PROVIDER", "Standard-Stimmenanbieter", required=False, secret=False,
                  choices=("dashscope", "minimax", "fish-audio", "openai-compatible", "gemini")),
-            _key("VOICE_NARRATOR_VOICE_ID", "默认旁白 voice-id", required=False, secret=False),
+            _key("VOICE_NARRATOR_VOICE_ID", "Standard-Sprecher (voice-id)", required=False, secret=False),
         ],
         "providers": [
             {
-                "id": "dashscope", "name": "阿里 CosyVoice", "keys": [
+                "id": "dashscope", "name": "Alibaba CosyVoice", "keys": [
                     _key("DASHSCOPE_API_KEY", "DashScope API Key",
                          aliases=("DASHSCOPE_KEY", "ALIYUN_API_KEY")),
-                    _key("DASHSCOPE_TTS_MODEL", "TTS 模型", required=False, secret=False),
-                    _key("DASHSCOPE_BASE_URL", "根地址", required=False, secret=False),
+                    _key("DASHSCOPE_TTS_MODEL", "TTS-Modell", required=False, secret=False),
+                    _key("DASHSCOPE_BASE_URL", "Basis-URL", required=False, secret=False),
                 ],
             },
             {
                 "id": "minimax", "name": "MiniMax", "keys": [
                     _key("MINIMAX_API_KEY", "API Key"),
                     _key("MINIMAX_GROUP_ID", "Group ID", secret=False),
-                    _key("MINIMAX_MODEL", "TTS 模型", required=False, secret=False),
-                    _key("MINIMAX_BASE_URL", "根地址", required=False, secret=False),
+                    _key("MINIMAX_MODEL", "TTS-Modell", required=False, secret=False),
+                    _key("MINIMAX_BASE_URL", "Basis-URL", required=False, secret=False),
                 ],
             },
             {
                 "id": "fish-audio", "name": "Fish Audio", "keys": [
                     _key("FISH_API_KEY", "API Key"),
-                    _key("FISH_BASE_URL", "根地址", required=False, secret=False),
+                    _key("FISH_BASE_URL", "Basis-URL", required=False, secret=False),
                 ],
             },
             {
-                "id": "openai-compatible", "name": "OpenAI 兼容 /audio/speech", "keys": [
+                "id": "openai-compatible", "name": "OpenAI-kompatibel /audio/speech", "keys": [
                     _key("VOICE_API_KEY", "API Key", aliases=("OPENAI_API_KEY", "API_KEY")),
-                    _key("VOICE_BASE_URL", "API 根地址", secret=False,
+                    _key("VOICE_BASE_URL", "API-Basis-URL", secret=False,
                          aliases=("OPENAI_BASE_URL", "BASE_URL")),
-                    _key("VOICE_MODEL", "TTS 模型", required=False, secret=False),
-                    _key("VOICE_INSTRUCT_MODE", "情感指令模式", required=False, secret=False,
+                    _key("VOICE_MODEL", "TTS-Modell", required=False, secret=False),
+                    _key("VOICE_INSTRUCT_MODE", "Modus für Emotionsanweisungen", required=False, secret=False,
                          choices=("field", "inline")),
-                    _key("VOICE_INSTRUCT_DELIM", "内联指令分隔符", required=False, secret=False),
+                    _key("VOICE_INSTRUCT_DELIM", "Trennzeichen für Inline-Anweisungen", required=False, secret=False),
                 ],
             },
             {
                 "id": "gemini", "name": "Google Gemini TTS", "keys": [
                     _key("GEMINI_API_KEY", "Gemini API Key",
                          aliases=("GOOGLE_API_KEY", "GOOGLE_GENAI_API_KEY")),
-                    _key("GEMINI_TTS_MODEL", "TTS 模型", required=False, secret=False),
-                    _key("GEMINI_VOICE", "预置音色", required=False, secret=False),
-                    _key("GEMINI_BASE_URL", "根地址", required=False, secret=False),
-                    _key("GEMINI_TTS_RATE", "采样率", required=False, secret=False),
+                    _key("GEMINI_TTS_MODEL", "TTS-Modell", required=False, secret=False),
+                    _key("GEMINI_VOICE", "Vorgegebene Stimme", required=False, secret=False),
+                    _key("GEMINI_BASE_URL", "Basis-URL", required=False, secret=False),
+                    _key("GEMINI_TTS_RATE", "Abtastrate", required=False, secret=False),
                 ],
             },
         ],

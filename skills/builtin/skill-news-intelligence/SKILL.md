@@ -1,9 +1,6 @@
 ---
 name: skill-news-intelligence
-description: >
-  聚合中文行业媒体、垂类资讯和平台商业动态，按创作者赛道过滤，生成结构化情报简报与可执行选题。
-  当用户说“行业资讯/深度情报、最近行业动态、每日简报、选题情报、财经/科技/AI 动态”时使用。
-  本 SKILL 做日级深度资讯；分钟级实时热搜与快速二创选题用 skill-trending-topics。
+description: "Branchennews: sammelt Fachmedien und Plattform-News, filtert nach Themenfeld und erstellt ein strukturiertes Briefing mit Themenvorschlägen. Hinweis: Die eingebauten Quellen sind noch chinesischsprachig; für europäische Quellen skill-rss-aggregator nutzen. Verwenden bei: Branchennews, Tagesbriefing, was gibt es Neues."
 layer: discover
 ---
 

@@ -1,9 +1,6 @@
 ---
 name: skill-voice-builder
-description: >-
-  通过结构化访谈和写作样本分析，构建创作者个人声音画像（语气/用词/节奏/风格），确保后续内容风格一致。
-  当用户说"声音画像""我的写作风格""风格一致""建立人设语气""voice/tone""我的表达习惯""统一文风"时使用。
-  和 skill-audience-profiler 的区别：本 SKILL 建创作者自己的声音画像；audience-profiler 建目标受众/粉丝画像。
+description: "Baut aus einem Gespräch und Textproben das Stimmprofil des Creators (Ton, Wortwahl, Rhythmus, Stil), damit alle Inhalte gleich klingen. Verwenden bei: mein Schreibstil, einheitlicher Ton, Tonalität festlegen. skill-audience-profiler beschreibt die Zielgruppe."
 layer: plan
 ---
 

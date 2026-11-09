@@ -1,6 +1,6 @@
 ---
 name: voice-clone
-description: "上传本人语音样本克隆专属音色，再用它合成口播、旁白或带货语音。当用户说“声音克隆、克隆/复刻我的声音、用我的声音配音、定制专属音色”时使用，需要用户自备云端 provider 凭证。使用公共现成音色时改用 tts-voiceover。"
+description: "Klont die eigene Stimme aus einer Sprachprobe und nutzt sie für Voiceover, Erzählung oder Werbetexte. Verwenden bei: Stimme klonen, mit meiner Stimme vertonen, eigene Stimme. Braucht Zugangsdaten eines Cloud-Anbieters. Für fertige Stimmen tts-voiceover."
 layer: produce
 ---
 

@@ -884,7 +884,7 @@ def test_web_stop_timeout_and_lock_cleanup(sandbox, monkeypatch):
         await web._run_harness_chat(req, "stoppable", "hello", "codex", web._harness_settings(), emit, timeout=0.1)
         last = json.loads(web._turn_file("web:stoppable").read_text(encoding="utf-8"))
         assert last["stop_reason"] == "timeout" and not web._session_lock("stoppable").locked()
-        assert "执行超时" in last["text"]
+        assert "Zeitüberschreitung" in last["text"]
 
     asyncio.run(exercise())
 

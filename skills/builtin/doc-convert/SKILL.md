@@ -1,6 +1,6 @@
 ---
 name: doc-convert
-description: "把 Markdown 文稿排版并转换为 HTML、可打印 PDF 或长图 PNG。当用户说“Markdown/MD 转 HTML/PDF/图片、文章导出长图、MD 排版/渲染”时使用。仅处理 Markdown；DOCX/PPT 不在范围内，层级大纲转脑图用 mindmap。"
+description: "Setzt Markdown-Texte und wandelt sie in HTML, druckbares PDF oder ein langes PNG um. Verwenden bei: Markdown zu HTML/PDF/Bild, Artikel als langes Bild exportieren. Nur Markdown; DOCX und PPT nicht. Gliederung als Mindmap: mindmap."
 layer: produce
 ---
 

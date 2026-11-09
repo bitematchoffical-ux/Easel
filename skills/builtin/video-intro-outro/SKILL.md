@@ -1,6 +1,6 @@
 ---
 name: video-intro-outro
-description: "视频片头 / 片尾：生成带标题、副标题、logo、关注引导的片头卡片和片尾卡片，并拼接到主视频（硬切或淡入淡出转场）。当用户说 片头、片尾、加片头片尾、开场卡片、结尾卡片、标题卡、关注引导页、订阅引导、视频开头加标题、结尾加点赞关注、intro、outro、片头动画 时使用。基于 shared/scripts/intro_outro.py 确定性 ffmpeg 封装。与 poster-hero 区别：poster-hero 出静态封面图，本 SKILL 出可拼接的视频卡片片段。"
+description: "Intro und Outro: erzeugt Start- und Endkarten mit Titel, Untertitel, Logo und Folgen-Aufforderung und hängt sie ans Video (harter Schnitt oder Überblendung). Verwenden bei: Intro, Outro, Titelkarte, „Folgen nicht vergessen“ am Ende. poster-hero macht statische Bilder, dieser Skill Videoclips."
 layer: produce
 ---
 

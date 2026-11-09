@@ -54,6 +54,20 @@ async function fetchWithRetry<T>(fn: () => Promise<T>, tries = 4, timeoutMs = 18
 /** 后端放在 model/baseUrl 里的展示占位串——提交前要清掉，它们不是真实配置值。 */
 const PLACEHOLDERS = new Set(['—', '官方', '（未配置）', '本机', '内建默认']);
 
+// Postloop: Das Backend liefert einige Anzeige- und Vergleichswerte auf Chinesisch
+// (z. B. '已配置', '本机'). Die Werte selbst bleiben unverändert, weil sie verglichen
+// und zurückgeschickt werden; übersetzt wird nur die Anzeige.
+const ZH_DISPLAY: Record<string, string> = {
+  '已配置': 'Eingerichtet', '未配置': 'Nicht eingerichtet', '缺 key': 'Schlüssel fehlt',
+  '缺配置': 'Unvollständig', '已就绪': 'Bereit', '优先': 'Vorrang', '免配': 'Ohne Einrichtung',
+  '官方': 'Offiziell', '（未配置）': '(nicht eingerichtet)', '本机': 'Lokal', '内建默认': 'Standard (eingebaut)',
+  '«已配置»': '«eingerichtet»', '官方直连': 'Direkt beim Anbieter', '中转站': 'Zwischenstelle',
+  '自定义': 'Eigener Anbieter', '独立直连配置': 'Eigene Direktverbindung', '本地 / 内网 API 直连': 'Lokale API / Netzwerk-API',
+  '自带字幕': 'Vorhandene Untertitel', '视频自带 SRT/VTT 时直接读': 'Liest SRT/VTT direkt, wenn das Video sie mitbringt',
+  '脚本层': 'Skript', '硅基流动': 'SiliconFlow',
+};
+const zh = (v: string | undefined | null): string => (v ? ZH_DISPLAY[v] ?? v : v ?? '');
+
 const hhmm = (ts: number) => {
   const d = new Date(ts * 1000);
   return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
@@ -374,9 +388,9 @@ export default function SettingsPanel({ onClose, banner = '' }: Props) {
   const resultText = (row: ModelRow): { text: string; cls: string } => {
     const st = row.baseUrl && row.baseUrl !== '—' ? selftest?.byBase[row.baseUrl] : undefined;
     if (st) return st.ok ? { text: `✓ ${st.ms}ms`, cls: 'good' } : { text: `✗ ${(st.detail || 'Fehler').slice(0, 42)}`, cls: 'bad' };
-    if (row.result.includes('已就绪') || row.result.includes('已配置')) return { text: row.result, cls: 'good' };
-    if (row.result.includes('缺') || row.result.includes('未装')) return { text: row.result, cls: 'warn-text' };
-    return { text: row.result, cls: '' };
+    if (row.result.includes('已就绪') || row.result.includes('已配置')) return { text: zh(row.result), cls: 'good' };
+    if (row.result.includes('缺') || row.result.includes('未装')) return { text: zh(row.result), cls: 'warn-text' };
+    return { text: zh(row.result), cls: '' };
   };
 
   const SLOT_EDIT: Record<string, { model: boolean; base: boolean }> = {
@@ -500,7 +514,7 @@ export default function SettingsPanel({ onClose, banner = '' }: Props) {
                   />
                 </span>
               ) : (
-                <span className="pname">{r.name}<small>{r.sub}</small></span>
+                <span className="pname">{zh(r.name)}<small>{zh(r.sub)}</small></span>
               )}
               {isCustom && ed && ed.base ? (
                 <span
@@ -543,7 +557,7 @@ export default function SettingsPanel({ onClose, banner = '' }: Props) {
               ) : isCustom ? (
                 <span title="Protokoll nach dem Speichern änderbar">{r.protocol === 'anthropic' ? 'anthropic' : 'openai'}</span>
               ) : (
-                <span>{r.type}</span>
+                <span>{zh(r.type)}</span>
               )}
               {ed && ed.model && (!ops?.media || r.adv) ? (
                 <span className={`model-cell${isCustom ? ' custom-model-cell' : ''}`} ref={(el) => { modelCellRefs.current[k(i)] = el; }}>
@@ -614,15 +628,15 @@ export default function SettingsPanel({ onClose, banner = '' }: Props) {
                   ) : null}
                 </span>
               ) : (
-                <span className={`cell-text${ops?.media && !r.model ? ' dim' : ''}`} title={r.model || '内建默认'}>
-                  {r.model || (ops?.media ? 'Standard (eingebaut)' : '')}
+                <span className={`cell-text${ops?.media && !r.model ? ' dim' : ''}`} title={zh(r.model) || 'Standard (eingebaut)'}>
+                  {zh(r.model) || (ops?.media ? 'Standard (eingebaut)' : '')}
                 </span>
               )}
               {ed && ed.base && (!ops?.media || r.adv) ? (
                 <input className="mock" value={r.baseUrl} placeholder="https://…" onChange={(e) => ops?.onRow?.(i, { baseUrl: e.target.value })} />
               ) : (
-                <span className={`cell-text${ops?.media && !r.baseUrl ? ' dim' : ''}`} title={r.baseUrl || '内建默认'}>
-                  {r.baseUrl
+                <span className={`cell-text${ops?.media && !r.baseUrl ? ' dim' : ''}`} title={zh(r.baseUrl) || 'Standard (eingebaut)'}>
+                  {zh(r.baseUrl)
                     || (ops?.media
                       ? r.baseOptional === false
                         ? 'Angabe nötig (unter „Erweitert“)'
@@ -637,7 +651,7 @@ export default function SettingsPanel({ onClose, banner = '' }: Props) {
                       className="mock key-input"
                       type="password"
                       value={r.keyNew || ''}
-                      placeholder={r.keyMasked || 'Key'}
+                      placeholder={zh(r.keyMasked) || 'Key'}
                       onChange={(e) => ops?.onRow?.(i, { keyNew: e.target.value })}
                     />
                     <input
@@ -653,12 +667,12 @@ export default function SettingsPanel({ onClose, banner = '' }: Props) {
                     className="mock key-input"
                     type="password"
                     value={r.keyNew || ''}
-                    placeholder={r.keyMasked || 'Schlüssel einfügen'}
+                    placeholder={zh(r.keyMasked) || 'Schlüssel einfügen'}
                     onChange={(e) => ops?.onRow?.(i, { keyNew: e.target.value })}
                   />
                 )
               ) : (
-                <span className="cell-text key-mask" title="Schlüssel wird nicht im Klartext angezeigt">{r.keyMasked || '—'}</span>
+                <span className="cell-text key-mask" title="Schlüssel wird nicht im Klartext angezeigt">{zh(r.keyMasked) || '—'}</span>
               )}
               {r.slot && ops?.onPrimary ? (
                 <button

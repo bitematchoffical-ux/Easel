@@ -60,8 +60,11 @@ def test_builtin_outage_is_not_successful_empty_result(monkeypatch):
         builtin.collect_platform("weibo")
 
 
-def test_all_builtin_platforms_use_public_python_transport(tmp_path):
+def test_builtin_sources_are_european_rss_feeds(tmp_path):
     sources = load_sources(tmp_path, {})
-    assert {s.id for s in sources} == set(builtin.SOURCES)
-    assert all(s.type == "python" and Path(s.options["script"]).is_file() for s in sources)
-    assert {s.id for s in sources if s.default} == {"weibo", "douyin", "zhihu"}
+    assert {s.id for s in sources} == {"google-trends-de", "google-trends-at", "google-trends-ch",
+                                       "reddit-de", "tagesschau"}
+    assert all(s.type == "rss" and s.options["url"].startswith("https://") for s in sources)
+    assert {s.id for s in sources if s.default} == {"google-trends-de", "reddit-de", "tagesschau"}
+    # Keine chinesischen Hot-Listen mehr als eingebaute Quelle
+    assert not any(s.id in builtin.SOURCES for s in sources)

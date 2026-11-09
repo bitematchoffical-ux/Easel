@@ -1,6 +1,6 @@
 ---
 name: infographic
-description: "将数据或文字内容转化为可视化信息图，支持静态（AntV）和动画 GIF 两种模式。当用户需要制作信息图、数据可视化、流程图、对比图、动画图表、GIF 图表、思维导图、SWOT 分析图时调用。本地渲染信息图/GIF 动画；要单张静态图片 URL 用 chart-visualization，要 CSV/JSON→整页报告用 data-report"
+description: "Macht aus Daten oder Text eine Infografik, statisch (AntV) oder als animiertes GIF. Verwenden bei: Infografik, Datenvisualisierung, Ablaufdiagramm, Vergleichsgrafik, animiertes Diagramm, SWOT-Grafik. Für ein einzelnes statisches Diagramm chart-visualization, für einen Bericht aus CSV/JSON data-report."
 layer: produce
 ---
 

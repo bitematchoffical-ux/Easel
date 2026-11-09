@@ -1,10 +1,6 @@
 ---
 name: skill-trending-topics
-description: >-
-  抓取微博、抖音、知乎、头条、B站实时热搜，筛选与创作者赛道相关的热点，输出二创选题建议。
-  当用户说"今天有什么热搜""热点""最近大家在聊什么""追热点""蹭热点""二创选题""热搜榜"时使用。
-  和 skill-news-intelligence 的区别：本 SKILL 抓分钟级实时热搜榜做快速二创选题；
-  news-intelligence 做日级深度行业资讯聚合，不抓热搜榜。
+description: "Sucht aktuelle Trends und filtert die, die zum Themenfeld des Kontos passen, mit Vorschlägen für eigene Beiträge. Hinweis: Das Skript fragt noch chinesische Hot-Listen ab; die Startseite zeigt bereits Google Trends, Reddit und Tagesschau. Verwenden bei: was ist gerade Trend, worüber reden alle."
 layer: discover
 ---
 

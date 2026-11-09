@@ -1,6 +1,6 @@
 ---
 name: ai-music
-description: "AI 音乐 / BGM 生成：给短视频、社媒内容生成原创背景音乐 / 配乐 / 纯音乐。通过可插拔 provider（阿里 DashScope / Suno 类第三方 API）文生音乐，异步提交→轮询→下载，产物可再裁剪/归一化或加到视频。当用户说“AI 音乐”“AI 配乐”“生成 BGM”“背景音乐”“原创音乐”“AI 作曲”“纯音乐”“给视频配乐”“做首曲子”时使用。与 tts-voiceover 的区别：tts-voiceover 生成人声口播/旁白，ai-music 生成背景音乐/配乐（无人声或带演唱）。"
+description: "KI-Musik und Hintergrundmusik: erzeugt eigene Hintergrundmusik, Soundtracks oder Instrumentalstücke für Kurzvideos und Social-Media-Inhalte. Über austauschbare Anbieter (Alibaba DashScope, Suno-ähnliche Dritt-APIs) asynchron einreichen, abfragen, herunterladen; das Ergebnis kann danach gekürzt, normalisiert oder unter ein Video gelegt werden. Verwenden bei: KI-Musik, Hintergrundmusik, BGM erzeugen, eigene Musik, Musik fürs Video. Unterschied zu tts-voiceover: dort Sprecherstimme, hier Musik."
 layer: produce
 ---
 

@@ -1,10 +1,6 @@
 ---
 name: skill-collab-proposal
-description: >
-  品牌合作方案与联名策划。当用户提到"品牌合作"、"商单方案"、"合作报价"、"联名"、"联动方案"、
-  "博主合作"、"品牌植入"、"商务合作"、"合作提案"时触发。支持两种模式：商单方案（品牌找上门，
-  基于 KOL 定价表生成报价、内容形式、排期、KPI 预估）和联名策划（与博主/品牌联动，生成双方
-  优势互补、内容分工、互推策略）。
+description: "Kooperationen und Markenpartnerschaften. Zwei Modi: Angebot an eine Marke (Preis auf Basis einer Creator-Preisliste, Formate, Zeitplan, erwartete Kennzahlen) und gemeinsame Aktion mit anderen Creators oder Marken (Stärken, Aufgabenteilung, gegenseitige Bewerbung). Verwenden bei: Kooperation, Werbedeal, Angebot, Collab, Markenpartnerschaft."
 layer: plan
 ---
 

@@ -1,10 +1,6 @@
 ---
 name: skill-positioning-analysis
-description: >-
-  差异化定位分析：帮账号/品牌找到差异化定位——扫描赛道、给竞品定位坐标、识别空白机会、
-  从人群/场景/价值/形式/人设多维找差异点，凝练一句话定位并给落地建议。当用户说"差异化定位"
-  "怎么和竞品区分""我的定位是什么""找差异化""赛道分析""定位分析""怎么突出""同质化怎么办"
-  "找我的独特点"时使用。
+description: "Positionierung: hilft Konto oder Marke, sich abzuheben – Themenfeld scannen, Wettbewerber einordnen, Lücken finden, Unterschiede nach Zielgruppe, Situation, Nutzen, Format und Persönlichkeit, verdichtet zu einem Positionierungssatz mit Umsetzungstipps. Verwenden bei: wie hebe ich mich ab, was ist meine Positionierung, alle machen dasselbe."
 layer: plan
 ---
 

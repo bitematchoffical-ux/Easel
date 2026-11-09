@@ -1,11 +1,6 @@
 ---
 name: asset-manager
-description: >
-  outputs/ 目录下的产物管理：按日期/平台/类型归档、打标签、搜索历史内容、生成素材清单。
-  当用户说"整理素材"、"归档"、"找之前的内容"、"搜索历史"、"素材管理"、
-  "outputs 整理"、"之前做的"时使用。
-  与其他 produce 层 SKILL 的区别：produce 层负责生成内容，
-  asset-manager 负责生成后的产物管理（归档、检索、标签）。
+description: "Verwaltung der Ergebnisse im Ordner outputs/: nach Datum, Plattform und Typ archivieren, verschlagworten, frühere Inhalte suchen, Materiallisten erstellen. Verwenden bei: Material aufräumen, archivieren, frühere Inhalte finden, Verlauf durchsuchen. Die produce-Skills erzeugen Inhalte, asset-manager verwaltet sie danach."
 layer: general
 ---
 

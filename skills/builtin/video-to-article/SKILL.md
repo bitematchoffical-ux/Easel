@@ -1,6 +1,6 @@
 ---
 name: video-to-article
-description: "把口播、讲座、直播或 Vlog 转录并改写成小红书笔记、公众号文章或知乎内容，同时抽帧配图。当用户说“视频转图文/文章/笔记、视频扒文案、口播转文章、视频内容复用”时使用。只生成字幕文件用 auto-subtitle；翻译已有字幕用 subtitle-translate。"
+description: "Macht aus Sprechvideos, Vorträgen, Livestreams oder Vlogs per Transkript einen Text – Blogartikel, LinkedIn-Beitrag oder Instagram-Caption – mit Standbildern als Illustration. Verwenden bei: Video in Text umwandeln, Artikel aus Video. Nur Untertitel: auto-subtitle."
 layer: produce
 ---
 

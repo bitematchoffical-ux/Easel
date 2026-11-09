@@ -238,7 +238,7 @@ def test_switching_modes_requires_new_session(sandbox, monkeypatch):
     web.SESSIONS_DIR.mkdir(exist_ok=True)
     web._transport_pin_file("gateway-session").write_text("http")
     response = sandbox.post("/api/chat/stream", json={"message": "test", "sessionId": "gateway-session"})
-    assert "新建会话" in response.text and "event: error" in response.text
+    assert "neuen Chat" in response.text and "event: error" in response.text
 
 
 @pytest.mark.skipif(os.name == "nt", reason="setup.sh is the Linux/macOS installer")
@@ -298,7 +298,7 @@ def test_existing_cli_history_cannot_be_discarded(sandbox, monkeypatch, prefix):
     transcript = web.OPENCLAW_SESSIONS_DIR / f"{web._openclaw_session_id(prefix + session)}.jsonl"
     transcript.write_text("{}\n")
     response = sandbox.post("/api/chat/stream", json={"message": "test", "sessionId": session})
-    assert "event: error" in response.text and "新建会话" in response.text
+    assert "event: error" in response.text and "neuen Chat" in response.text
     assert not direct_api.history_path(web.SESSIONS_DIR, session).exists()
 
 

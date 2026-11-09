@@ -1,6 +1,6 @@
 ---
 name: beat-sync-video
-description: "音乐卡点视频 / 踩点视频：检测背景音乐的节拍，让图片或片段在节拍点上切换，配推进/白闪特效，做出燃系'卡点'短视频。当用户说 卡点视频、踩点视频、音乐卡点、节奏卡点、按音乐切换、鼓点视频、踩节奏、beat 卡点、图片卡点、卡点混剪 时使用。基于 shared/scripts/beatsync.py（librosa 节拍检测）。与 slideshow-video 区别：slideshow 每图固定时长、柔和转场，本 SKILL 切换点由音乐节拍决定、硬切踩点带特效。"
+description: "Beat-Sync-Video: erkennt die Beats der Musik und wechselt Bilder oder Clips genau auf dem Takt, mit Zoom- und Blitz-Effekten. Verwenden bei: Beat-Video, Schnitt auf den Takt, Bilder im Rhythmus, Beat-Edit. Unterschied zu slideshow-video: dort feste Bilddauer und weiche Übergänge, hier harte Schnitte im Takt."
 layer: produce
 ---
 

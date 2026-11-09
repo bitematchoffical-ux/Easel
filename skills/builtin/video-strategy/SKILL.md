@@ -1,9 +1,6 @@
 ---
 name: video-strategy
-description: >-
-  视频制作策略与工具选型：AI 视频生成模型对比、视频脚本结构设计、制作流程规划，覆盖产品演示/解说/社媒短视频场景。
-  当用户说"视频怎么做""视频选型""用什么工具做视频""视频制作流程""视频策略""视频系列规划"时使用。
-  和 video-script 的区别：video-strategy 做内容规划与工具选型，video-script 写具体某条视频的脚本。
+description: "Videostrategie und Werkzeugwahl: Vergleich von KI-Videomodellen, Aufbau von Skripten und Planung der Produktion für Produktdemos, Erklärvideos und Social-Media-Clips. Verwenden bei: wie mache ich das Video, welches Werkzeug, Videoserie planen. video-script schreibt das konkrete Skript."
 layer: produce
 ---
 

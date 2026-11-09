@@ -1,11 +1,6 @@
 ---
 name: skill-quality-gate
-description: >
-  发布前质量关卡：合规风险检测（敏感词、绝对化用语、平台规则）
-  + 产物质量审核（完整性、可读性、平台适配度）。一次检查，两道把关。
-  当用户说"检查合规"、"质量检查"、"能不能发"、"有没有敏感词"、
-  "审核一下"、"发布前检查"、"质量够不够"时使用。
-  合并了原 skill-check-compliance 和 skill-review-deliverable 的能力。
+description: "Qualitätsprüfung vor dem Posten: rechtliche Risiken (heikle Begriffe, Superlative, Werbekennzeichnung, Plattformregeln) und Qualität des Ergebnisses (Vollständigkeit, Lesbarkeit, Passung zur Plattform). Verwenden bei: rechtlich prüfen, Qualitätscheck, kann ich das posten."
 layer: publish
 ---
 

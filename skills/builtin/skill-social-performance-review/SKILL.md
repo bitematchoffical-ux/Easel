@@ -1,9 +1,6 @@
 ---
 name: skill-social-performance-review
-description: >-
-  生成月度社媒效果复盘报告，分析小红书、抖音、B站、微博等平台的内容表现，输出下月可执行建议。
-  当用户说"月度复盘""效果复盘""这个月表现""内容复盘""运营总结""下月建议""月报"时使用。
-  和 skill-publish-analytics 的区别：analytics 从发布日志做四维归因，本 SKILL 做跨平台组合级月度复盘。
+description: "Monatlicher Leistungsbericht über Instagram, TikTok, YouTube und X mit konkreten Empfehlungen für den nächsten Monat. Verwenden bei: Monatsrückblick, wie lief der Monat, Monatsbericht. skill-publish-analytics wertet das Protokoll nach vier Ursachen aus."
 layer: attribute
 ---
 

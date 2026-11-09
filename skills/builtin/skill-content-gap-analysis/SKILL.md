@@ -1,10 +1,6 @@
 ---
 name: skill-content-gap-analysis
-description: >-
-  分析社媒赛道的内容空白，发现高需求低竞争的蓝海选题机会。
-  当用户说"蓝海选题""内容空白""没人做的选题""选题机会""高需求低竞争""差异化选题""内容缺口"时使用。
-  和 skill-competitor-analysis 的区别：本 SKILL 从赛道供需交叉验证找蓝海选题空白；
-  competitor-analysis 拆解具体竞品账号的内容策略。
+description: "Findet Lücken im Themenfeld: Themen mit hoher Nachfrage und wenig Konkurrenz. Verwenden bei: Themenlücken, worüber noch niemand schreibt, Themenchancen, Nische finden. skill-competitor-analysis zerlegt einzelne Wettbewerber, dieser Skill das ganze Feld."
 layer: discover
 ---
 

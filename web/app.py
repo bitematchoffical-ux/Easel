@@ -353,7 +353,7 @@ LOGIN_RUNNERS: dict[str, dict] = {
     # X 无扫码登录 → login_window：登录时弹有头浏览器窗口由用户手动完成
     # （web_publisher login-qr --headed 窗口模式，状态走 window_login）；国际站需外网代理
     # （web_publisher 按 needs_proxy 读 EASEL_PROXY/https_proxy，未配则回退系统代理）。
-    "twitter-x": {"name": "推特 X", "backend": "web", "wp": "twitter-x",
+    "twitter-x": {"name": "X", "backend": "web", "wp": "twitter-x",
                   "profile": "TwitterXProfile", "login_window": True},
 }
 
@@ -1526,20 +1526,40 @@ async def api_skills():
     return get_skills()
 
 
+_UNTRANSLATED_SKILL_BODY = (
+    "_Die ausführliche Anleitung zu diesem Skill ist noch nicht ins Deutsche übersetzt._\n\n"
+    "Der Agent nutzt sie trotzdem: Er liest die Originalfassung und überträgt sie sinngemäß "
+    "auf Deutsch und auf Instagram, TikTok, YouTube Shorts und X. Was der Skill macht, steht "
+    "in der Beschreibung oben."
+)
+
+
+def _mostly_chinese(text: str) -> bool:
+    """True, wenn ein nennenswerter Teil des Textes chinesische Schriftzeichen sind."""
+    han = len(re.findall(r'[\u4e00-\u9fff]', text or ''))
+    return han >= 20
+
+
 @app.get("/api/skill/{name}")
 async def api_skill_detail(name: str):
     """单个 SKILL 详情：描述 + 正文 + API 需求与当前配置状态（脱敏）。"""
     full = find_skill(name)
     if full is None:
-        raise HTTPException(404, f"SKILL '{name}' 不存在")
+        raise HTTPException(404, f"Skill '{name}' gibt es nicht")
     desc, layer, body = _parse_skill_md(SKILLS_DIR / "builtin" / full / "SKILL.md")
     needs_api = full in SKILL_API_REQUIREMENTS
     env = _read_env()
+    untranslated = _mostly_chinese(body)
+    if untranslated:
+        # Postloop: keine chinesischen Texte in der Oberfläche. Der Agent liest die
+        # Originalanleitung weiterhin direkt aus SKILL.md und überträgt sie sinngemäß.
+        body = _UNTRANSLATED_SKILL_BODY
     return {
         "name": full,
         "layer": layer,
         "description": desc,
         "body": body,
+        "bodyUntranslated": untranslated,
         "needsApi": needs_api,
         "apiConfigured": _skill_api_configured(full, env) if needs_api else True,
         "apiSpec": _api_spec_status(full, env) if needs_api else None,
@@ -3164,12 +3184,12 @@ async def _run_harness_chat(req: ChatRequest, sk: str, message: str, runtime: st
 
     async def ask(questions):
         if not interactive:
-            raise HarnessError("此操作需要权限确认，请在流式对话中执行并确认权限")
+            raise HarnessError("Dieser Schritt braucht eine Bestätigung; bitte im laufenden Chat ausführen und bestätigen")
         return await _harness_ask(sk, questions, receive)
 
     try:
         if lock.locked():
-            emit("activity", "这个会话上一条还在运行，等待完成…")
+            emit("activity", "Die letzte Nachricht in diesem Chat läuft noch, warte …")
         await lock.acquire()
         locked = True
         deadline = time.monotonic() + min(timeout, 300)
@@ -3179,9 +3199,9 @@ async def _run_harness_chat(req: ChatRequest, sk: str, message: str, runtime: st
                 xlock.release()
                 await asyncio.sleep(0.2)
         if not acquired:
-            raise HarnessError("此会话正在另一个窗口运行，请稍后再试")
+            raise HarnessError("Dieser Chat läuft gerade in einem anderen Fenster; bitte gleich noch einmal versuchen")
         if _chat_backend(sk) != runtime:
-            raise HarnessError("底座已切换，请使用新对话重试")
+            raise HarnessError("Die Engine wurde gewechselt; bitte einen neuen Chat starten")
         record = harness_store.binding(SESSIONS_DIR, sk)
         native_id = record.get("native_id", "")
         harness_store.bind(SESSIONS_DIR, sk, runtime, native_id)
@@ -3202,16 +3222,16 @@ async def _run_harness_chat(req: ChatRequest, sk: str, message: str, runtime: st
         reason = "completed"
     except asyncio.CancelledError:
         reason = "stopped" if sk in _STOPPED_CHAT else "shutdown"
-        emit("activity", "已停止" if reason == "stopped" else "服务关闭，本轮已取消")
+        emit("activity", "Gestoppt" if reason == "stopped" else "Server beendet, diese Runde wurde abgebrochen")
     except asyncio.TimeoutError:
         reason = "timeout"
-        error_message = "Agent 执行超时，已终止本轮进程"
+        error_message = "Zeitüberschreitung: Der Agent wurde für diese Runde beendet"
         emit("error", error_message)
     except (HarnessError, HTTPException) as error:
         error_message = _scrub_secrets(str(error.detail if isinstance(error, HTTPException) else error))
         emit("error", error_message)
     except Exception:
-        error_message = "Agent 执行失败，请检查本机 CLI、登录和模型配置"
+        error_message = "Der Agent ist fehlgeschlagen; bitte CLI, Login und Modell-Einstellungen prüfen"
         emit("error", error_message)
     finally:
         if claimed:
@@ -3252,7 +3272,7 @@ async def _run_direct_chat(req: ChatRequest, sk: str, content, system: str, emit
     task = asyncio.current_task()
     _DIRECT_CHAT_TASKS.add(task)
     if lock.locked():
-        emit("activity", "⏳ 这个会话上一条还在跑，排队等它结束…")
+        emit("activity", "⏳ Die letzte Nachricht läuft noch, diese wartet in der Schlange …")
     try:
         await lock.acquire()
         locked = True
@@ -3266,18 +3286,18 @@ async def _run_direct_chat(req: ChatRequest, sk: str, content, system: str, emit
                 break
             await asyncio.sleep(0.2)
         if not acquired:
-            raise DirectAPIError("这个会话正在另一个窗口运行，请稍候再试")
+            raise DirectAPIError("Dieser Chat läuft gerade in einem anderen Fenster; bitte gleich noch einmal versuchen")
         # Existing OpenClaw conversations have different histories. Require a new
         # session rather than silently discard their context when switching modes.
         if (_transport_pin_file(sk).is_file()
                 or (OPENCLAW_SESSIONS_DIR / f"{_openclaw_session_id(sk)}.jsonl").is_file()
                 or (OPENCLAW_SESSIONS_DIR / f"{_openclaw_session_id(pk)}.jsonl").is_file()):
-            raise DirectAPIError("此会话属于 OpenClaw，请新建会话使用 API 直连")
+            raise DirectAPIError("Dieser Chat gehört zu OpenClaw; für die direkte API bitte einen neuen Chat starten")
         _save_turn(pk, "running", "", {"turn_id": turn_id})
         claimed = True
         proc._task = asyncio.current_task()
         _RUNNING_CHAT[sk] = proc
-        emit("activity", "🧠 正在通过 API 思考…")
+        emit("activity", "🧠 Denkt über die API nach …")
 
         async def consume():
             nonlocal clean_end, reason
@@ -3297,10 +3317,10 @@ async def _run_direct_chat(req: ChatRequest, sk: str, content, system: str, emit
         if reason != "user_stopped":
             raise
     except (DirectAPIError, asyncio.TimeoutError) as error:
-        error_message = str(error) or "API 请求超时"
+        error_message = str(error) or "Zeitüberschreitung bei der API-Anfrage"
         emit("error", error_message)
     except OSError:
-        error_message = "会话历史保存失败，请检查项目 outputs 目录权限"
+        error_message = "Chatverlauf konnte nicht gespeichert werden; bitte Schreibrechte für den Ordner outputs prüfen"
         emit("error", error_message)
     finally:
         proc.finish()
@@ -3343,7 +3363,7 @@ async def api_chat_job_stream(turn_id: str, after: int = 0):
     # A stale browser-side pendingTurnId must fail promptly instead of receiving
     # heartbeats forever. The frontend can then recover from the final snapshot.
     if not _job_event_file(turn_id).is_file():
-        raise HTTPException(404, "对话任务记录不存在或已失效")
+        raise HTTPException(404, "Diese Chat-Runde ist nicht mehr vorhanden")
 
     async def events():
         cursor = max(0, after)
@@ -3405,7 +3425,7 @@ async def api_chat_stream(req: ChatRequest):
         message = ""
     else:
         if req.sessionId and history_path(SESSIONS_DIR, req.sessionId).is_file():
-            raise HTTPException(409, "此会话属于 API 直连，请新建会话使用 OpenClaw")
+            raise HTTPException(409, "Dieser Chat nutzt die direkte API; für OpenClaw bitte einen neuen Chat starten")
         message = _chat_message(req)
 
     # supervisor（跑 openclaw run）与 forward（转发 SSE 给浏览器）之间的事件通道。
@@ -3444,7 +3464,7 @@ async def api_chat_stream(req: ChatRequest):
             client_q.put_nowait({"t": kind, "text": text, "id": event_seq, **extra})
 
         # 秒级反馈：发出即亮「已收到」，不等 agent 冷启动（首个 SSE 事件，随流回放必达）
-        to_client("activity", "⏳ 已收到…" if direct else "⏳ 已收到，正在唤醒 agent…")
+        to_client("activity", "⏳ Angekommen …" if direct else "⏳ Angekommen, Agent wird gestartet …")
 
         if direct:
             try:
@@ -3493,7 +3513,7 @@ async def api_chat_stream(req: ChatRequest):
                             json=body, headers=headers) as resp:
                         if resp.status_code != 200:
                             raw = (await resp.aread())[:200].decode("utf-8", "replace")
-                            to_client("error", f"❌ 对话失败（HTTP {resp.status_code}）：{raw[:160]}")
+                            to_client("error", f"❌ Chat fehlgeschlagen (HTTP {resp.status_code}): {raw[:160]}")
                             return
                         async for line in resp.aiter_lines():
                             if not line.startswith("data:"):
@@ -3507,7 +3527,7 @@ async def api_chat_stream(req: ChatRequest):
                             except ValueError:
                                 continue
                             if isinstance(d.get("error"), dict):   # 200 里夹错误对象：不能当正常流吞掉
-                                to_client("error", f"❌ 网关返回错误：{str(d['error'])[:160]}")
+                                to_client("error", f"❌ Fehler vom Gateway: {str(d['error'])[:160]}")
                                 return
                             delta = (d.get("choices") or [{}])[0].get("delta") or {}
                             # 思考流的两个可能来源，先到先得（`sse_thinking` 闩锁，防两路都来时重复）：
@@ -3529,17 +3549,17 @@ async def api_chat_stream(req: ChatRequest):
                                 q.put_nowait({"t": "token", "text": c})
                             if delta.get("tool_calls") and not tool_noted:
                                 tool_noted = True
-                                to_client("activity", "🔧 正在执行操作…")
+                                to_client("activity", "🔧 Führt einen Schritt aus …")
                 # 流正常结束却既没正文也没 [DONE]：多半是端点没真开或中途断了。
                 # 不报错的话这一轮会静默落一条空回答，还会被 /api/chat/last 原样取回。
                 if not got_text and not saw_done:
-                    to_client("error", "❌ 网关流异常结束：没有收到任何内容（检查 "
-                                       "gateway.http.endpoints.chatCompletions 是否开启，"
-                                       "或设 EASEL_CHAT_TRANSPORT=cli 回退）")
+                    to_client("error", "❌ Der Gateway-Stream endete ohne Inhalt (prüfen, ob "
+                                       "gateway.http.endpoints.chatCompletions aktiv ist, "
+                                       "oder EASEL_CHAT_TRANSPORT=cli setzen)")
             except asyncio.CancelledError:
                 raise
             except Exception as e:  # noqa: BLE001
-                to_client("error", f"❌ 网关连接失败：{str(e)[:140]}")
+                to_client("error", f"❌ Verbindung zum Gateway fehlgeschlagen: {str(e)[:140]}")
             finally:
                 # 先把 SENTINEL 排进 q（FIFO 保证它排在本轮所有 token 之后），再标记完成：
                 # 主循环读到它时，前面的 token 必然已全部消费过。
@@ -3567,7 +3587,7 @@ async def api_chat_stream(req: ChatRequest):
         lock = _session_lock(sk)
         xlock = _CrossProcLock(sk)
         if lock.locked():
-            to_client("activity", "⏳ 这个会话上一条还在跑，排队等它结束再开始…")
+            to_client("activity", "⏳ Die letzte Nachricht läuft noch; diese startet danach …")
         locked = claimed = started = False
         startup_reason = "spawn_failed"
         startup_error = None
@@ -3583,7 +3603,7 @@ async def api_chat_stream(req: ChatRequest):
                     break
                 xlock.release()
                 if time.monotonic() >= lock_deadline:
-                    startup_error = "这个会话正在另一个窗口运行，请稍候再试。"
+                    startup_error = "Dieser Chat läuft gerade in einem anderen Fenster; bitte gleich noch einmal versuchen."
                     return
                 await asyncio.sleep(0.2)
 
@@ -3619,7 +3639,7 @@ async def api_chat_stream(req: ChatRequest):
             startup_reason = "cancelled"
             raise
         except Exception:
-            startup_error = "❌ 启动失败，请重试"
+            startup_error = "❌ Start fehlgeschlagen, bitte noch einmal versuchen"
             return
         finally:
             if not started:
@@ -3640,7 +3660,7 @@ async def api_chat_stream(req: ChatRequest):
         _RUNNING_CHAT[sk] = proc         # 注册运行中进程（HTTP 模式为伪进程），供 /api/chat/stop
         # 经 gateway 后客户端 stdout 没有 model-fetch 标记（那是独立跑 agent 才有），先立刻
         # 给一个「正在思考」活动指示，随后 token 从共享 raw stream 流进来接管显示。
-        to_client("activity", "🧠 正在思考…")
+        to_client("activity", "🧠 Denkt nach …")
 
         q = asyncio.Queue()
         SENTINEL = object()
@@ -3658,10 +3678,10 @@ async def api_chat_stream(req: ChatRequest):
                     if "model-fetch] start" in c:
                         run_info["fetch_count"] += 1
                         fc = run_info["fetch_count"]
-                        _emit("activity", "🧠 正在思考…" if fc == 1 else f"🔧 调用工具后继续推理（第 {fc} 步）…")
+                        _emit("activity", "🧠 Denkt nach …" if fc == 1 else f"🔧 Werkzeug genutzt, denkt weiter (Schritt {fc}) …")
                     elif "[agent]" in c and "delegat" in c.lower():
                         run_info["delegated"] = True
-                        _emit("activity", "🛠️ 制作中…")
+                        _emit("activity", "🛠️ Erstellt …")
                     m = re.search(r"ended with stopReason=(\S+)", c)
                     if m:
                         run_info["stop_reason"] = m.group(1)
@@ -3797,7 +3817,7 @@ async def api_chat_stream(req: ChatRequest):
                 remaining = deadline - time.monotonic()
                 if remaining <= 0:
                     timed_out = True
-                    to_client("error", "⏱️ 请求超时")
+                    to_client("error", "⏱️ Zeitüberschreitung")
                     break
                 try:
                     item = await asyncio.wait_for(q.get(), timeout=min(10, remaining))
@@ -3840,7 +3860,7 @@ async def api_chat_stream(req: ChatRequest):
                     to_client("token", clean)
                 elif rc not in (0, None):
                     err = clean_agent_output("".join(stdout_lines))[:200]
-                    to_client("error", f"❌ 执行失败（退出码 {rc}）{' — ' + err if err else ''}")
+                    to_client("error", f"❌ Ausführung fehlgeschlagen (Exit-Code {rc}){' — ' + err if err else ''}")
             # 收尾检测：即使已吐了内容，只要不是「正常收尾」就显式告知——
             # 否则被截断（触顶）/被杀（负载）/流被中断，都会被当成「清晰地答完了」，
             # 用户看到的就是「答一半突然停、也不说做完」（本 bug 根因）。
@@ -3849,22 +3869,22 @@ async def api_chat_stream(req: ChatRequest):
             if (emitted or run_info["thinking_chars"]) and sk not in _STOPPED_CHAT:
                 note = None
                 if sr and sr in ("max_tokens", "length", "model_length"):
-                    note = (f"\n\n---\n⚠️ 上面这条**被截断**了（stopReason={sr}，单条回复触顶）。"
-                            f"回我「继续」我接着写完，或让我把任务拆小一点。")
+                    note = (f"\n\n---\n⚠️ Diese Antwort wurde **abgeschnitten** (stopReason={sr}, Längenlimit erreicht). "
+                            f"Schreib „weiter“, dann schreibe ich sie fertig, oder lass mich die Aufgabe kleiner aufteilen.")
                 elif rc not in (0, None):
-                    note = (f"\n\n---\n⚠️ 生成**被中断**（退出码 {rc}，多半是超时或系统负载过高把进程杀了），"
-                            f"不是正常收尾。可以让我重试。")
+                    note = (f"\n\n---\n⚠️ Die Erstellung wurde **unterbrochen** (Exit-Code {rc}, meist Zeitüberschreitung oder hohe Systemlast), "
+                            f"kein normales Ende. Ich kann es noch einmal versuchen.")
                 elif sr == "tool_use":
-                    note = ("\n\n---\n⚠️ 我刚做完这一步、**正要执行下一步操作时中断了**"
-                            "（本轮以工具调用结尾却没能继续，前端把它当成答完了）。回我「继续」我接着做。")
+                    note = ("\n\n---\n⚠️ Ich wurde **direkt vor dem nächsten Schritt unterbrochen** "
+                            "(die Runde endete mit einem Werkzeugaufruf). Schreib „weiter“, dann mache ich weiter.")
                 elif run_info.get("last_ev") not in (None, "assistant_message_end"):
-                    note = ("\n\n---\n⚠️ 这条**可能没写完**——模型的输出/思考流被中断、没有正常收尾"
-                            "（多为网络或模型代理把长回复的流掐断了）。回我「继续」，或重试。")
+                    note = ("\n\n---\n⚠️ Diese Antwort ist **vielleicht unvollständig**: Der Datenstrom des Modells brach ab "
+                            "(meist Netzwerk oder Proxy bei langen Antworten). Schreib „weiter“ oder versuch es noch einmal.")
                 elif run_info.get("text_tail", "").rstrip()[-1:] in ("：", ":"):
                     # 正常收尾但正文停在冒号 = 模型"我要做X："后没接着做（多为要接工具/下一步却断了）。
                     # 用户实测「所有莫名停止都停在冒号」——这一条兜住这个模式。
-                    note = ("\n\n---\n⚠️ 我似乎停在了冒号处、没接着把后面的内容/操作做出来。"
-                            "回我「继续」我补上。")
+                    note = ("\n\n---\n⚠️ Ich bin anscheinend nach einem Doppelpunkt stehen geblieben. "
+                            "Schreib „weiter“, dann ergänze ich den Rest.")
                 if note:
                     full_text.append(note)
                     to_client("token", note)
@@ -3972,7 +3992,7 @@ async def api_chat_stream(req: ChatRequest):
                 if time.monotonic() - idle_since >= 30:
                     idle_since = time.monotonic()
                     yield {"event": "heartbeat", "data": json.dumps(
-                        "仍在处理中，未卡住…（复杂或制作类任务会花点时间）", ensure_ascii=False)}
+                        "Arbeitet noch, hängt nicht … (aufwendige Aufgaben dauern etwas)", ensure_ascii=False)}
                 continue
             if item is CLIENT_DONE:
                 break
@@ -4008,18 +4028,18 @@ async def api_question_answer(req: QuestionAnswerRequest):
         record = _HARNESS_QUESTIONS.get(req.questionId)
         if record is None:
             return {"ok": False, "expired": True, "status": "expired",
-                    "error": "权限或问答请求已过期，请重试"}
+                    "error": "Diese Rückfrage ist abgelaufen, bitte noch einmal versuchen"}
         required = {question["questionId"] for question in record["questions"]}
         if set(req.answers or {}) != required:
-            raise HTTPException(400, "回答与当前问题不匹配")
+            raise HTTPException(400, "Die Antwort passt nicht zur aktuellen Frage")
         if record["future"].done():
-            return {"ok": False, "expired": True, "status": "resolved", "error": "请求已回答"}
+            return {"ok": False, "expired": True, "status": "resolved", "error": "Wurde bereits beantwortet"}
         record["future"].set_result(req.answers)
         return {"ok": True}
     if _direct_api_enabled():
-        raise HTTPException(409, "API 直连模式使用文字问答，请新建对话")
+        raise HTTPException(409, "Im Modus „direkte API“ werden Rückfragen als Text gestellt; bitte einen neuen Chat starten")
     if _harness_settings()["runtime"] != "openclaw":
-        raise HTTPException(409, "此问题属于旧 OpenClaw 会话，请使用当前底座的新对话")
+        raise HTTPException(409, "Diese Frage gehört zu einem alten OpenClaw-Chat; bitte einen neuen Chat starten")
     if GatewayClient is None:
         return {"ok": False, "error": "gateway question bridge unavailable"}
     client = GatewayClient()
@@ -4029,7 +4049,7 @@ async def api_question_answer(req: QuestionAnswerRequest):
         return {"ok": True, "result": result}
     except GatewayQuestionClosedError as error:
         return {"ok": False, "expired": True, "status": "expired", "reason": error.reason,
-                "error": "此问题已关闭或过期，答案未发送。请在输入框中继续对话。"}
+                "error": "Diese Frage ist geschlossen oder abgelaufen, die Antwort wurde nicht gesendet. Bitte im Eingabefeld weiterschreiben."}
     except Exception as e:
         return {"ok": False, "error": str(e)}
     finally:
@@ -4136,7 +4156,7 @@ async def api_chat(req: ChatRequest):
             raise HTTPException(502, errors[0])
         return {"response": result, "sessionKey": sk}
     if req.sessionId and history_path(SESSIONS_DIR, req.sessionId).is_file():
-        raise HTTPException(409, "此会话属于 API 直连，请新建会话使用 OpenClaw")
+        raise HTTPException(409, "Dieser Chat nutzt die direkte API; für OpenClaw bitte einen neuen Chat starten")
     # 每轮末尾追加「先查技能库」提醒，抗长对话指令衰减（对用户不可见）
     message = _chat_message(req)
     loop = asyncio.get_event_loop()
@@ -4154,10 +4174,10 @@ class SkillRequest(BaseModel):
 @app.post("/api/skill")
 async def api_skill(req: SkillRequest):
     if _direct_api_enabled():
-        raise HTTPException(409, "API 直连模式支持聊天；SKILL 执行需要具备本机工具的 Agent 运行时")
+        raise HTTPException(409, "Der Modus „direkte API“ kann nur chatten; Skills brauchen einen Agenten mit lokalen Werkzeugen")
     skill_full = find_skill(req.skill)
     if skill_full is None:
-        raise HTTPException(404, f"SKILL '{req.skill}' 不存在")
+        raise HTTPException(404, f"Skill '{req.skill}' gibt es nicht")
     message = f"{_persona_prefix(req.persona)}请执行 /{skill_full}，内容如下：\n\n{req.input}"
     # 统一给足超时：制作类 SKILL（生视频/多镜合成）可能跑很久，取安全上界
     timeout = TIMEOUT_PRODUCE

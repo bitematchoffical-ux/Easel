@@ -78,12 +78,12 @@ def test_invalid_wire_bytes(raw, code):
 
 
 def test_config_override_disable_paths_and_missing_file(tmp_path):
-    config(tmp_path, [{"id": "weibo", "enabled": False},
-                      {"id": "douyin", "label": "替换抖音", "type": "python", "script": "custom.py"}], include_builtin=True)
+    config(tmp_path, [{"id": "google-trends-de", "enabled": False},
+                      {"id": "reddit-de", "label": "Eigenes Reddit", "type": "python", "script": "custom.py"}], include_builtin=True)
     registry = {s.id: s for s in load_sources(tmp_path, {})}
-    assert "weibo" not in registry and "zhihu" in registry
-    assert registry["douyin"].label == "替换抖音"
-    assert registry["douyin"].options["script"] == str(tmp_path / "config" / "custom.py")
+    assert "google-trends-de" not in registry and "tagesschau" in registry
+    assert registry["reddit-de"].label == "Eigenes Reddit"
+    assert registry["reddit-de"].options["script"] == str(tmp_path / "config" / "custom.py")
     with pytest.raises(ConfigError):
         load_sources(tmp_path, {"EASEL_TREND_SOURCES_CONFIG": "missing.json"})
 

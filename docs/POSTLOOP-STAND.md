@@ -18,6 +18,7 @@ Werkzeug für die eigene Match2Eat-Kampagne, kein eigenes Produkt.
 | `3855257` Paket C | Weboberfläche nur auf 127.0.0.1, Kostenschutz gegen Token-Explosion (Upstream-Issue #163), KI wird gekennzeichnet statt verschleiert |
 | `0de6d63` Skills | Persona (SOUL.md, AGENTS.md), Profil-Vorlage und 12 Kern-Skills auf Deutsch; Fixes in wordcount (Umlaute), asr (Untertitelzeilen), tts (deutsche Stimme) |
 | `2d24ba5` Oberfläche | Weboberfläche auf Deutsch (1.505 Texte) |
+| (offen) Ohne Chinesisch | Startseiten-Trends auf Google Trends DE/AT/CH, Reddit r/de, Tagesschau; alle 90 Skill-Beschreibungen deutsch; Skill-Details ohne chinesische Anleitung (Hinweis statt Original); Einstellungen, Konten, Chat-Statusmeldungen und Chat-Titel deutsch |
 
 Tests: Python 1580 grün, Frontend 142/142. Ein Test (`test_installers_degrade_on_invalid_input_and_unsupported_schema[bash]`)
 schlägt auf macOS fehl, aber genauso im Original (alte macOS-bash), kein Fehler von uns.
@@ -47,6 +48,14 @@ cd web/frontend && node --test ../../tests/frontend/*.test.mjs
 
 ## Wichtige Entscheidungen
 
+- **Denktiefe begrenzt:** `agents.defaults.thinkingDefault = low` in `~/.openclaw-easel/openclaw.json`. Mit dem
+  Standard (adaptiv) hat Sonnet 4.6 beim ersten Karussell-Versuch zweimal das ganze Ausgabelimit (32k Tokens) fürs
+  Nachdenken verbraucht und nichts erzeugt. Mit `low` lief derselbe Auftrag in ca. 5 Minuten durch.
+- **Hauptmodell muss `anthropic/…` sein**, nicht `claude-cli/…`: Sonst nutzt OpenClaw den Claude-Code-Login des
+  Rechners statt des API-Schlüssels („OAuth session expired“).
+- **Mac mini:** System-Python ist 3.9; `.venv` mit Homebrew-Python 3.12 anlegen und `setup.sh` mit aktivierter
+  `.venv` starten. Tests mit `PATH="$PWD/.venv/bin:$PATH"` laufen lassen.
+
 - **Kein automatisches Posten auf Instagram/TikTok per Browser-Automatisierung** (Account-Sperre). Bis die offiziellen
   APIs da sind: Export-Paket, der Nutzer postet selbst. X kann weiterhin per Browser-Login posten.
 - **Budget-Plugin `agents/tool-budget` bewusst nicht aktiviert**: an OpenClaw 2026.10.2 gebunden, bei anderer Version
@@ -59,9 +68,10 @@ cd web/frontend && node --test ../../tests/frontend/*.test.mjs
 
 ## Nächste Schritte (Reihenfolge)
 
-1. OpenClaw einrichten (`bash setup.sh`), API-Schlüssel eintragen, Ausgabenlimit setzen, `easel ping`.
-2. Match2Eat-Profil anlegen (Onboarding in der Oberfläche oder `skill-profile-builder`).
-3. Probelauf: ein Karussell und ein Reel-Skript erzeugen, als Paket exportieren, selbst posten.
+1. ~~OpenClaw einrichten~~ (erledigt auf dem Mac mini, 9.11.).
+2. ~~Match2Eat-Profil anlegen~~ (`profiles/match2eat/`, nicht im Repo).
+3. Probelauf erledigt (Karussell `outputs/match2eat-mir-egal/`, Reel-Skript im Chat). Offen: Fehler der Karten
+   beheben (Wasserzeichen überlappt Fußzeile, gerade statt typografische Anführungszeichen), Freigabe durch David.
 4. Backend-Texte auf Deutsch (`web/app.py`: Plattformname „推特 X“, Einstellungs-Labels, Fehlermeldungen).
    Vorsicht bei Werten, die das Frontend vergleicht (siehe oben).
 5. Paket E: Trendquellen für EU (Google Trends, TikTok Creative Center, Reddit) statt Weibo/Douyin/Zhihu

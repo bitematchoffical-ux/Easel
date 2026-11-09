@@ -1,6 +1,6 @@
 ---
 name: card-quote
-description: "生成适合微博、知乎、公众号或 X/Twitter 分享的 16:9 横版金句卡和数据卡。当用户说“做金句卡、语录卡、数据卡、横版分享卡”时使用。小红书竖版知识卡用 card-xiaohongshu，竖版营销海报用 poster-hero。"
+description: "Erstellt 16:9-Querformat-Zitatkarten und Zahlenkarten zum Teilen auf X, LinkedIn oder im Blog. Verwenden bei: Zitatkarte, Spruchkarte, Datenkarte, Teilen-Karte im Querformat. Für Karussell-Karten im Hochformat card-xiaohongshu, für Hochformat-Werbeposter poster-hero."
 layer: produce
 ---
 

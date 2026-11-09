@@ -1,6 +1,6 @@
 ---
 name: batch-process
-description: "批量处理：对一个目录里的一批图片/视频/音频统一套用同一操作——批量压缩、加水印、转格式、缩放、转比例、音量归一化等。当用户说 批量处理、批量压缩、批量加水印、批量转格式、一批图片/视频、给这个文件夹、全部转成、批量缩放、批量转竖版、整个目录 时使用。基于 shared/scripts/batch_process.py（委派 image_ops/video_ops/audio_ops）。与 image-editing/video-editing/audio-editing 区别：那些处理单文件，本 SKILL 批量套用到整个目录。"
+description: "Stapelverarbeitung: dieselbe Operation auf alle Bilder, Videos oder Audiodateien eines Ordners anwenden – komprimieren, Wasserzeichen, Format umwandeln, skalieren, Seitenverhältnis ändern, Lautstärke normalisieren. Verwenden bei: alle Bilder in diesem Ordner, Stapel komprimieren, alles ins Hochformat. image-editing, video-editing und audio-editing bearbeiten einzelne Dateien, dieser Skill ganze Ordner."
 layer: general
 ---
 

@@ -30,7 +30,7 @@ KNOWN_AGENT_CLIS: tuple[dict[str, object], ...] = (
         # openclaw.json 里的 provider 键名与后端 id 不同名：CLI 后端 = claude-cli，
         # 配置块 = anthropic（models.providers.anthropic）。
         "config_provider": "anthropic",
-        "login_hint": "在终端运行 claude 完成登录后，本机即无需再填 API Key。",
+        "login_hint": "Nach dem Login mit „claude“ im Terminal braucht dieser Mac keinen API-Schlüssel mehr.",
     },
     {
         "id": "gemini-cli",
@@ -38,7 +38,7 @@ KNOWN_AGENT_CLIS: tuple[dict[str, object], ...] = (
         "commands": ("gemini",),
         "openclaw_provider": "google-gemini-cli",
         "config_provider": "google",
-        "login_hint": "在终端运行 gemini 完成登录后，本机即无需再填 API Key。",
+        "login_hint": "Nach dem Login mit „gemini“ im Terminal braucht dieser Mac keinen API-Schlüssel mehr.",
     },
     {
         "id": "codex",
@@ -46,7 +46,7 @@ KNOWN_AGENT_CLIS: tuple[dict[str, object], ...] = (
         "commands": ("codex",),
         "openclaw_provider": None,
         "config_provider": None,
-        "login_hint": "Codex CLI 登录态暂未被底座识别为模型来源，可用其自身命令直接使用。",
+        "login_hint": "Der Codex-CLI-Login wird von OpenClaw noch nicht als Modellquelle erkannt; Codex lässt sich direkt über seine eigenen Befehle nutzen.",
     },
     {
         "id": "opencode",
@@ -54,7 +54,7 @@ KNOWN_AGENT_CLIS: tuple[dict[str, object], ...] = (
         "commands": ("opencode",),
         "openclaw_provider": None,
         "config_provider": None,
-        "login_hint": "OpenCode 登录态暂未被底座识别为模型来源，可用其自身命令直接使用。",
+        "login_hint": "Der OpenCode-Login wird von OpenClaw noch nicht als Modellquelle erkannt; OpenCode lässt sich direkt über seine eigenen Befehle nutzen.",
     },
     {
         "id": "qwen-code",
@@ -62,7 +62,7 @@ KNOWN_AGENT_CLIS: tuple[dict[str, object], ...] = (
         "commands": ("qwen",),
         "openclaw_provider": None,
         "config_provider": None,
-        "login_hint": "Qwen Code 登录态暂未被底座识别为模型来源，可用其自身命令直接使用。",
+        "login_hint": "Der Qwen-Code-Login wird von OpenClaw noch nicht als Modellquelle erkannt; Qwen Code lässt sich direkt über seine eigenen Befehle nutzen.",
     },
     {
         "id": "copilot-cli",
@@ -73,7 +73,7 @@ KNOWN_AGENT_CLIS: tuple[dict[str, object], ...] = (
         # 用，所以要另起代理服务。这里如实标为不支持，避免给出假的「一键接入」。
         "openclaw_provider": None,
         "config_provider": None,
-        "login_hint": "Copilot 走底座的 copilot-proxy 需要另行运行本地代理（默认 localhost:3000），不能用本机 CLI 登录态免 key。",
+        "login_hint": "Copilot läuft über den copilot-proxy von OpenClaw und braucht einen separat gestarteten lokalen Proxy (Standard localhost:3000); der CLI-Login allein ersetzt keinen Schlüssel.",
     },
 )
 

@@ -1,9 +1,6 @@
 ---
 name: skill-ugc-discovery
-description: >
-  发现用户生成内容（UGC）。搜索与创作者品牌/账号相关的粉丝内容、测评、提及和社区讨论，
-  输出高价值 UGC 列表与互动建议。当用户说"谁提到了我"、"粉丝内容"、"品牌提及"、
-  "UGC 发现"、"用户口碑"、"测评搜索"、"社区讨论"时触发。
+description: "Findet nutzergenerierte Inhalte: Beiträge von Fans, Bewertungen, Erwähnungen und Diskussionen zur Marke oder zum Konto, mit Liste der wertvollsten Fundstücke und Vorschlägen zur Interaktion. Verwenden bei: wer erwähnt mich, Fan-Inhalte, Markenerwähnungen, Bewertungen suchen."
 layer: discover
 ---
 

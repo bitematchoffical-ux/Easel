@@ -1,6 +1,6 @@
 ---
 name: ai-video-gen
-description: "AI 视频生成：文生视频 / 图生视频 / 数字人首帧驱动。通过可插拔 provider（通义万相 Wan / 火山 Seedance / 快手可灵 / OpenAI 兼容）异步生成视频，用户自备 API key。当用户说 AI 视频生成、文生视频、图生视频、AI 生成视频、AI 短视频、让图片动起来、数字人视频、生成一段视频 时使用。与 video-strategy（选型/策略）、video-editing（剪辑处理）、clipify（切片）区别：本 SKILL 是从 0 用 AI 生成新视频。"
+description: "KI-Videogenerierung: Text zu Video, Bild zu Video und Avatar-Videos aus einem Startbild. Asynchron über austauschbare Anbieter (Wan, Seedance, Kling oder OpenAI-kompatibel); der Nutzer bringt den API-Schlüssel selbst mit. Verwenden bei: KI-Video erzeugen, Bild animieren, Avatar-Video, „mach ein Video daraus“. Unterschied zu video-strategy (Planung), video-editing (Schnitt) und clipify (Ausschnitte): dieser Skill erzeugt ein neues Video von null."
 layer: produce
 ---
 

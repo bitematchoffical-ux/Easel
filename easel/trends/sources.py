@@ -36,8 +36,22 @@ def read_document(path: Path) -> dict:
     _boolean(document, "include_builtin", True)
     return document
 
-LABELS = {"weibo": "微博", "douyin": "抖音", "zhihu": "知乎",
-          "bilibili": "B站", "baidu": "百度", "toutiao": "头条"}
+# Postloop: built-in sources are European RSS feeds. The old Chinese hot-list
+# collector (builtin.py) stays in the tree but is no longer registered.
+_UA = {"User-Agent": "Mozilla/5.0 (Macintosh) Postloop/0.3 trend-reader"}
+BUILTIN_RSS: list[dict] = [
+    {"id": "google-trends-de", "label": "Google Trends DE", "default": True,
+     "url": "https://trends.google.com/trending/rss?geo=DE"},
+    {"id": "google-trends-at", "label": "Google Trends AT", "default": False,
+     "url": "https://trends.google.com/trending/rss?geo=AT"},
+    {"id": "google-trends-ch", "label": "Google Trends CH", "default": False,
+     "url": "https://trends.google.com/trending/rss?geo=CH"},
+    {"id": "reddit-de", "label": "Reddit r/de", "default": True,
+     "url": "https://www.reddit.com/r/de/hot/.rss", "headers": _UA},
+    {"id": "tagesschau", "label": "Tagesschau", "default": True,
+     "url": "https://www.tagesschau.de/index~rss2.xml"},
+]
+LABELS = {row["id"]: row["label"] for row in BUILTIN_RSS}
 
 
 class ConfigError(ValueError):
@@ -181,11 +195,9 @@ def load_sources(root: Path, environment: dict[str, str], *, warnings: list[str]
         raise ConfigError("sources 必须为数组，最多 64 个数据源")
     registry = {}
     if _boolean(document, "include_builtin", True):
-        for identifier, label in LABELS.items():
-            row = {"id": identifier, "label": label, "type": "python",
-                   "script": str(Path(__file__).with_name("builtin.py")), "args": [identifier],
-                   "default": identifier in ("weibo", "douyin", "zhihu")}
-            registry[identifier] = _source(row, root)
+        for builtin_row in BUILTIN_RSS:
+            row = {"type": "rss", "refresh_seconds": 900, **builtin_row}
+            registry[row["id"]] = _source(row, root)
     seen = set()
     for index, row in enumerate(rows):
         try:

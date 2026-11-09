@@ -79,14 +79,14 @@ def _pyfn_check_cft() -> tuple[bool, str]:
     if w:
         cands.append(w)
     if cands:
-        return True, Path(sorted(cands)[-1]).parent.parent.name or "已装"
+        return True, Path(sorted(cands)[-1]).parent.parent.name or "installiert"
     return False, ""
 
 
 def _pyfn_check_model() -> tuple[bool, str]:
     d = Path(os.path.expanduser("~/models/whisper-large-v3"))
     if d.is_dir() and any(d.iterdir()):
-        return True, "模型目录已就绪"
+        return True, "Modellordner bereit"
     return False, ""
 
 
@@ -95,58 +95,58 @@ _PYFN = {"cft": _pyfn_check_cft, "model": _pyfn_check_model}
 
 TOOLS: list[Tool] = [
     # ── 视频产线套件（Remotion）──
-    Tool("node", "Node.js", "rm", "rm 运行时 · 建议 24 LTS",
+    Tool("node", "Node.js", "rm", "Laufzeit für Videoproduktion · empfohlen 24 LTS",
          ["node", "-v"],
          [("winget · OpenJS.NodeJS.LTS",
            ["winget", "install", "-e", "--id", "OpenJS.NodeJS.LTS",
             "--accept-source-agreements", "--accept-package-agreements"], 900)]),
-    Tool("ffmpeg", "ffmpeg", "rm", "full build · lut3d / nlmeans 等滤镜齐",
+    Tool("ffmpeg", "ffmpeg", "rm", "Vollversion · mit Filtern wie lut3d / nlmeans",
          ["ffmpeg", "-version"],
          [("winget · Gyan.FFmpeg",
            ["winget", "install", "-e", "--id", "Gyan.FFmpeg",
             "--accept-source-agreements", "--accept-package-agreements"], 900),
           ("choco · ffmpeg", ["choco", "install", "ffmpeg", "-y"], 900)]),
-    Tool("python", "Python", "rm", "3.11+ · 工具与门脚本运行用",
+    Tool("python", "Python", "rm", "3.11+ · für Werkzeuge und Prüfskripte",
          ["{python}", "--version"],
          [("winget · Python.Python.3.13",
            ["winget", "install", "-e", "--id", "Python.Python.3.13",
             "--accept-source-agreements", "--accept-package-agreements"], 900)]),
-    Tool("fw", "faster-whisper", "rm", "GPU 转录（cu121）",
+    Tool("fw", "faster-whisper", "rm", "GPU-Transkription (cu121)",
          ["{python}", "-c", "import faster_whisper as f;print(getattr(f,'__version__','ok'))"],
          _pip_chain("faster-whisper", timeout=1800)),
-    Tool("model", "Whisper large-v3 模型", "rm", "约 3.1GB · hf-mirror 直拉 · 不入包",
+    Tool("model", "Whisper-Modell large-v3", "rm", "ca. 3,1 GB · Download über hf-mirror · nicht im Paket",
          ["@pyfn:model"],
          _pip_chain("huggingface_hub", timeout=600)
          + [("hf-mirror 下载 large-v3", ["{python}", "-c", WHISPER_MODEL_PY], 7200)],
          big=True),
-    Tool("rmdeps", "Remotion 工程依赖", "rm", "蓝本内置 · npm ci 还原（镜像加速）",
+    Tool("rmdeps", "Remotion-Projektabhängigkeiten", "rm", "in der Vorlage enthalten · Wiederherstellung per npm ci",
          ["{python}", "-c",
           "import os,sys;sys.exit(0 if os.path.isdir(os.path.join(sys.argv[1],'node_modules')) else 1)",
           "{dir}"],
          [("npm ci · npmmirror 镜像", ["npm", "ci", "--registry=https://registry.npmmirror.com"], 1800)],
          needs_dir=True),
-    Tool("shell", "Chrome Headless Shell", "rm", "渲染用 · 随 Remotion 下载",
+    Tool("shell", "Chrome Headless Shell", "rm", "zum Rendern · wird mit Remotion geladen",
          ["@pyfn:shell"],
          [("npx remotion browser ensure", ["npx", "--yes", "remotion", "browser", "ensure"], 1800)],
          needs_dir=True),
     # ── 发布链 ──
-    Tool("biliup", "biliup", "pub", "B站投稿 CLI · python 包装",
+    Tool("biliup", "biliup", "pub", "Bilibili-Upload (China) · nicht benötigt",
          ["biliup", "--version"],
          _pip_chain("biliup", timeout=1800)),
-    Tool("pw", "Playwright Chromium", "pub", "小红书 / 快手 / 知乎 发布链浏览器",
+    Tool("pw", "Playwright Chromium", "pub", "Browser für Plattform-Login und X-Veröffentlichung",
          ["{python}", "-c", "import playwright;print('playwright ok')"],
          _pip_chain("playwright")
          + [("下载 Chromium", ["{python}", "-m", "playwright", "install", "chromium"], 1800)]),
-    Tool("cft", "Chrome for Testing", "pub", "登录态浏览器 · 平台登录用",
+    Tool("cft", "Chrome for Testing", "pub", "Browser mit Login-Daten · für Plattform-Logins",
          ["@pyfn:cft"],
          [("playwright 自带 Chromium", ["{python}", "-m", "playwright", "install", "chromium"], 1800)]),
     # ── 常用库 ──
-    Tool("pylibs", "常用 Python 库", "common", "Pillow · edge-tts · pdfplumber · requests",
+    Tool("pylibs", "Häufige Python-Bibliotheken", "common", "Pillow · edge-tts · pdfplumber · requests",
          ["{python}", "-c", "import PIL,edge_tts,pdfplumber,requests;print('4/4 ok')"],
          _pip_chain("Pillow", "edge-tts", "pdfplumber", "requests")),
 ]
 
-GROUP_NAMES = {"rm": "视频产线套件（Remotion）", "pub": "发布链", "common": "常用库"}
+GROUP_NAMES = {"rm": "Videoproduktion (Remotion)", "pub": "Veröffentlichung", "common": "Häufige Bibliotheken"}
 
 # ═══════════════════════════════════════════════════════════════════════
 # 解释器解析：优先「Scripts 目录已在 PATH 上」的（装完 CLI 直接可见）
@@ -309,7 +309,7 @@ def _run(argv: list[str], *, cwd: str | None = None, timeout: int = 600):
 def check_tool(tool: Tool, python: str, dir_: str | None = None) -> dict:
     """单个体检 → {"id","state","version","detail"}；state: ok | missing | no_dir"""
     if tool.needs_dir and not dir_:
-        return {"id": tool.id, "state": "no_dir", "version": None, "detail": "需要 --dir（工程目录）"}
+        return {"id": tool.id, "state": "no_dir", "version": None, "detail": "--dir (Projektordner) nötig"}
     try:
         if tool.check[0].startswith("@pyfn:"):
             name = tool.check[0].split(":", 1)[1]
@@ -318,7 +318,7 @@ def check_tool(tool: Tool, python: str, dir_: str | None = None) -> dict:
                 g = glob.glob(os.path.join(dir_, "node_modules", ".remotion", "**",
                                            "chrome-headless-shell*"), recursive=True)
                 return {"id": tool.id, "state": "ok" if g else "missing",
-                        "version": "已缓存" if g else None, "detail": None}
+                        "version": "zwischengespeichert" if g else None, "detail": None}
             ok, detail = _PYFN[name]()
             return {"id": tool.id, "state": "ok" if ok else "missing",
                     "version": detail if ok else None, "detail": None}
@@ -331,7 +331,7 @@ def check_tool(tool: Tool, python: str, dir_: str | None = None) -> dict:
         if proc.returncode == 0:
             first = (proc.stdout or proc.stderr or "").strip().splitlines()
             return {"id": tool.id, "state": "ok",
-                    "version": (first[0].strip()[:70] if first else "已装"), "detail": None}
+                    "version": (first[0].strip()[:70] if first else "installiert"), "detail": None}
         return {"id": tool.id, "state": "missing", "version": None, "detail": None}
     except FileNotFoundError:
         return {"id": tool.id, "state": "missing", "version": None, "detail": None}

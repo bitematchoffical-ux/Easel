@@ -1,9 +1,6 @@
 ---
 name: skill-content-matrix
-description: >-
-  将内容支柱与多种格式交叉，生成选题矩阵，每个格子产出一个可直接执行的选题。
-  当用户说"选题矩阵""批量选题""选题池""内容矩阵""一次多个选题""支柱×格式""选题规划表"时使用。
-  和 skill-topic-evaluator 的区别：本 SKILL 批量生成选题池；topic-evaluator 评估单个选题是否值得做。
+description: "Kreuzt Content-Säulen mit Formaten zu einer Themenmatrix; jedes Feld ergibt ein direkt umsetzbares Thema. Verwenden bei: Themenmatrix, viele Themen auf einmal, Themenpool. skill-topic-evaluator bewertet ein einzelnes Thema."
 layer: plan
 ---
 

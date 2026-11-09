@@ -1,9 +1,6 @@
 ---
 name: skill-publish-log
-description: >
-  发布记录管理。当用户提到"记一下刚发的"、"发布记录"、"这个月发了多少"、"发布历史"、
-  "记录一下"、"发布日志"、"上次发了什么"时触发。支持记录每次发布的内容信息（平台、标题、
-  链接、时间、初始数据），并提供查询和统计功能，方便后续复盘。
+description: "Protokoll der Veröffentlichungen: speichert Plattform, Titel, Link, Zeitpunkt und erste Zahlen und bietet Abfragen und Statistik für spätere Rückblicke. Verwenden bei: trag das ein, was habe ich diesen Monat gepostet, Veröffentlichungsverlauf."
 layer: attribute
 ---
 

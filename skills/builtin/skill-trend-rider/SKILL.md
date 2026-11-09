@@ -1,12 +1,6 @@
 ---
 name: skill-trend-rider
-description: >
-  给定一个热点事件或话题，结合创作者账号定位，输出蹭热点的具体内容方案。
-  包含切入角度、内容形式、标题建议、风险提醒。
-  当用户说"这个热点怎么蹭"、"蹭热点"、"怎么结合"、"热点和我有关吗"、
-  "追热点"、"热点方案"、"借势"、"怎么追这个热点"、"热点怎么切"时触发。
-  和 skill-trending-topics 的区别：trending-topics 发现和筛选热点，
-  trend-rider 拿到一个具体热点后规划怎么蹭、怎么切内容。
+description: "Macht aus einem konkreten Trend oder Anlass einen Inhaltsplan für das eigene Konto: Blickwinkel, Format, Titelvorschläge und Risiken. Verwenden bei: wie nutze ich diesen Trend, passt der Trend zu mir, auf den Trend aufspringen."
 layer: plan
 ---
 

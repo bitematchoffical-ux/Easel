@@ -1,11 +1,6 @@
 ---
 name: style-transfer
-description: >-
-  文案风格迁移：把一段文案从一种风格改写成另一种风格（严肃→搞笑、书面→口语、文艺→直白、正式→社交媒体感），
-  支持风格参考（给一段目标风格的示例文本）。
-  使用时机：用户说"改成搞笑风格"、"换个风格"、"风格迁移"、"改成口语化"、"改成文艺风"、
-  "像 XX 那样写"、"风格改写"、"换个腔调"。
-  和 text-polisher 的区别：polisher 提升质量不改风格，style-transfer 改变风格不做质量评估。
+description: "Stil umschreiben: macht aus einem Text eine andere Tonlage (ernst → witzig, schriftlich → umgangssprachlich, formell → Social-Media-Ton), optional nach einem Beispieltext. Verwenden bei: lustiger machen, anderer Stil, lockerer, schreib es wie XY. text-polisher verbessert Qualität ohne Stilwechsel."
 layer: produce
 ---
 

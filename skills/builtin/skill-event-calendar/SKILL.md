@@ -1,13 +1,6 @@
 ---
 name: skill-event-calendar
-description: >
-  查询未来 N 天的节日、纪念日、电商节点、行业事件，为创作者提供内容蹭点。
-  覆盖中国节假日、国际节日、电商大促、行业展会、考试节点、体育赛事等。
-  当用户说"未来有什么节日"、"下个月有什么可以蹭"、"节点日历"、"营销日历"、
-  "有什么热点可以提前准备"、"内容日历节点"、"最近有什么节日"、
-  "什么时候有大促"、"节日营销"时触发。
-  和 skill-content-calendar 的区别：content-calendar 排内容发布日程，
-  event-calendar 提供节日和事件的数据查询，是选题灵感的上游数据源。
+description: "Zeigt Feiertage, Gedenktage, Shopping-Termine, Messen und Sportereignisse der nächsten Tage als Anlass für Inhalte. Hinweis: Die Datenbasis enthält noch viele chinesische Termine; internationale und europäische Anlässe sind enthalten. Verwenden bei: welche Feiertage kommen, Marketingkalender, Anlässe im nächsten Monat. skill-content-calendar plant Veröffentlichungen, dieser Skill liefert Anlässe."
 layer: discover
 ---
 

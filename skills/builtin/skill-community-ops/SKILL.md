@@ -1,13 +1,6 @@
 ---
 name: skill-community-ops
-description: >-
-  评论区运营与舆情危机应对：为一批评论生成分层回复模板（赞美/提问/求购/杠精/黑粉）
-  与分级处理规则，从评论中挖掘选题反哺内容，负面事件时做危机分级 + 声明草稿 + 统一口径。
-  当用户说"回复评论"、"评论区运营"、"评论怎么回"、"钓评论"、"引导互动"、
-  "评论区选题"、"舆情"、"危机公关"、"差评"、"黑粉"、"被骂了"、"道歉声明"、
-  "统一口径"、"负面缠上来了"、"翻车了怎么办"时触发。
-  和 skill-quality-gate 的区别：quality-gate 是发布前合规质检，
-  community-ops 是发布后的评论互动与危机响应。
+description: "Community-Management und Krisen: Antwortvorlagen nach Kommentartyp (Lob, Frage, Kaufinteresse, Troll, Hater) mit Regeln, Themenideen aus Kommentaren und bei negativen Vorfällen Einstufung, Stellungnahme und einheitliche Sprachregelung. Verwenden bei: Kommentare beantworten, Shitstorm, schlechte Bewertung, Entschuldigung formulieren. skill-quality-gate prüft vor dem Posten, community-ops reagiert danach."
 layer: publish
 ---
 

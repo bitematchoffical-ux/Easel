@@ -1,12 +1,6 @@
 ---
 name: comparison-card
-description: >-
-  对比图/一图流：生成 A vs B 参数对比图、优劣势对比表、产品参数一图流。
-  用 HTML+CSS 渲染成可截图的视觉卡片，适合小红书/微博等平台分享。
-  使用时机：用户说"做个对比图"、"A vs B"、"参数对比"、"优劣对比"、
-  "一图流"、"对比表"、"哪个好"、"对比一下"。
-  和 chart-visualization 的区别：chart 做数据图表（柱状图/折线图），comparison-card 做对比表/一图流。
-  和 infographic 的区别：infographic 做多维信息图，comparison-card 专注 A vs B 对比。
+description: "Vergleichsgrafik: A-gegen-B-Vergleich, Vor- und Nachteile, Produktdaten auf einen Blick; als HTML/CSS-Karte gerendert und als Bild für Instagram, LinkedIn oder X. Verwenden bei: Vergleich, A vs B, was ist besser, Vergleichstabelle. Für Datendiagramme chart-visualization, für mehrdimensionale Infografiken infographic."
 layer: produce
 ---
 

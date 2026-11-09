@@ -13,7 +13,7 @@ from pathlib import Path
 from easel.timeouts import TIMEOUT_TREND_CONFIG_LOCK, TIMEOUT_TREND_SCRIPT_CHECK, TREND_POLL_INTERVAL
 
 from .protocol import MAX_SCRIPT_BYTES, CollectorError, bounded_text, safe_json
-from .sources import (LABELS, MAX_CONFIG_BYTES, ConfigError, _source, config_path,
+from .sources import (BUILTIN_RSS, LABELS, MAX_CONFIG_BYTES, ConfigError, _source, config_path,
                       display_label, load_sources, read_document)
 
 _LOCK = threading.RLock()
@@ -238,8 +238,9 @@ def update(root: Path, environment: dict[str, str], value: dict) -> dict:
                     rows[:] = [row for row in rows if not isinstance(row, dict) or row.get("id") != identifier]
                     # Re-enabling an individual builtin when the global switch is off.
                     if not document.get("include_builtin", True):
-                        builtin = {"id": identifier, "label": LABELS[identifier], "type": "python",
-                                   "script": str(Path(__file__).with_name("builtin.py")), "args": [identifier]}
+                        builtin = {"type": "rss", "refresh_seconds": 900,
+                                   **next(row for row in BUILTIN_RSS if row["id"] == identifier)}
+                        builtin.pop("default", None)
                         rows.append(builtin)
                 elif existing is None:
                     rows.append({"id": identifier, "enabled": enabled})

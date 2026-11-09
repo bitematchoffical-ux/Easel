@@ -1,10 +1,6 @@
 ---
 name: skill-campaign-planner
-description: >-
-  活动/营销策划（国内本地化）：为节日营销、电商大促（618/双11/年货节）、新品发布、活动造势
-  制定完整方案——目标拆解、营销节奏（预热-爆发-返场）、多平台内容矩阵、互动玩法、KOL 分层、
-  预算分配、风险合规、效果指标。当用户说"营销方案""活动策划""大促方案""618/双11 怎么做"
-  "节日营销""新品发布方案""造势""campaign""营销节奏""怎么搞活动"时使用。
+description: "Kampagnen- und Aktionsplanung: vollständiger Plan für Feiertags- und Saisonaktionen (z. B. Black Friday, Weihnachten, Valentinstag), Produktstarts und Events – Ziele, Ablauf (Vorlauf, Höhepunkt, Nachlauf), Inhalte je Plattform, Mitmach-Ideen, Creator-Kooperationen, Budget, Rechtliches, Kennzahlen. Verwenden bei: Kampagne planen, Aktion, Marketingplan, Produktstart."
 layer: plan
 ---
 

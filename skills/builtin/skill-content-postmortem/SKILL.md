@@ -1,10 +1,6 @@
 ---
 name: skill-content-postmortem
-description: >
-  内容复盘与爆款规律提炼。两种模式：(A) 单条复盘 — 分析一条已发布内容为什么爆/扑，
-  从 Hook、结构、选题、时间、平台适配等维度拆解原因；(B) 规律提炼 — 从多条内容中
-  提炼爆款共同特征、总结可复制的爆款公式。当用户说"这条为什么火了"、"为什么扑了"、
-  "复盘"、"分析数据"、"爆款规律"、"总结规律"、"爆款公式"、"内容复盘"、"什么规律"时触发。
+description: "Rückblick auf Inhalte. Zwei Modi: (A) einzelner Beitrag – warum lief er gut oder schlecht (Hook, Aufbau, Thema, Zeitpunkt, Plattform); (B) Muster – gemeinsame Merkmale erfolgreicher Beiträge als wiederholbare Formel. Verwenden bei: warum lief das so gut, warum ist das gefloppt, Rückblick, Erfolgsmuster."
 layer: attribute
 ---
 

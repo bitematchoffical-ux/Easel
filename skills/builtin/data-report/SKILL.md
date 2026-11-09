@@ -1,6 +1,6 @@
 ---
 name: data-report
-description: "把 CSV、Excel 或 JSON 数据生成包含 KPI、图表和洞察的完整可视化报告页。当用户说“数据报告、CSV/Excel 转报告、做 KPI 看板、生成可视化报告页”时使用。单张图表用 chart-visualization；信息图或 GIF 动画图表用 infographic。"
+description: "Macht aus CSV-, Excel- oder JSON-Daten eine vollständige Berichtsseite mit Kennzahlen, Diagrammen und Erkenntnissen. Verwenden bei: Datenbericht, CSV/Excel als Bericht, KPI-Dashboard. Einzelnes Diagramm: chart-visualization; Infografik oder GIF-Diagramm: infographic."
 layer: produce
 ---
 

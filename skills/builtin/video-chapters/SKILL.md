@@ -1,6 +1,6 @@
 ---
 name: video-chapters
-description: "视频章节 / 时间戳目录：给中长视频自动生成章节划分和时间戳目录，用于 B站分P/YouTube 章节/视频描述区，方便观众跳转、提升完播。当用户说 视频章节、章节目录、时间戳、分章节、视频目录、chapters、B站章节、YouTube 章节、给视频加时间点、看点目录、视频大纲时间戳 时使用。编排复用 asr.py（带时间轴转录），章节划分与命名由 LLM 完成。与 video-to-article 区别：那个把视频改写成成篇图文，本 SKILL 只出章节时间戳目录。"
+description: "Kapitel und Zeitmarken: teilt längere Videos automatisch in Kapitel mit Zeitstempeln für YouTube-Kapitel oder die Videobeschreibung. Verwenden bei: Kapitel, Zeitstempel, Inhaltsverzeichnis fürs Video, YouTube-Kapitel. video-to-article macht einen ganzen Text daraus."
 layer: produce
 ---
 

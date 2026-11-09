@@ -1,8 +1,6 @@
 ---
 name: card-design
-description: >
-  社媒卡片视觉设计系统：提供配色、中文字体层级、满画幅布局、品类骨架和死空白/密度质检，避免模板化 PPT 与廉价 AI 感。
-  当用户说“卡片难看、优化视觉、封面/海报设计、排版配色、卡片填不满、AI 味重”时使用；所有 card-*、poster-hero 等视觉产出应把它作为设计规范，而非最终渲染器。
+description: "Gestaltungssystem für Social-Media-Karten: Farbpaletten, Schrifthierarchie, randlose Layouts, Grundraster je Kategorie und Prüfung auf Leerflächen und Dichte – gegen Präsentations-Optik und billigen KI-Look. Verwenden bei: Karten sehen schlecht aus, Gestaltung verbessern, Cover oder Poster gestalten, Farben und Layout. Alle card-* und poster-hero sollen dieses System als Gestaltungsregel nutzen; es rendert selbst nichts."
 layer: produce
 ---
 

@@ -1,13 +1,6 @@
 ---
 name: template-library
-description: >
-  内容模板的保存、复用、管理。把成功的内容结构保存为模板，下次直接套用，支持模板分类和版本管理。
-  当用户说"保存模板"、"用模板"、"模板管理"、"模板列表"、"复用上次的结构"、
-  "常用模板"时使用。
-  与 post-formatter（帖子框架）的区别：post-formatter 提供通用营销框架（PAS/AIDA/BAB），
-  template-library 管理用户自己沉淀的个性化模板。
-  与 social-content（社媒内容）的区别：social-content 从零生成内容，
-  template-library 基于已有模板快速复制结构。
+description: "Vorlagen speichern und wiederverwenden: erfolgreiche Inhaltsstrukturen als Vorlage sichern, später direkt anwenden, mit Kategorien und Versionen. Verwenden bei: als Vorlage speichern, Vorlage nutzen, Struktur von letztem Mal. post-formatter bietet allgemeine Rahmen, template-library die eigenen Vorlagen."
 layer: general
 ---
 

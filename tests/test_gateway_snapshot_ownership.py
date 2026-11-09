@@ -74,7 +74,7 @@ def test_queued_turn_preserves_owner_until_lock_acquired(sandbox, owner_status):
             # Wait for the actual queue notification instead of a timing sleep.
             while True:
                 event = await asyncio.wait_for(anext(response.body_iterator), timeout=2)
-                if "排队" in event.get("data", ""):
+                if "wartet" in event.get("data", "") or "startet danach" in event.get("data", ""):
                     break
             assert web._turn_file("web:same").read_bytes() == original
             assert (await web.api_chat_last("same", turn_id="owner"))["text"] == "owner result"
@@ -234,7 +234,7 @@ def test_cancelled_startup_releases_only_its_ownership(sandbox, monkeypatch, sta
             if stage == "local_lock":
                 while True:
                     event = await asyncio.wait_for(anext(response.body_iterator), timeout=2)
-                    if "排队" in event.get("data", ""):
+                    if "wartet" in event.get("data", "") or "startet danach" in event.get("data", ""):
                         break
             else:
                 await asyncio.wait_for(entered.wait(), timeout=2)

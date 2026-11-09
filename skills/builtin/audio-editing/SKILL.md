@@ -1,6 +1,6 @@
 ---
 name: audio-editing
-description: "通用音频处理：音频剪辑/裁剪、格式转码（mp3/wav/m4a/aac）、音量归一化、从视频提取音轨、多段拼接、淡入淡出、变速（保音高）。当用户说“剪音频”“裁一段”“转成 mp3”“调音量/响度”“提取音轨/扒音频”“拼接音频”“淡入淡出”“加速/减速音频”“变速不变调”时使用。与 audio-denoise 的区别：audio-denoise 专做降噪，audio-editing 做除降噪外的通用音频操作（也内置 denoise 作为兜底）。"
+description: "Allgemeine Audiobearbeitung: schneiden und kürzen, umwandeln (mp3/wav/m4a/aac), Lautstärke normalisieren, Tonspur aus Video ziehen, mehrere Teile aneinanderhängen, ein- und ausblenden, Tempo ändern ohne Tonhöhe. Verwenden bei: Audio schneiden, in mp3 umwandeln, lauter oder leiser, Tonspur extrahieren, Audio zusammenfügen. Für gezieltes Entrauschen audio-denoise."
 layer: produce
 ---
 

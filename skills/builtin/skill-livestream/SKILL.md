@@ -1,10 +1,6 @@
 ---
 name: skill-livestream
-description: >
-  为直播生成完整方案：直播主题、流程时间表、开场白/过渡语/催单话术/感谢话术/互动话术。
-  适用于带货直播、知识分享直播、娱乐直播。
-  当用户说"直播策划"、"直播方案"、"直播话术"、"开播前准备"、"直播流程"、
-  "直播脚本"、"带货直播"、"怎么开播"、"直播怎么做"、"直播排期"、"写个直播话术"时触发。
+description: "Komplettplan für Livestreams: Thema, Ablauf mit Zeiten, Begrüßung, Überleitungen, Kaufaufforderung, Dank und Interaktion. Für Verkaufs-, Wissens- und Unterhaltungs-Lives. Verwenden bei: Livestream planen, Live-Skript, wie gehe ich live."
 layer: plan
 ---
 

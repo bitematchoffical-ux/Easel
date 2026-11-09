@@ -1,9 +1,6 @@
 ---
 name: skill-short-link
-description: >-
-  短链 + UTM 追踪：给内容/投放链接拼接 UTM 追踪参数（来源/媒介/活动）并缩短，
-  便于在小红书/抖音/公众号等追踪流量来源与活动效果。当用户说"短链""生成短链""缩短链接"
-  "UTM""追踪链接""投放链接""带参数的链接""统计来源""tinyurl"时使用。用免 key 公共短链服务。
+description: "Kurzlinks mit UTM-Parametern: hängt Quelle, Medium und Kampagne an Links an und kürzt sie, um Herkunft und Kampagnenerfolg auf Instagram, TikTok und Co. zu messen. Verwenden bei: Kurzlink, UTM, Tracking-Link, Link mit Parametern. Nutzt einen öffentlichen Kurzlinkdienst ohne Schlüssel."
 layer: publish
 ---
 

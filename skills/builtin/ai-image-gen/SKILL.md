@@ -1,6 +1,6 @@
 ---
 name: ai-image-gen
-description: "通用 AI 生图：文生图 / 图生图 / 图像变体。当用户说 AI 生图、AI 画图、文生图、图生图、生成图片、生成配图、图像生成、AI 出图、AI 作图、换图、改图、图像编辑、给我画一张、生成一张图 时使用。支持 OpenAI 兼容 API 与 apimart 异步 API，用户自备 API key。"
+description: "KI-Bildgenerierung: Text zu Bild, Bild zu Bild und Bildvarianten. Verwenden, wenn der Nutzer sagt: KI-Bild, Bild generieren, Bild malen lassen, Illustration erzeugen, Bild bearbeiten oder verändern, „mach mir ein Bild“. Unterstützt OpenAI-kompatible APIs und die asynchrone apimart-API; der Nutzer bringt den API-Schlüssel selbst mit."
 layer: produce
 ---
 

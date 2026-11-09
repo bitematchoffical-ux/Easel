@@ -1,6 +1,6 @@
 ---
 name: meme-generator
-description: "表情包 / Meme 生成：给图片加经典上下大字（白字黑边）做梗图，或在图上/下加配文条做反应图（'当…的时候'格式）。中英文都支持，自动换行和字号自适应。当用户说 表情包、做表情包、meme、梗图、reaction 图、配图加字、给这张图加字、做个梗、反应图、当xx的时候 时使用。基于 shared/scripts/meme_ops.py（Pillow）。与 card-quote 区别：card-quote 做精致金句卡片，meme-generator 做梗图/表情包；与 image-editing watermark 区别：那个加水印，本 SKILL 加梗字。"
+description: "Memes erstellen: klassische Ober- und Unterzeile (weiße Schrift mit schwarzem Rand) oder Textleiste über oder unter dem Bild („Wenn du …“-Format). Automatischer Zeilenumbruch und passende Schriftgröße. Verwenden bei: Meme, Reaktionsbild, Text aufs Bild. card-quote macht hochwertige Zitatkarten, meme-generator Memes."
 layer: produce
 ---
 

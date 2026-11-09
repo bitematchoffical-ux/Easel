@@ -212,6 +212,25 @@ function chooseFocusClause(text: string): string {
   }, clauses[0]);
 }
 
+/** Postloop: Titel für deutsche Eingaben – erster Satz, ohne Befehlsverb und Füllwörter. */
+function germanSessionTitle(text: string): string {
+  const quoted = text.match(/[„“"»«]([^„“"»«]{3,40})[“”"«»]/u)?.[1]?.trim();
+  const first = (text.split(/(?<=[.!?])\s|\n/)[0] || text).trim();
+  let core = first
+    .replace(/^(?:bitte\s+)?(?:erstelle|erstell|schreib(?:e)?|mach(?:e)?|generiere|plane|entwirf|baue|bau|gib mir|zeig mir|hilf mir(?: bei)?|kannst du(?: mir)?|ich (?:will|möchte|brauche))\s+/i, '')
+    .replace(/(?:^|\s+)(?:für|von)\s+match2eat\b\s*/i, ' ')
+    .trim()
+    .replace(/^(?:mir\s+)?(?:ein(?:e[nmrs]?)?|den|die|das)\s+/i, '')
+    .replace(/\s+zum Thema\s+.*$/i, '')
+    .replace(/[\s,:;.!?]+$/g, '')
+    .trim();
+  if (quoted && core.length < 40) core = `${core}: ${quoted}`;
+  const title = core || 'Neuer Chat';
+  const chars = Array.from(title);
+  const max = TITLE_MAX_CHARS + 12;
+  return chars.length > max ? `${chars.slice(0, max).join('')}…` : title;
+}
+
 /** 从首条提问提取“主题对象 + 动作”；确定性生成，不请求模型或后端。 */
 export function generateSessionTitle(message: string, _seed = message): string {
   const attachmentMarker = '【附件素材】';
@@ -227,6 +246,8 @@ export function generateSessionTitle(message: string, _seed = message): string {
     const filename = path.split('/').pop() || 'Material hochladen';
     text = `Anhang verarbeiten ${filename}`;
   }
+
+  if (!/[\u4e00-\u9fff]/.test(text)) return germanSessionTitle(text);
 
   text = cleanTitleClause(text);
   const focusClause = chooseFocusClause(text);

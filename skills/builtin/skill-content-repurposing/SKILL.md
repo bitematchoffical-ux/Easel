@@ -1,10 +1,6 @@
 ---
 name: skill-content-repurposing
-description: >-
-  将一篇内容拆解改编到小红书、抖音、B站、微博等多平台，适配各平台原生格式和风格。
-  当用户说"一稿多发""改编到各平台""内容复用""多平台适配""这篇改成小红书/抖音""转成其他平台""一鱼多吃"时使用。
-  和 skill-cross-platform-diff 的区别：diff 做平台差异洞察分析（发现层）；本 SKILL 实际改写内容到各平台。
-  和 skill-cross-platform-publish 的区别：本 SKILL 只改写适配内容，cross-platform-publish 负责实际一键分发到多平台。
+description: "Macht aus einem Inhalt passende Fassungen für Instagram, TikTok, YouTube Shorts und X, jeweils im eigenen Format und Stil der Plattform. Verwenden bei: einen Inhalt mehrfach nutzen, für alle Plattformen umschreiben, Repurposing. skill-cross-platform-diff analysiert Unterschiede; skill-cross-platform-publish erstellt die Export-Pakete."
 layer: publish
 ---
 

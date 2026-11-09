@@ -1,12 +1,6 @@
 ---
 name: skill-seo-quality
-description: >
-  平台原生搜索流量优化：把内容做成能被平台搜索到的样子。
-  校验并优化标题/正文关键词布局、话题标签搜索权重、封面/首帧文字关键词、
-  搜索流量 vs 推荐流量的取舍。覆盖小红书、抖音、知乎、公众号、B站、微博。
-  当用户说"SEO 检查"、"搜索优化"、"关键词布局"、"搜不到我的内容"、
-  "怎么被搜到"、"话题标签怎么选"、"搜一搜优化"、"发布前校验"时使用。
-  网页/博客的 Meta/OG/Slug/E-E-A-T 校验作为可选模式保留（见 references）。
+description: "Suchoptimierung in den Plattformen: Schlüsselwörter in Titel und Text, Hashtags, Text auf Cover und erstem Bild, Abwägung Suche gegen Empfehlungen – für Instagram, TikTok, YouTube und X. Verwenden bei: SEO-Check, man findet meine Inhalte nicht, welche Hashtags. Prüfung von Meta-Tags und Slugs für Webseiten als optionaler Modus."
 layer: publish
 ---
 
